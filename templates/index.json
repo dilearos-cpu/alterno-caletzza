@@ -15,7 +15,7 @@
         "column_UgUHnj": {
           "type": "column",
           "settings": {
-            "video": "shopify://files/videos/IMG_6869.mp4",
+            "video": "",
             "video_url": "",
             "link": "",
             "open_in_new_tab": false,
@@ -25,7 +25,7 @@
         "col_1": {
           "type": "column",
           "settings": {
-            "video": "shopify://files/videos/IMG_8295.mp4",
+            "video": "",
             "video_url": "",
             "link": "",
             "open_in_new_tab": false,
