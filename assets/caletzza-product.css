@@ -1,0 +1,335 @@
+/* Página de producto — estilo Pauly Lingerie */
+
+.cz-product-pauly .cz-product-mobile-summary {
+  padding: 1.2rem 0 1.6rem;
+  border-bottom: 1px solid rgba(80, 47, 29, 0.08);
+  margin-bottom: 1rem;
+}
+
+.cz-product-pauly .cz-product-mobile-summary__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--cz-brown);
+  margin: 0 0 0.6rem;
+  line-height: 1.2;
+}
+
+.cz-product-pauly .cz-product-mobile-summary__price .price--large {
+  font-size: 1.6rem;
+  color: #6c6874;
+}
+
+@media screen and (max-width: 749px) {
+  .cz-product-pauly .product__info-container > .product__title,
+  .cz-product-pauly .product__info-container > div[role='status'] {
+    display: none;
+  }
+}
+
+.cz-product-pauly .product__title h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--cz-brown);
+  line-height: 1.2;
+}
+
+.cz-product-pauly .product .price--large {
+  font-size: 1.6rem;
+  color: #6c6874;
+}
+
+.cz-product-pauly .product .price .price-item--sale {
+  color: #ec0101;
+}
+
+/* Galería dual metafield segunda imagen */
+.cz-product-media {
+  width: 100%;
+}
+
+.cz-product-dual-media,
+.cz-product-standard-media.hidden,
+.cz-product-dual-media.hidden {
+  display: none;
+}
+
+.cz-product-dual-media:not(.hidden) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  background: #fafafa;
+}
+
+.cz-product-dual-media__item {
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.cz-product-dual-media__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media screen and (max-width: 749px) {
+  .cz-product-dual-media:not(.hidden) {
+    gap: 0.2rem;
+  }
+}
+
+/* Galería */
+.cz-product-pauly .product__media-wrapper {
+  background: #fafafa;
+}
+
+.cz-product-pauly .product__media-list .product__media-item {
+  border-radius: 0;
+}
+
+.cz-product-pauly .thumbnail-list {
+  gap: 0.8rem;
+}
+
+.cz-product-pauly .thumbnail {
+  border-radius: 0;
+  border: 1px solid rgba(80, 47, 29, 0.12);
+}
+
+.cz-product-pauly .thumbnail[aria-current] {
+  border-color: var(--cz-brown);
+  box-shadow: none;
+}
+
+/* Colores vinculados entre productos */
+.cz-color-siblings {
+  margin-bottom: 1.6rem;
+}
+
+.cz-color-siblings__label {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--cz-brown);
+  margin: 0 0 0.8rem;
+}
+
+.cz-color-siblings__current {
+  font-weight: 400;
+}
+
+.cz-color-siblings__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cz-color-siblings__dot {
+  text-decoration: none;
+}
+
+.cz-color-siblings__circle {
+  display: block;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 2px solid rgba(80, 47, 29, 0.15);
+  background-color: var(--cz-swatch-color, #eee);
+  background-image: none;
+  background-size: cover;
+  background-position: center;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.cz-color-siblings__dot:hover .cz-color-siblings__circle,
+.cz-color-siblings__dot.is-active .cz-color-siblings__circle {
+  border-color: var(--cz-brown);
+  transform: scale(1.05);
+}
+
+/* Selector de variantes */
+.cz-variant-picker__legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  width: 100%;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--cz-brown);
+  margin-bottom: 0.8rem;
+}
+
+.cz-variant-picker__legend--size {
+  margin-bottom: 1rem;
+}
+
+.cz-size-guide-link {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--cz-brown);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cz-variant-picker__swatch-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cz-variant-picker__radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cz-variant-picker__swatch-dot {
+  position: relative;
+  display: inline-flex;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 2px solid rgba(80, 47, 29, 0.15);
+  background-color: var(--cz-swatch-color, #eee);
+  background-image: none;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+}
+
+.cz-variant-picker__radio:checked + .cz-variant-picker__swatch-dot,
+.cz-variant-picker__swatch-dot.is-selected {
+  border-color: var(--cz-brown);
+  transform: scale(1.05);
+}
+
+.cz-variant-picker__radio.disabled + .cz-variant-picker__swatch-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    rgba(80, 47, 29, 0.55) calc(50% - 1px),
+    rgba(80, 47, 29, 0.55) calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+  pointer-events: none;
+}
+
+.cz-variant-picker__size .product-form__input--pill input[type='radio'] + label {
+  min-width: 4.4rem;
+  padding: 0.9rem 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(80, 47, 29, 0.2);
+  margin: 0 0.6rem 0.6rem 0;
+}
+
+.cz-variant-picker__size .product-form__input--pill input[type='radio']:checked + label {
+  border-color: var(--cz-brown);
+  background: var(--cz-brown);
+  color: #fff;
+}
+
+.cz-variant-picker .swatch-input__label {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+/* Botón agregar al carrito */
+.cz-product-pauly .product-form__submit {
+  width: 100%;
+  min-height: 4.8rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0.8rem;
+  background: var(--cz-brown);
+  color: #fff;
+}
+
+.cz-product-pauly .product-form__submit:hover {
+  background: var(--cz-brown-dark);
+}
+
+.cz-product-pauly .shopify-payment-button {
+  display: none;
+}
+
+.cz-product-pauly .product-form__quantity {
+  display: none;
+}
+
+.cz-product-pauly .product-form__buttons {
+  max-width: none;
+}
+
+/* Guía de tallas modal */
+.cz-size-guide-modal {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: min(90vw, 52rem);
+}
+
+.cz-size-guide-modal::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.cz-size-guide-modal__inner {
+  position: relative;
+  background: #fff;
+  padding: 1rem;
+}
+
+.cz-size-guide-modal__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 2;
+  background: #fff;
+  border: none;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cz-size-guide-modal__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Acordeón descripción */
+.cz-product-pauly .product__accordion .accordion__title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cz-brown);
+}
+
+.cz-product-pauly .product__info-container {
+  padding-top: 0.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .cz-product-pauly .product__info-wrapper {
+    padding-left: 4rem;
+  }
+}

@@ -1,0 +1,97 @@
+{%- liquid
+  assign target_variant = product.selected_or_first_available_variant
+  assign collection_handles = product.collections | map: 'handle' | join: ','
+  assign product_tags = product.tags | join: ','
+-%}
+
+<!-- CZ_DEPLOY_MARK_20260724 -->
+<div
+  class="discount-rules-tier-table"
+  data-discount-rules-tier-table
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-variant-price="{{ target_variant.price }}"
+  data-collection-handles="{{ collection_handles }}"
+  data-tags="{{ product_tags }}"
+  hidden
+>
+  <p class="discount-rules-tier-table__title caption-with-letter-spacing">Precios por cantidad</p>
+  <table class="discount-rules-tier-table__table">
+    <thead>
+      <tr>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Precio c/u</th>
+      </tr>
+    </thead>
+    <tbody data-discount-rules-tier-body></tbody>
+  </table>
+</div>
+
+<script>
+  (function () {
+    function renderTierTable() {
+      var engine = window.DiscountRules || window.PackDiscountRules;
+      var table = document.querySelector('[data-discount-rules-tier-table]');
+      if (!engine || !table) {
+        return;
+      }
+
+      var context = engine.getProductContextFromNode(table);
+      var rows = engine.getTierRowsForProduct(context, { scope: 'storefront' });
+      var body = table.querySelector('[data-discount-rules-tier-body]');
+      if (!rows.length || !body) {
+        return;
+      }
+
+      body.innerHTML = rows
+        .map(function (row) {
+          var qtyLabel = row.label;
+          if (!qtyLabel) {
+            qtyLabel = row.min === row.max ? String(row.min) : row.min + ' - ' + row.max;
+          }
+
+          return (
+            '<tr data-tier-row data-min="' +
+            row.min +
+            '" data-max="' +
+            row.max +
+            '"><td>' +
+            qtyLabel +
+            '</td><td data-tier-price></td></tr>'
+          );
+        })
+        .join('');
+
+      rows.forEach(function (row, index) {
+        var rowNode = body.children[index];
+        if (!rowNode) {
+          return;
+        }
+        var priceCell = rowNode.querySelector('[data-tier-price]');
+        if (!priceCell) {
+          return;
+        }
+
+        try {
+          priceCell.textContent = new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || 'COP',
+            maximumFractionDigits: 0
+          }).format(row.unitPrice / 100);
+        } catch (error) {
+          priceCell.textContent = '$' + Math.round(row.unitPrice / 100).toLocaleString('es-CO');
+        }
+      });
+
+      table.hidden = false;
+    }
+
+    document.addEventListener('discount-rules:ready', renderTierTable);
+    if (document.readyState !== 'loading') {
+      renderTierTable();
+    } else {
+      document.addEventListener('DOMContentLoaded', renderTierTable);
+    }
+    document.addEventListener('shopify:section:load', renderTierTable);
+  })();
+</script>

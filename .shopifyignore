@@ -1,0 +1,20 @@
+# Personalización del editor: NUNCA subir en push habitual.
+# Los banners de colección (Banner colección Caletzza), home, header/footer
+# y reglas de precio viven en el editor live — no en el repo.
+
+# Templates JSON (incluye banners por colección en collection*.json)
+templates/**/*.json
+templates/*.json
+
+# Config del editor
+config/settings_data.json
+config/markets.json
+
+# Groups JSON del editor
+sections/header-group.json
+sections/footer-group.json
+sections/discount-rules-group.json
+sections/*-group.json
+
+# Schema de locales (no es contenido, pero evita ruido)
+locales/*.schema.json

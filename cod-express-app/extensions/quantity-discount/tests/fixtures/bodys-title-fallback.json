@@ -1,0 +1,103 @@
+{
+  "payload": {
+    "export": "cart-lines-discounts-generate-run",
+    "target": "cart.lines.discounts.generate.run",
+    "input": {
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 4,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "35000.0"
+              },
+              "subtotalAmount": {
+                "amount": "140000.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/48126125310210",
+              "product": {
+                "id": "gid://shopify/Product/9493812052226",
+                "handle": "body-bandeja-resorte",
+                "title": "BODY BANDEJA RESORTE",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/1",
+                    "isMember": true
+                  }
+                ],
+                "hasTags": []
+              }
+            }
+          }
+        ]
+      },
+      "discount": {
+        "discountClasses": [
+          "PRODUCT"
+        ],
+        "metafield": {
+          "jsonValue": [
+            {
+              "enabled": true,
+              "scope": "both",
+              "count_mode": "filter_set",
+              "filter": {
+                "type": "collection",
+                "collection": "bodys",
+                "collection_id": "gid://shopify/Collection/1",
+                "collection_ids": [
+                  "gid://shopify/Collection/1"
+                ]
+              },
+              "ranges": [
+                {
+                  "min": 1,
+                  "max": 3,
+                  "type": "fixed_price_per_item",
+                  "value": 3500000
+                },
+                {
+                  "min": 4,
+                  "max": 6,
+                  "type": "fixed_price_per_item",
+                  "value": 3000000
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "productDiscountsAdd": {
+            "candidates": [
+              {
+                "message": "Descuento por cantidad",
+                "targets": [
+                  {
+                    "cartLine": {
+                      "id": "gid://shopify/CartLine/1"
+                    }
+                  }
+                ],
+                "value": {
+                  "fixedAmount": {
+                    "amount": "5000",
+                    "appliesToEachItem": true
+                  }
+                }
+              }
+            ],
+            "selectionStrategy": "ALL"
+          }
+        }
+      ]
+    }
+  }
+}

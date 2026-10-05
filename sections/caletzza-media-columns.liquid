@@ -1,0 +1,578 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    margin: 0;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} .cz-media-columns {
+    --cz-media-gap: {{ section.settings.column_gap }}px;
+    --cz-media-radius: {{ section.settings.corner_radius }}px;
+    --cz-media-min-height: {{ section.settings.min_height_mobile }}px;
+    background: {{ section.settings.background_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .cz-media-columns {
+      --cz-media-min-height: {{ section.settings.min_height_desktop }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign cz_autoplay_ms = section.settings.autoplay_speed | default: 5000
+  if cz_autoplay_ms > 0 and cz_autoplay_ms < 100
+    assign cz_autoplay_ms = cz_autoplay_ms | times: 1000
+  endif
+-%}
+
+<section
+  class="cz-media-columns cz-media-columns--hero cz-media-columns--bleed cz-media-columns--slider"
+  id="cz-media-columns-{{ section.id }}"
+  aria-label="{{ section.settings.accessibility_label | default: 'Banner principal' }}"
+  data-autoplay="{% if section.settings.autoplay %}true{% else %}false{% endif %}"
+  data-autoplay-speed="{{ cz_autoplay_ms }}"
+>
+  {%- if section.blocks.size == 0 -%}
+    <div class="cz-media-columns__empty">
+      <p>Agrega videos o GIFs desde la configuración de la sección.</p>
+    </div>
+  {%- else -%}
+    <div class="cz-media-columns__viewport">
+      {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
+        <button type="button" class="cz-media-columns__arrow cz-media-columns__arrow--prev" data-media-prev aria-label="Anterior">
+          &#10094;
+        </button>
+      {%- endif -%}
+
+      <div class="cz-media-columns__track" data-media-track role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign col_number = forloop.index
+            assign media_label = block.settings.heading
+            if media_label == blank
+              assign media_label = 'Columna ' | append: col_number
+            endif
+            assign has_shopify_video = false
+            if block.settings.video != blank
+              assign has_shopify_video = true
+            endif
+            assign has_image = false
+            if block.settings.image != blank
+              assign has_image = true
+            endif
+            assign has_external = false
+            if block.settings.video_url != blank
+              assign has_external = true
+            endif
+          -%}
+          <div
+            class="cz-media-columns__item{% if forloop.first %} is-active{% endif %}"
+            role="listitem"
+            data-media-slide
+            aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.link != blank -%}
+              <a class="cz-media-columns__link" href="{{ block.settings.link }}" {% if block.settings.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+            {%- else -%}
+              <div class="cz-media-columns__link">
+            {%- endif -%}
+
+              <div class="cz-media-columns__media">
+                {%- if has_shopify_video -%}
+                  {{
+                    block.settings.video
+                    | video_tag:
+                      image_size: '1400x',
+                      autoplay: false,
+                      loop: true,
+                      muted: true,
+                      controls: false,
+                      class: 'cz-media-columns__video'
+                  }}
+                {%- elsif has_image -%}
+                  {%- liquid
+                    if forloop.first
+                      assign image_loading = 'eager'
+                    else
+                      assign image_loading = 'lazy'
+                    endif
+                  -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 1400
+                    | image_tag:
+                      class: 'cz-media-columns__image',
+                      loading: image_loading,
+                      sizes: '100vw',
+                      widths: '400, 600, 800, 1000, 1200, 1400',
+                      alt: media_label
+                  }}
+                {%- elsif has_external -%}
+                  {%- if block.settings.video_url.type == 'youtube' -%}
+                    <iframe
+                      class="cz-media-columns__embed"
+                      data-src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ block.settings.video_url.id }}&playsinline=1"
+                      title="{{ media_label | escape }}"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen
+                      loading="lazy"
+                    ></iframe>
+                  {%- elsif block.settings.video_url.type == 'vimeo' -%}
+                    <iframe
+                      class="cz-media-columns__embed"
+                      data-src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}?autoplay=1&muted=1&loop=1&background=1"
+                      title="{{ media_label | escape }}"
+                      allow="autoplay; encrypted-media"
+                      allowfullscreen
+                      loading="lazy"
+                    ></iframe>
+                  {%- endif -%}
+                {%- else -%}
+                  <div class="cz-media-columns__placeholder" aria-hidden="true">
+                    <span class="cz-media-columns__placeholder-label">Video o GIF {{ col_number }}</span>
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- if block.settings.link != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
+        <button type="button" class="cz-media-columns__arrow cz-media-columns__arrow--next" data-media-next aria-label="Siguiente">
+          &#10095;
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_dots and section.blocks.size > 1 -%}
+      <div class="cz-media-columns__dots" data-media-dots role="tablist" aria-label="Diapositivas">
+        {%- for block in section.blocks -%}
+          <button
+            type="button"
+            class="cz-media-columns__dot{% if forloop.first %} is-active{% endif %}"
+            data-media-dot="{{ forloop.index0 }}"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="Ir al video {{ forloop.index }}"
+          ></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('cz-media-columns-{{ section.id }}');
+    if (!root) return;
+
+    var track = root.querySelector('[data-media-track]');
+    var slides = Array.prototype.slice.call(root.querySelectorAll('[data-media-slide]'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('[data-media-dot]'));
+    if (!track || slides.length === 0) return;
+
+    var autoplay = root.getAttribute('data-autoplay') === 'true';
+    // Editor may store seconds (e.g. 5) or ms (e.g. 5000). Normalize to ms.
+    var autoplaySpeed = Number(root.getAttribute('data-autoplay-speed') || 5000);
+    if (autoplaySpeed > 0 && autoplaySpeed < 100) autoplaySpeed = autoplaySpeed * 1000;
+    if (!autoplaySpeed || autoplaySpeed < 1000) autoplaySpeed = 5000;
+
+    var current = 0;
+    var timer = null;
+    var touchStartX = 0;
+    var touchDeltaX = 0;
+    var isDragging = false;
+    var isAnimating = false;
+
+    function getVideo(slide) {
+      return slide ? slide.querySelector('.cz-media-columns__video') : null;
+    }
+
+    function getEmbed(slide) {
+      return slide ? slide.querySelector('.cz-media-columns__embed') : null;
+    }
+
+    function activateEmbed(slide, active) {
+      var embed = getEmbed(slide);
+      if (!embed) return;
+      var src = embed.getAttribute('data-src') || embed.getAttribute('src') || '';
+      if (!src) return;
+      if (active) {
+        if (!embed.getAttribute('src')) embed.setAttribute('src', src);
+      } else if (embed.getAttribute('src')) {
+        embed.removeAttribute('src');
+      }
+    }
+
+    function syncMedia(activeIndex) {
+      slides.forEach(function (slide, index) {
+        var video = getVideo(slide);
+        var active = index === activeIndex;
+
+        activateEmbed(slide, active);
+
+        if (!video) return;
+
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.loop = true;
+
+        if (active) {
+          video.preload = 'auto';
+          try {
+            if (video.readyState < 2) video.load();
+          } catch (e) {}
+          try {
+            if (video.currentTime > 0.15) video.currentTime = 0;
+          } catch (e) {}
+          var playPromise = video.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(function () {});
+          }
+        } else {
+          try {
+            video.pause();
+          } catch (e) {}
+          video.preload = 'metadata';
+        }
+      });
+    }
+
+    function goTo(index, animate) {
+      if (slides.length <= 1) return;
+      var nextIndex = ((index % slides.length) + slides.length) % slides.length;
+      if (nextIndex === current && animate !== false) return;
+
+      current = nextIndex;
+
+      if (animate === false) {
+        track.style.transition = 'none';
+      } else {
+        track.style.transition = '';
+        isAnimating = true;
+      }
+
+      track.style.transform = 'translate3d(-' + current * 100 + '%, 0, 0)';
+
+      slides.forEach(function (slide, i) {
+        var active = i === current;
+        slide.classList.toggle('is-active', active);
+        slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+
+      dots.forEach(function (dot, i) {
+        var active = i === current;
+        dot.classList.toggle('is-active', active);
+        dot.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      syncMedia(current);
+
+      if (animate === false) {
+        // Force reflow before restoring transition
+        void track.offsetHeight;
+        track.style.transition = '';
+      }
+    }
+
+    function next() {
+      goTo(current + 1, true);
+    }
+
+    function prev() {
+      goTo(current - 1, true);
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      if (!autoplay || slides.length <= 1 || document.hidden) return;
+      timer = setInterval(next, autoplaySpeed);
+    }
+
+    track.addEventListener('transitionend', function (event) {
+      if (event.target !== track) return;
+      isAnimating = false;
+    });
+
+    root.querySelectorAll('[data-media-prev]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        prev();
+        startAutoplay();
+      });
+    });
+
+    root.querySelectorAll('[data-media-next]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        next();
+        startAutoplay();
+      });
+    });
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        goTo(Number(dot.getAttribute('data-media-dot')), true);
+        startAutoplay();
+      });
+    });
+
+    track.addEventListener(
+      'touchstart',
+      function (event) {
+        if (!event.changedTouches || !event.changedTouches.length) return;
+        isDragging = true;
+        touchStartX = event.changedTouches[0].clientX;
+        touchDeltaX = 0;
+        stopAutoplay();
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      'touchmove',
+      function (event) {
+        if (!isDragging || !event.changedTouches || !event.changedTouches.length) return;
+        touchDeltaX = event.changedTouches[0].clientX - touchStartX;
+      },
+      { passive: true }
+    );
+
+    track.addEventListener(
+      'touchend',
+      function () {
+        if (!isDragging) return;
+        isDragging = false;
+        if (Math.abs(touchDeltaX) > 40) {
+          if (touchDeltaX < 0) next();
+          else prev();
+        }
+        startAutoplay();
+      },
+      { passive: true }
+    );
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        stopAutoplay();
+        var activeVideo = getVideo(slides[current]);
+        if (activeVideo) {
+          try {
+            activeVideo.pause();
+          } catch (e) {}
+        }
+      } else {
+        syncMedia(current);
+        startAutoplay();
+      }
+    });
+
+    // Prepare inactive videos for lighter first paint
+    slides.forEach(function (slide, index) {
+      var video = getVideo(slide);
+      if (!video) return;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = index === 0 ? 'auto' : 'metadata';
+      video.removeAttribute('autoplay');
+    });
+
+    goTo(0, false);
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero 3 columnas video/GIF",
+  "tag": "section",
+  "class": "section-caletzza-media-columns",
+  "max_blocks": 6,
+  "limit": 1,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Muestra videos o GIFs de a uno en un slider. Sube un video de Shopify Files o un GIF/imagen en cada bloque."
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Etiqueta accesibilidad",
+      "default": "Banner principal"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#FDF5EB"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de esquina",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "min": 160,
+      "max": 520,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura mínima (móvil)",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "min": 280,
+      "max": 720,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura mínima (escritorio)",
+      "default": 520
+    },
+    {
+      "type": "checkbox",
+      "id": "full_bleed",
+      "label": "Ancho completo",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay del slider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Velocidad del slider",
+      "default": 5000,
+      "info": "Tiempo entre slides. Si el valor guardado es bajo (p. ej. 5), se interpreta como segundos."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Mostrar indicadores",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Mostrar flechas",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Columna video/GIF",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video (Shopify Files)",
+          "info": "Prioridad 1. Se reproduce en loop, sin sonido."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "GIF o imagen",
+          "info": "Prioridad 2 si no hay video. Los GIF animados funcionan aquí."
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "accept": ["youtube", "vimeo"],
+          "label": "URL YouTube / Vimeo",
+          "info": "Prioridad 3 (respaldo)."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace al hacer clic (opcional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Abrir enlace en pestaña nueva",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Nombre interno (accesibilidad)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero 3 columnas video/GIF",
+      "blocks": [
+        { "type": "column", "settings": { "heading": "Columna izquierda" } },
+        { "type": "column", "settings": { "heading": "Columna centro" } },
+        { "type": "column", "settings": { "heading": "Columna derecha" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,45 @@
+{% liquid
+  assign ns = namespace | default: 'custom'
+  assign key = metafield_key | default: 'custom_second_image'
+  assign color_option_index = 0
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name contains 'talla' or option_name contains 'size'
+      continue
+    endif
+    assign color_option_index = forloop.index0
+    break
+  endfor
+
+  assign color_option_name = product.options_with_values[color_option_index].name | default: 'Color'
+%}
+{
+  "id": {{ product.id | json }},
+  "color_option_index": {{ color_option_index | json }},
+  "color_option_name": {{ color_option_name | json }},
+  "second_by_color": {
+    {% assign first_color = true %}
+    {% for variant in product.variants %}
+      {% capture second_image %}{% render 'variant-second-image-url', variant: variant, namespace: ns, metafield_key: key %}{% endcapture %}
+      {% assign second_image = second_image | strip %}
+      {% if second_image != blank %}
+        {% assign color_value = variant.options[color_option_index] %}
+        {% unless first_color %},{% endunless %}
+        {% assign first_color = false %}
+        {{ color_value | json }}: {{ second_image | json }}
+      {% endif %}
+    {% endfor %}
+  },
+  "variants": [
+    {% for variant in product.variants %}
+      {% capture second_image %}{% render 'variant-second-image-url', variant: variant, namespace: ns, metafield_key: key %}{% endcapture %}
+      {% assign second_image = second_image | strip %}
+      {
+        "id": {{ variant.id | json }},
+        "second_image": {{ second_image | json }},
+        "options": {{ variant.options | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}

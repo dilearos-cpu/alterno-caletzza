@@ -1,0 +1,218 @@
+{{ 'promo-countdown.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="promo-countdown"
+  id="promo-countdown-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-duration-hours="{{ section.settings.duration_hours }}"
+  data-storage-key="promo-countdown-{{ section.id }}"
+  style="
+    --promo-bg: {{ section.settings.background_color }};
+    --promo-number-color: {{ section.settings.number_color }};
+    --promo-color-low: {{ section.settings.progress_color_low }};
+    --promo-color-mid: {{ section.settings.progress_color_mid }};
+    --promo-color-high: {{ section.settings.progress_color_high }};
+    --promo-timer-value-size: {{ section.settings.timer_number_size }}px;
+    --promo-timer-label-size: {{ section.settings.timer_label_size }}px;
+    --promo-timer-label-color: {{ section.settings.timer_label_color }};
+  "
+>
+  <div class="promo-countdown__inner">
+    <div class="promo-countdown__timer-box">
+      <div class="promo-countdown__timer">
+        <div class="promo-countdown__unit">
+          <span class="promo-countdown__value" data-hours>00</span>
+          <span class="promo-countdown__label">{{ section.settings.hours_label }}</span>
+        </div>
+        <div class="promo-countdown__unit">
+          <span class="promo-countdown__value" data-minutes>00</span>
+          <span class="promo-countdown__label">{{ section.settings.minutes_label }}</span>
+        </div>
+        <div class="promo-countdown__unit">
+          <span class="promo-countdown__value" data-seconds>00</span>
+          <span class="promo-countdown__label">{{ section.settings.seconds_label }}</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="promo-countdown__instruction">
+      <strong>{{ section.settings.instruction_bold }}</strong>
+      {{ section.settings.instruction_regular }}
+    </p>
+
+    <div class="promo-countdown__progress-wrap" data-progress-wrap aria-live="polite">
+      <div class="promo-countdown__bar-track" data-bar-track>
+        <div class="promo-countdown__bar-fill" data-bar-fill aria-hidden="true"></div>
+      </div>
+      <div class="promo-countdown__bar-text" data-bar-label>
+        <span class="promo-countdown__progress-copy" data-progress-copy>
+          <span data-progress-prefix>{{ section.settings.progress_prefix }}</span>
+          <strong data-progress-percent>0%</strong>
+          <span data-progress-suffix>{{ section.settings.progress_suffix }}</span>
+        </span>
+        <span class="promo-countdown__complete-copy" data-complete-copy hidden>
+          {{ section.settings.completion_message }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-promo-settings>
+    {
+      "unitsToComplete": {{ section.settings.units_to_complete | json }},
+      "progressPrefix": {{ section.settings.progress_prefix | json }},
+      "progressSuffix": {{ section.settings.progress_suffix | json }},
+      "completionMessage": {{ section.settings.completion_message | json }},
+      "colorLow": {{ section.settings.progress_color_low | json }},
+      "colorMid": {{ section.settings.progress_color_mid | json }},
+      "colorHigh": {{ section.settings.progress_color_high | json }}
+    }
+  </script>
+</section>
+
+<script src="{{ 'pack-page-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'promo-countdown.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Contador promo 24h",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#D2B49B"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Color de numeros del contador",
+      "default": "#D2B49B"
+    },
+    {
+      "type": "range",
+      "id": "duration_hours",
+      "min": 1,
+      "max": 48,
+      "step": 1,
+      "label": "Duracion del contador (horas)",
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Etiqueta horas",
+      "default": "horas"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Etiqueta minutos",
+      "default": "minutos"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Etiqueta segundos",
+      "default": "segundos"
+    },
+    {
+      "type": "header",
+      "content": "Tamano del contador"
+    },
+    {
+      "type": "range",
+      "id": "timer_number_size",
+      "min": 20,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamano de los numeros",
+      "default": 48,
+      "info": "Aplica a horas, minutos y segundos."
+    },
+    {
+      "type": "range",
+      "id": "timer_label_size",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamano de las etiquetas",
+      "default": 15,
+      "info": "Aplica a horas, minutos y segundos."
+    },
+    {
+      "type": "color",
+      "id": "timer_label_color",
+      "label": "Color de las etiquetas",
+      "default": "#555555"
+    },
+    {
+      "type": "header",
+      "content": "Barra de progreso del pack"
+    },
+    {
+      "type": "number",
+      "id": "units_to_complete",
+      "label": "Unidades para completar el 100%",
+      "default": 4,
+      "info": "Debe coincidir con la cantidad de slots del pack (ej. 4 bodys)."
+    },
+    {
+      "type": "text",
+      "id": "progress_prefix",
+      "label": "Texto antes del porcentaje",
+      "default": "Llevas"
+    },
+    {
+      "type": "text",
+      "id": "progress_suffix",
+      "label": "Texto despues del porcentaje",
+      "default": "completado"
+    },
+    {
+      "type": "textarea",
+      "id": "completion_message",
+      "label": "Mensaje al llegar al 100%",
+      "default": "¡Pack completo! Toca aquí para Comprar ahora.",
+      "info": "Al llegar al 100%, la barra funciona igual que el boton Comprar ahora."
+    },
+    {
+      "type": "color",
+      "id": "progress_color_low",
+      "label": "Color barra (inicio / poco progreso)",
+      "default": "#E53935"
+    },
+    {
+      "type": "color",
+      "id": "progress_color_mid",
+      "label": "Color barra (progreso medio)",
+      "default": "#F9A825"
+    },
+    {
+      "type": "color",
+      "id": "progress_color_high",
+      "label": "Color barra (100% completado)",
+      "default": "#2E7D32"
+    },
+    {
+      "type": "text",
+      "id": "instruction_bold",
+      "label": "Texto instruccion (negrita)",
+      "default": "Dale click a los recuadros en blanco"
+    },
+    {
+      "type": "text",
+      "id": "instruction_regular",
+      "label": "Texto instruccion (normal)",
+      "default": "para escoger 4 diseños a tu gusto."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contador promo 24h"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,39 @@
+# COD Express Dev — solo tienda-dev-cuunda
+# Deploy: npx shopify app deploy -c cod-express-dev --allow-updates
+
+name = "COD Express Dev"
+client_id = "05c7b613f937a591fa1b70f3e591a891"
+application_url = "https://theme-caletzza-sh.onrender.com"
+embedded = true
+
+[build]
+
+[access_scopes]
+scopes = "write_draft_orders,write_orders,read_products,write_products,write_discounts,read_discounts,write_app_proxy"
+
+[auth]
+redirect_urls = [ "https://theme-caletzza-sh.onrender.com/auth/callback" ]
+
+[app_proxy]
+url = "https://theme-caletzza-sh.onrender.com/proxy/order"
+subpath = "cod-express"
+prefix = "apps"
+
+[webhooks]
+api_version = "2025-01"
+
+[pos]
+embedded = false
+
+# Metafields app-owned ($app): la Function solo lee namespaces reservados del app.
+[discount.metafields.app.discount_rules]
+type = "json"
+name = "Reglas de descuento Caletzza"
+description = "Reglas de precio por cantidad sincronizadas desde el tema."
+access.admin = "merchant_read_write"
+
+[discount.metafields.app.function_input]
+type = "json"
+name = "Variables input Function"
+description = "collectionIds para inCollections en checkout (cualquier coleccion)."
+access.admin = "merchant_read_write"

@@ -1,0 +1,194 @@
+{
+  "payload": {
+    "export": "cart-lines-discounts-generate-run",
+    "target": "cart.lines.discounts.generate.run",
+    "input": {
+      "discount": {
+        "discountClasses": [
+          "PRODUCT"
+        ],
+        "metafield": {
+          "jsonValue": [
+            {
+              "id": "rule_bodys",
+              "enabled": true,
+              "scope": "both",
+              "priority": 20,
+              "exclusive": false,
+              "count_mode": "filter_set",
+              "filter": {
+                "type": "collection",
+                "collection": "bodys",
+                "collections": [
+                  "bodys"
+                ],
+                "collection_id": "gid://shopify/Collection/1",
+                "collection_ids": [
+                  "gid://shopify/Collection/1"
+                ]
+              },
+              "ranges": [
+                {
+                  "min": 1,
+                  "max": 3,
+                  "type": "fixed_price_per_item",
+                  "value": 3500000
+                },
+                {
+                  "min": 4,
+                  "max": 6,
+                  "type": "fixed_price_per_item",
+                  "value": 3000000
+                }
+              ]
+            },
+            {
+              "id": "rule_basicas",
+              "enabled": true,
+              "scope": "both",
+              "priority": 10,
+              "exclusive": false,
+              "count_mode": "filter_set",
+              "filter": {
+                "type": "collection",
+                "collection": "basicas",
+                "collections": [
+                  "basicas"
+                ],
+                "collection_id": "gid://shopify/Collection/2",
+                "collection_ids": [
+                  "gid://shopify/Collection/2"
+                ]
+              },
+              "ranges": [
+                {
+                  "min": 1,
+                  "max": 3,
+                  "type": "fixed_price_per_item",
+                  "value": 2000000
+                },
+                {
+                  "min": 4,
+                  "max": 6,
+                  "type": "fixed_price_per_item",
+                  "value": 1800000
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 4,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "35000.0"
+              },
+              "subtotalAmount": {
+                "amount": "140000.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/48126125310210",
+              "product": {
+                "id": "gid://shopify/Product/9493812052226",
+                "handle": "body-una-tira",
+                "title": "BODY UNA TIRA",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/1",
+                    "isMember": true
+                  },
+                  {
+                    "collectionId": "gid://shopify/Collection/2",
+                    "isMember": false
+                  }
+                ],
+                "hasTags": []
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/2",
+            "quantity": 4,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "20000.0"
+              },
+              "subtotalAmount": {
+                "amount": "80000.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/48126126065922",
+              "product": {
+                "id": "gid://shopify/Product/9493812609282",
+                "handle": "camiseta-perrito-salchicorazones-cafe",
+                "title": "Camiseta perrito salchicorazones cafe - 1202431",
+                "inCollections": [
+                  {
+                    "collectionId": "gid://shopify/Collection/1",
+                    "isMember": false
+                  },
+                  {
+                    "collectionId": "gid://shopify/Collection/2",
+                    "isMember": true
+                  }
+                ],
+                "hasTags": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "productDiscountsAdd": {
+            "candidates": [
+              {
+                "message": "Descuento por cantidad",
+                "targets": [
+                  {
+                    "cartLine": {
+                      "id": "gid://shopify/CartLine/1"
+                    }
+                  }
+                ],
+                "value": {
+                  "fixedAmount": {
+                    "amount": "5000",
+                    "appliesToEachItem": true
+                  }
+                }
+              },
+              {
+                "message": "Descuento por cantidad",
+                "targets": [
+                  {
+                    "cartLine": {
+                      "id": "gid://shopify/CartLine/2"
+                    }
+                  }
+                ],
+                "value": {
+                  "fixedAmount": {
+                    "amount": "2000",
+                    "appliesToEachItem": true
+                  }
+                }
+              }
+            ],
+            "selectionStrategy": "ALL"
+          }
+        }
+      ]
+    }
+  }
+}

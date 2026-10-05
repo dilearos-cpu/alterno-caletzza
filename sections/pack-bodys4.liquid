@@ -1,0 +1,528 @@
+{% liquid
+  assign pack_collection = collections[section.settings.collection]
+  assign slot_count = section.settings.slot_count | default: 4
+  assign products_limit = section.settings.products_limit | default: 24
+
+  if slot_count <= 4
+    assign pack_rows = 1
+  elsif slot_count <= 12
+    assign pack_rows = 2
+  else
+    assign pack_rows = 3
+  endif
+
+  assign pack_cols = slot_count | plus: pack_rows | minus: 1 | divided_by: pack_rows
+
+  if slot_count == 4
+    assign pack_rows_mobile = 2
+    assign pack_cols_mobile = 2
+  elsif slot_count <= 10
+    assign pack_rows_mobile = 2
+    assign pack_cols_mobile = slot_count | plus: 1 | divided_by: 2
+  else
+    assign pack_rows_mobile = 3
+    assign pack_cols_mobile = slot_count | plus: 2 | divided_by: 3
+  endif
+
+  assign liquid_products_limit = products_limit
+  if liquid_products_limit > 50
+    assign liquid_products_limit = 50
+  endif
+
+  if section.settings.anchor_id != blank
+    assign pack_anchor_id = section.settings.anchor_id | handleize
+  else
+    assign pack_anchor_id = 'pack-bodys'
+  endif
+%}
+{{ 'pack-bodys4.css' | asset_url | stylesheet_tag }}
+{{ 'pack-cod-checkout.css' | asset_url | stylesheet_tag }}
+<section
+  class="pack-ui"
+  id="{{ pack_anchor_id }}"
+  data-pack-kind="bodys"
+  data-pack-mode="variable"
+  data-section-id="{{ section.id }}"
+  data-slot-count="{{ slot_count }}"
+  data-collection-handle="{{ pack_collection.handle }}"
+  data-products-limit="{{ products_limit }}"
+  data-cart-url="{{ routes.cart_add_url }}"
+  data-checkout-url="{{ routes.checkout_url }}"
+  data-cod-enabled="{{ section.settings.cod_enabled }}"
+  data-cod-endpoint="{{ section.settings.cod_order_endpoint | escape }}"
+  data-cod-shipping-flat="{{ section.settings.cod_shipping_flat }}"
+  data-cod-tax-rate="{{ section.settings.cod_tax_rate }}"
+  data-cod-free-shipping-threshold="{{ section.settings.cod_free_shipping_threshold }}"
+  data-cod-currency="{{ cart.currency.iso_code | default: shop.currency }}"
+  data-cod-pack-label="{{ section.settings.cod_pack_label | escape }}"
+  data-cod-submit-label="{{ section.settings.cod_submit_label | escape }}"
+  data-cod-loading-label="{{ section.settings.loading_button_label | escape }}"
+  data-cod-fallback="{{ section.settings.cod_show_checkout_fallback }}"
+  data-cod-enable-online="{{ section.settings.cod_enable_online_payment }}"
+  data-cod-online-submit-label="{{ section.settings.cod_online_submit_label | escape }}"
+  data-cod-payment-note="{{ section.settings.cod_payment_note | escape }}"
+  data-cod-online-payment-note="{{ section.settings.cod_payment_online_hint | escape }}"
+  data-cod-accent="{{ section.settings.cod_accent_color }}"
+  data-cod-storefront-token="{{ section.settings.cod_storefront_token | escape }}"
+  data-cod-storefront-api="{{ section.settings.cod_storefront_api_version | escape }}"
+  data-button-default-text="{{ section.settings.buy_button_label | escape }}"
+  data-button-loading-text="{{ section.settings.loading_button_label | escape }}"
+  data-metafield-namespace="{{ section.settings.metafield_namespace | escape }}"
+  data-metafield-key="{{ section.settings.metafield_key | escape }}"
+  style="
+    --pack-bg: {{ section.settings.background_color }};
+    --pack-pt: {{ section.settings.padding_top }}px;
+    --pack-pr: {{ section.settings.padding_right }}px;
+    --pack-pb: {{ section.settings.padding_bottom }}px;
+    --pack-pl: {{ section.settings.padding_left }}px;
+    --pack-mt: {{ section.settings.margin_top }}px;
+    --pack-mb: {{ section.settings.margin_bottom }}px;
+    --pack-cols: {{ pack_cols }};
+    --pack-cols-mobile: {{ pack_cols_mobile }};
+    --pack-rows: {{ pack_rows }};
+    --pack-rows-mobile: {{ pack_rows_mobile }};
+  "
+  {% if pack_collection == blank %}
+    data-empty="true"
+  {% endif %}
+>
+  {% if section.settings.heading != blank %}
+    <h2 class="pack-ui__heading">{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  {% if pack_collection == blank %}
+    <p class="pack-ui__empty">
+      Selecciona una coleccion en la configuracion de la seccion para mostrar productos.
+    </p>
+  {% else %}
+    <div class="pack-slots" data-slot-count="{{ slot_count }}">
+      {% for index in (1..slot_count) %}
+        <button
+          type="button"
+          class="slot"
+          data-slot="{{ index }}"
+          aria-label="Seleccionar producto {{ index }}"
+        >
+          <span class="slot__plus">+</span>
+        </button>
+      {% endfor %}
+    </div>
+
+    <div class="pack-actions">
+      <button type="button" id="pack-buy-{{ section.id }}" class="pack-button pack-button--buy">
+        {{ section.settings.buy_button_label }}
+      </button>
+      <button type="button" id="pack-reset-{{ section.id }}" class="pack-button pack-button--reset">
+        {{ section.settings.reset_button_label }}
+      </button>
+    </div>
+
+    <p class="pack-ui__message" data-pack-message hidden></p>
+
+    <div class="pack-modal" data-pack-modal hidden>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="Seleccionar producto">
+        <button type="button" class="modal-close" data-close-products aria-label="Cerrar">x</button>
+        <div class="products" data-products-grid></div>
+        <div class="pack-pagination" data-pagination></div>
+      </div>
+    </div>
+
+    <div class="pack-modal" data-variant-modal hidden>
+      <div class="modal-content modal-content--narrow" role="dialog" aria-modal="true" aria-label="Seleccionar variante">
+        <button type="button" class="modal-close" data-close-variants aria-label="Cerrar">x</button>
+        <div data-variant-content></div>
+      </div>
+    </div>
+
+    {% render 'pack-cod-modal', section: section %}
+
+    <script type="application/json" data-pack-products>
+      [
+        {% for product in pack_collection.products limit: liquid_products_limit %}
+          {% unless product.available %}
+            {% continue %}
+          {% endunless %}
+          {% liquid
+            assign color_option_index = 0
+            for option in product.options_with_values
+              assign option_name = option.name | downcase
+              if option_name contains 'talla' or option_name contains 'size'
+                continue
+              endif
+              assign color_option_index = forloop.index0
+              break
+            endfor
+          %}
+          {% if product.featured_media %}
+            {% assign featured = product.featured_media | image_url: width: 600 %}
+          {% else %}
+            {% assign featured = '' %}
+          {% endif %}
+          {
+            "id": {{ product.id | json }},
+            "handle": {{ product.handle | json }},
+            "name": {{ product.title | json }},
+            "img": {{ featured | json }},
+            "available": {{ product.available | json }},
+            "is_variable": {% if product.has_only_default_variant %}false{% else %}true{% endif %},
+            "color_option_index": {{ color_option_index | json }},
+            "second_by_color": {
+              {% assign first_color_entry = true %}
+              {% for variant in product.variants %}
+                {% capture second_image %}{% render 'variant-second-image-url', variant: variant, namespace: section.settings.metafield_namespace, metafield_key: section.settings.metafield_key %}{% endcapture %}
+                {% assign second_image = second_image | strip %}
+                {% if second_image != blank %}
+                  {% assign color_value = variant.options[color_option_index] %}
+                  {% unless first_color_entry %},{% endunless %}
+                  {% assign first_color_entry = false %}
+                  {{ color_value | json }}: {{ second_image | json }}
+                {% endif %}
+              {% endfor %}
+            },
+            "default_variant_id": {{ product.selected_or_first_available_variant.id | json }},
+            "variants": [
+              {% for variant in product.variants %}
+                {% if variant.featured_media %}
+                  {% assign variant_image = variant.featured_media | image_url: width: 600 %}
+                {% elsif product.featured_media %}
+                  {% assign variant_image = product.featured_media | image_url: width: 600 %}
+                {% else %}
+                  {% assign variant_image = '' %}
+                {% endif %}
+                {% capture second_image %}{% render 'variant-second-image-url', variant: variant, namespace: section.settings.metafield_namespace, metafield_key: section.settings.metafield_key %}{% endcapture %}
+                {% assign second_image = second_image | strip %}
+                {
+                  "id": {{ variant.id | json }},
+                  "title": {{ variant.title | json }},
+                  "available": {{ variant.available | json }},
+                  "image": {{ variant_image | json }},
+                  "second_image": {{ second_image | json }},
+                  "price": {{ variant.price | json }},
+                  "options": {{ variant.options | json }}
+                }{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ],
+            "options": [
+              {% for option in product.options_with_values %}
+                {
+                  "name": {{ option.name | json }},
+                  "values": {{ option.values | json }}
+                }{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ]
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    </script>
+  {% endif %}
+</section>
+<script src="{{ 'pack-cod-checkout.js' | asset_url }}" defer></script>
+<script src="{{ 'pack-page-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'pack-bodys4.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Pack Bodys 4",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titulo",
+      "default": "Arma tu pack"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "ID de ancla para enlaces",
+      "default": "pack-bodys",
+      "info": "Usa #pack-bodys en banners o botones para saltar a esta seccion. Si tienes varias en la misma pagina, cambia este valor en cada una."
+    },
+    {
+      "type": "header",
+      "content": "Espaciado y fondo"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding izquierdo",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding derecho",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin inferior",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Segunda imagen de variante"
+    },
+    {
+      "type": "text",
+      "id": "metafield_namespace",
+      "label": "Namespace del metafield",
+      "default": "custom",
+      "info": "Metafield de variante en Admin (tipo archivo/imagen). Namespace: custom. Key: la que muestre Admin bajo el nombre (ej. custom_second_image)."
+    },
+    {
+      "type": "text",
+      "id": "metafield_key",
+      "label": "Key del metafield",
+      "default": "custom_second_image"
+    },
+    {
+      "type": "header",
+      "content": "Checkout express COD"
+    },
+    {
+      "type": "checkbox",
+      "id": "cod_enabled",
+      "label": "Usar checkout express COD",
+      "default": true,
+      "info": "Abre un formulario dentro del theme (estilo EasySell) en lugar de redirigir al checkout de Shopify."
+    },
+    {
+      "type": "text",
+      "id": "cod_form_title",
+      "label": "Titulo del formulario",
+      "default": "Finaliza tu pedido"
+    },
+    {
+      "type": "text",
+      "id": "cod_form_subtitle",
+      "label": "Subtitulo",
+      "default": "Pago contra entrega. Completa tus datos y confirmamos por WhatsApp."
+    },
+    {
+      "type": "text",
+      "id": "cod_submit_label",
+      "label": "Texto boton confirmar COD",
+      "default": "Confirmar pedido contra entrega"
+    },
+    {
+      "type": "checkbox",
+      "id": "cod_enable_online_payment",
+      "label": "Mostrar pago en linea (Shopify Checkout)",
+      "default": true,
+      "info": "Mercado Pago, tarjeta y otros metodos activos en Shopify aparecen en el checkout nativo."
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_cod_title",
+      "label": "Titulo pago contra entrega",
+      "default": "Contra entrega (COD)"
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_cod_hint",
+      "label": "Descripcion pago COD",
+      "default": "Pagas al recibir tu pedido"
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_online_title",
+      "label": "Titulo pago en linea",
+      "default": "Mercado Pago"
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_online_hint",
+      "label": "Descripcion pago en linea",
+      "default": "Checkout seguro de Shopify con tus metodos activos"
+    },
+    {
+      "type": "text",
+      "id": "cod_online_submit_label",
+      "label": "Texto boton pago en linea",
+      "default": "Continuar al pago seguro"
+    },
+    {
+      "type": "color",
+      "id": "cod_accent_color",
+      "label": "Color acento checkout (estilo EasySell)",
+      "default": "#1fad66"
+    },
+    {
+      "type": "text",
+      "id": "cod_storefront_token",
+      "label": "Storefront API token (prefill checkout)",
+      "default": "2cbb41e2000dff3ceaa606f7e3a61755",
+      "info": "Token publico de Storefront API. Permite llevar nombre, telefono y direccion al checkout nativo sin volver a escribirlos."
+    },
+    {
+      "type": "text",
+      "id": "cod_storefront_api_version",
+      "label": "Version Storefront API",
+      "default": "2025-01"
+    },
+    {
+      "type": "text",
+      "id": "cod_pack_label",
+      "label": "Etiqueta del pack en el pedido",
+      "default": "Pack Bodys"
+    },
+    {
+      "type": "text",
+      "id": "cod_order_endpoint",
+      "label": "URL app proxy pedido",
+      "default": "/apps/cod-express-1",
+      "info": "Preferido: /apps/cod-express-1 (proxy activo). Si /apps/cod-express falla, el JS prueba cod-express-1 automáticamente."
+    },
+    {
+      "type": "range",
+      "id": "cod_tax_rate",
+      "min": 0,
+      "max": 25,
+      "step": 1,
+      "unit": "%",
+      "label": "IVA (impuesto)",
+      "default": 0,
+      "info": "Las landings ya no suman IVA (forzado a 0 en el checkout express)."
+    },
+    {
+      "type": "number",
+      "id": "cod_shipping_flat",
+      "label": "Costo de envio fijo (centavos)",
+      "default": 2600000,
+      "info": "Las landings usan $26.000 (2600000) incluido en el total y oculto en UI."
+    },
+    {
+      "type": "number",
+      "id": "cod_free_shipping_threshold",
+      "label": "Envio gratis desde (centavos)",
+      "default": 0,
+      "info": "0 = desactivado."
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_note",
+      "label": "Nota de pago",
+      "default": "Pagas al recibir tu pedido en la puerta de tu casa."
+    },
+    {
+      "type": "text",
+      "id": "cod_success_title",
+      "label": "Titulo pedido confirmado",
+      "default": "¡Gracias por tu compra!"
+    },
+    {
+      "type": "textarea",
+      "id": "cod_success_message",
+      "label": "Mensaje pedido confirmado",
+      "default": "Tu pedido fue registrado correctamente. Te contactaremos pronto para coordinar la entrega."
+    },
+    {
+      "type": "checkbox",
+      "id": "cod_show_checkout_fallback",
+      "label": "Mostrar boton fallback al checkout Shopify",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Pack builder"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Coleccion de productos"
+    },
+    {
+      "type": "range",
+      "id": "slot_count",
+      "min": 1,
+      "max": 15,
+      "step": 1,
+      "label": "Cantidad de espacios",
+      "info": "4 = 1 fila, 6 a 12 = 2 filas, 13 a 15 = 3 filas",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 4,
+      "max": 150,
+      "step": 2,
+      "label": "Productos a cargar",
+      "info": "Hasta 50 se cargan directo; de 52 a 150 se cargan por Ajax",
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "buy_button_label",
+      "label": "Texto del boton comprar",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "text",
+      "id": "loading_button_label",
+      "label": "Texto del boton cargando",
+      "default": "Procesando..."
+    },
+    {
+      "type": "text",
+      "id": "reset_button_label",
+      "label": "Texto del boton reset",
+      "default": "Borrar todo"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pack Bodys 4"
+    }
+  ]
+}
+{% endschema %}

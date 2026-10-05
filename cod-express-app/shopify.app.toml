@@ -1,0 +1,25 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "COD Express"
+client_id = "5d9a1ae1f763a39ca78420135be28603"
+application_url = "https://theme-caletzza-sh.onrender.com"
+embedded = true
+
+[build]
+
+[access_scopes]
+scopes = "write_draft_orders,write_orders,read_products,write_discounts,read_discounts,write_app_proxy"
+
+[auth]
+redirect_urls = [ "https://theme-caletzza-sh.onrender.com/auth/callback" ]
+
+[app_proxy]
+url = "https://theme-caletzza-sh.onrender.com/proxy/order"
+subpath = "cod-express"
+prefix = "apps"
+
+[webhooks]
+api_version = "2025-01"
+
+[pos]
+embedded = false

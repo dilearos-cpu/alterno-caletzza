@@ -1,0 +1,262 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  comment
+    En páginas de colección la tabla vive en el banner (reglas por colección).
+    Esta sección legacy con filas fijas se ocultaba como «tabla predeterminada» en todas.
+  endcomment
+  if request.page_type == 'collection'
+    assign skip_unit_table = true
+  endif
+
+  assign has_rows = false
+  assign table_heading = section.settings.heading
+
+  unless skip_unit_table
+    for block in section.blocks
+      if block.type == 'tier'
+        assign tier_collection = block.settings.collection
+        if tier_collection == blank or tier_collection.handle == collection.handle
+          assign has_rows = true
+          break
+        endif
+      endif
+    endfor
+
+    if section.settings.use_product_pricing and product != blank
+      assign first_variant = product.selected_or_first_available_variant
+      if first_variant.quantity_price_breaks.size > 0
+        assign has_rows = true
+        assign use_variant_pricing = true
+      endif
+    endif
+  endunless
+-%}
+
+{%- if has_rows -%}
+  <div
+    class="cz-unit-price-table section-{{ section.id }}-padding"
+    id="CZUnitPriceTable-{{ section.id }}"
+    data-cz-unit-table
+  >
+    <div class="page-width">
+      {%- if table_heading != blank -%}
+        <h2 class="cz-unit-price-table__heading">{{ table_heading }}</h2>
+      {%- endif -%}
+
+      <div class="cz-unit-price-table__wrap{% unless section.settings.show_total_column %} cz-unit-price-table__wrap--2col{% endunless %}" role="table" aria-label="{{ table_heading | default: 'Precios por unidad' }}">
+        <div class="cz-unit-price-table__head" role="row">
+          <span role="columnheader">{{ section.settings.col_units | default: 'Unidades' }}</span>
+          <span role="columnheader">{{ section.settings.col_unit_price | default: 'Precio c/u' }}</span>
+          {%- if section.settings.show_total_column -%}
+            <span role="columnheader">{{ section.settings.col_total | default: 'Total' }}</span>
+          {%- endif -%}
+        </div>
+
+        <div class="cz-unit-price-table__body">
+          {%- if use_variant_pricing -%}
+            {%- assign base_qty = first_variant.quantity_rule.min | default: 1 -%}
+            <div class="cz-unit-price-table__row is-active" role="row" data-qty="{{ base_qty }}">
+              <span class="cz-unit-price-table__qty" role="cell">{{ base_qty }}+</span>
+              <span class="cz-unit-price-table__price" role="cell">{{ first_variant.price | money }}</span>
+              {%- if section.settings.show_total_column -%}
+                <span class="cz-unit-price-table__total" role="cell">—</span>
+              {%- endif -%}
+            </div>
+            {%- for price_break in first_variant.quantity_price_breaks -%}
+              {%- assign line_total = price_break.price | times: price_break.minimum_quantity -%}
+              <div class="cz-unit-price-table__row" role="row" data-qty="{{ price_break.minimum_quantity }}">
+                <span class="cz-unit-price-table__qty" role="cell">{{ price_break.minimum_quantity }}+</span>
+                <span class="cz-unit-price-table__price" role="cell">{{ price_break.price | money }}</span>
+                {%- if section.settings.show_total_column -%}
+                  <span class="cz-unit-price-table__total" role="cell">{{ line_total | money }}</span>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type != 'tier' -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- assign tier_collection = block.settings.collection -%}
+              {%- if tier_collection != blank and tier_collection.handle != collection.handle -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- assign qty = block.settings.quantity | default: 1 -%}
+              {%- assign unit_cents = block.settings.unit_price | times: 100 | round -%}
+              {%- assign line_total_cents = unit_cents | times: qty -%}
+              <div
+                class="cz-unit-price-table__row{% if block.settings.highlight %} is-highlight{% endif %}{% if forloop.first %} is-active{% endif %}"
+                role="row"
+                data-qty="{{ qty }}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="cz-unit-price-table__qty" role="cell">
+                  {{ qty }}
+                  {%- if block.settings.badge != blank -%}
+                    <span class="cz-unit-price-table__badge">{{ block.settings.badge }}</span>
+                  {%- endif -%}
+                </span>
+                <span class="cz-unit-price-table__price" role="cell">{{ unit_cents | money }}</span>
+                {%- if section.settings.show_total_column -%}
+                  <span class="cz-unit-price-table__total" role="cell">{{ line_total_cents | money }}</span>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if section.settings.note != blank -%}
+        <p class="cz-unit-price-table__note">{{ section.settings.note }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <script src="{{ 'caletzza-theme.js' | asset_url }}" defer="defer"></script>
+{%- elsif request.design_mode -%}
+  <div class="page-width section-{{ section.id }}-padding">
+    <p class="cz-unit-price-table__placeholder">
+      Tabla de precios: agrega filas (tiers) o activa precios por volumen del producto.
+    </p>
+  </div>
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "Precios por unidades",
+  "tag": "section",
+  "class": "section-caletzza-unit-price-table",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tabla estilo Caletzza para mostrar descuentos por cantidad. Asigna filas a una colección específica (ej. Bodys) o déjala vacía para todas."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Precios por cantidad"
+    },
+    {
+      "type": "text",
+      "id": "col_units",
+      "label": "Columna unidades",
+      "default": "Unidades"
+    },
+    {
+      "type": "text",
+      "id": "col_unit_price",
+      "label": "Columna precio unitario",
+      "default": "Precio c/u"
+    },
+    {
+      "type": "text",
+      "id": "col_total",
+      "label": "Columna total",
+      "default": "Total"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_total_column",
+      "label": "Mostrar columna total",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_pricing",
+      "label": "Usar precios por volumen del producto (página de producto)",
+      "default": false,
+      "info": "Si el producto tiene breaks de cantidad en Shopify Admin, los muestra automáticamente."
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Nota al pie",
+      "default": "Precios en COP. Descuentos aplicados automáticamente al agregar al carrito."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Fila de precio",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección (opcional)",
+          "info": "Vacío = visible en todas las colecciones donde esté la sección"
+        },
+        {
+          "type": "number",
+          "id": "quantity",
+          "label": "Cantidad de unidades",
+          "default": 1
+        },
+        {
+          "type": "number",
+          "id": "unit_price",
+          "label": "Precio por unidad (COP, sin puntos)",
+          "default": 72900,
+          "info": "Ejemplo: 72900 = $72.900"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Etiqueta (ej. Más vendido)"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Destacar fila",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Precios por unidades",
+      "blocks": [
+        { "type": "tier", "settings": { "quantity": 1, "unit_price": 72900 } },
+        { "type": "tier", "settings": { "quantity": 3, "unit_price": 69900, "badge": "Ahorra" } },
+        { "type": "tier", "settings": { "quantity": 6, "unit_price": 65900 } },
+        { "type": "tier", "settings": { "quantity": 10, "unit_price": 59900, "highlight": true, "badge": "Mejor precio" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

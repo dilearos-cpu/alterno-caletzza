@@ -1,0 +1,195 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #shopify-section-{{ section.id }} .cz-tabs-collection {
+    --cz-tabs-cols: {{ section.settings.columns_desktop }};
+  }
+{%- endstyle -%}
+
+<div class="cz-tabs-collection section-{{ section.id }}-padding" data-cz-tabs>
+  <div class="cz-tabs-collection__panel-shell">
+    <div class="page-width">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="cz-tabs-collection__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="cz-tabs-collection__nav" role="tablist">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="cz-tabs-collection__tab{% if forloop.first %} is-active{% endif %}"
+              data-cz-tab="tab-{{ section.id }}-{{ forloop.index }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.tab_title | default: block.settings.collection.title | escape }}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- for block in section.blocks -%}
+          {%- assign coll = block.settings.collection -%}
+          <div
+            class="cz-tabs-collection__panel{% if forloop.first %} is-active{% endif %}"
+            data-cz-panel="tab-{{ section.id }}-{{ forloop.index }}"
+            role="tabpanel"
+            {% unless forloop.first %}aria-hidden="true"{% endunless %}
+          >
+            <ul
+              class="cz-tabs-collection__rail product-grid"
+              role="list"
+            >
+              {%- if coll != blank -%}
+                {%- for product in coll.products limit: section.settings.products_to_show -%}
+                  <li class="grid__item">
+                    {% render 'card-product',
+                      card_product: product,
+                      media_aspect_ratio: 'portrait',
+                      show_secondary_image: true,
+                      show_vendor: false,
+                      show_rating: false,
+                      show_color_swatches: true,
+                      lazy_load: false,
+                      skip_styles: forloop.first,
+                      section_id: section.id
+                    %}
+                  </li>
+                {%- endfor -%}
+              {%- else -%}
+                {%- for i in (1..section.settings.products_to_show) -%}
+                  <li class="grid__item">
+                    {% render 'card-product', show_vendor: false %}
+                  </li>
+                {%- endfor -%}
+              {%- endif -%}
+            </ul>
+
+            {%- if coll != blank and block.settings.show_view_all -%}
+              <div class="cz-tabs-collection__view-all">
+                <a href="{{ coll.url }}" class="button button--secondary">
+                  {{ block.settings.view_all_label | default: 'Ver todo' }}
+                </a>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'caletzza-theme.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Tabs colección Caletzza",
+  "tag": "section",
+  "class": "section-caletzza-tabs-collection",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "PRENDAS QUE VAS A QUERER VOLVER A USAR"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Productos a mostrar",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columnas en escritorio",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Título del tab",
+          "default": "LO NUEVO"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_view_all",
+          "label": "Mostrar Ver todo",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "view_all_label",
+          "label": "Texto Ver todo",
+          "default": "Ver todo"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabs colección Caletzza",
+      "blocks": [
+        { "type": "tab", "settings": { "tab_title": "LO NUEVO" } },
+        { "type": "tab", "settings": { "tab_title": "LO MÁS VENDIDO" } },
+        { "type": "tab", "settings": { "tab_title": "REBAJAS" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,22 @@
+        {%- assign tier_min = block.settings.min_quantity | default: block.settings.quantity | default: 1 -%}
+        {%- assign tier_max = block.settings.max_quantity | default: tier_min -%}
+        {%- assign unit_cents = block.settings.unit_price | times: 100 | round -%}
+        {%- assign line_total_cents = unit_cents | times: tier_max -%}
+        {%- assign tier_label = block.settings.label | default: block.settings.badge -%}
+
+        <div
+          class="cz-unit-price-table__row{% if block.settings.highlight %} is-highlight{% endif %}{% if forloop.first %} is-active{% endif %}"
+          role="row"
+          data-qty="{{ tier_min }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="cz-unit-price-table__qty" role="cell">
+            {%- if tier_min == tier_max -%}
+              {{ tier_min }}
+            {%- else -%}
+              {{ tier_min }} - {{ tier_max }}
+            {%- endif -%}
+            {%- if tier_label != blank -%}
+              <span class="cz-unit-price-table__badge">{{ tier_label }}</span>
+            {%- endif -%}
+          </span>

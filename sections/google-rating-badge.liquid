@@ -1,0 +1,348 @@
+{{ 'google-rating-badge.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="google-rating-badge{% if section.settings.enable_animation %} google-rating-badge--animate{% endif %}"
+  id="google-rating-badge-{{ section.id }}"
+  style="
+    --grb-section-bg: {% if section.settings.section_background_transparent %}transparent{% else %}{{ section.settings.section_background_color }}{% endif %};
+    --grb-pt: {{ section.settings.padding_top }}px;
+    --grb-pr: {{ section.settings.padding_right }}px;
+    --grb-pb: {{ section.settings.padding_bottom }}px;
+    --grb-pl: {{ section.settings.padding_left }}px;
+    --grb-card-bg: {{ section.settings.card_background_color }};
+    --grb-text-color: {{ section.settings.text_color }};
+    --grb-highlight-color: {{ section.settings.highlight_color }};
+    --grb-border-color: {{ section.settings.border_color }};
+    --grb-radius: {{ section.settings.border_radius }}px;
+    --grb-star-size: {{ section.settings.star_size }}px;
+    --grb-max-width: {{ section.settings.max_width }}px;
+    --grb-shadow-y: {{ section.settings.shadow_y }}px;
+    --grb-shadow-blur: {{ section.settings.shadow_blur }}px;
+    --grb-heading-size: {{ section.settings.heading_font_size }}px;
+    --grb-phrase-size: {{ section.settings.phrase_font_size }}px;
+    --grb-heading-color: {{ section.settings.heading_color }};
+  "
+>
+  <div class="google-rating-badge__inner google-rating-badge__inner--align-{{ section.settings.alignment }}">
+    {% if section.settings.show_heading and section.settings.heading_text != blank %}
+      <h2 class="google-rating-badge__heading google-rating-badge__heading--align-{{ section.settings.heading_alignment }}">
+        {{ section.settings.heading_text }}
+      </h2>
+    {% endif %}
+
+    <div class="google-rating-badge__card" aria-label="{{ section.settings.prefix_text }} {{ section.settings.customer_count }} {{ section.settings.phrase_text }}">
+      <div class="google-rating-badge__stars" aria-hidden="true">
+        {% for i in (1..section.settings.star_count) %}
+          <span class="google-rating-badge__star">
+            <svg viewBox="0 0 24 24" fill="{{ section.settings.star_color }}" aria-hidden="true">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+            </svg>
+          </span>
+        {% endfor %}
+      </div>
+
+      <p class="google-rating-badge__text">
+        {% if section.settings.prefix_text != blank %}
+          <span class="google-rating-badge__prefix">{{ section.settings.prefix_text }}</span>
+        {% endif %}
+        {% if section.settings.customer_count != blank %}
+          <strong class="google-rating-badge__count">{{ section.settings.customer_count }}</strong>
+        {% endif %}
+        {% if section.settings.phrase_text != blank %}
+          <span class="google-rating-badge__phrase">{{ section.settings.phrase_text }}</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Recuadro estrellas Google",
+  "tag": "section",
+  "class": "section-google-rating-badge",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titulo superior"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Mostrar titulo",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Titulo",
+      "default": "Nuestros clientes nos califican"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "min": 14,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamano del titulo",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Alineacion del titulo",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del titulo",
+      "default": "#202124"
+    },
+    {
+      "type": "header",
+      "content": "Contenido del recuadro"
+    },
+    {
+      "type": "range",
+      "id": "star_count",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Cantidad de estrellas",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "prefix_text",
+      "label": "Texto antes del numero",
+      "default": "mas de"
+    },
+    {
+      "type": "text",
+      "id": "customer_count",
+      "label": "Numero de clientes",
+      "default": "5.000",
+      "info": "Escribe el numero como quieras mostrarlo. Ej: 5.000, 10.000+, 5000"
+    },
+    {
+      "type": "text",
+      "id": "phrase_text",
+      "label": "Frase despues del numero",
+      "default": "clientes felices"
+    },
+    {
+      "type": "range",
+      "id": "phrase_font_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamano de la frase (ej. clientes felices)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Animacion"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Movimiento leve (flotar)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colores del recuadro"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Fondo del recuadro",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#202124"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color del numero",
+      "default": "#1A73E8"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Color de las estrellas",
+      "default": "#FBBC04"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color del borde",
+      "default": "#DADCE0"
+    },
+    {
+      "type": "header",
+      "content": "Fondo de la seccion"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_background_transparent",
+      "label": "Fondo de seccion transparente",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Color de fondo de la seccion",
+      "default": "#D2B49B"
+    },
+    {
+      "type": "header",
+      "content": "Diseno"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineacion",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 280,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho maximo del recuadro",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Redondeo del recuadro",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamano de estrellas",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "shadow_y",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Sombra vertical",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Difuminado de sombra",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding izquierdo",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding derecho",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recuadro estrellas Google",
+      "category": "Confianza",
+      "settings": {
+        "star_count": 5,
+        "prefix_text": "mas de",
+        "customer_count": "5.000",
+        "phrase_text": "clientes felices",
+        "enable_animation": true
+      }
+    }
+  ]
+}
+{% endschema %}

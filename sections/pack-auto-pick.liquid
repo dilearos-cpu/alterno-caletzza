@@ -1,0 +1,287 @@
+{{ 'pack-bodys4.css' | asset_url | stylesheet_tag }}
+{{ 'pack-auto-pick.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  if section.settings.section_background_transparent
+    assign section_bg = 'transparent'
+  else
+    assign section_bg = section.settings.section_background_color
+  endif
+%}
+
+<section
+  class="pack-auto-pick pack-auto-pick--align-{{ section.settings.alignment }}"
+  id="pack-auto-pick-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-pack-target="{{ section.settings.pack_target }}"
+  data-size-hint="{{ section.settings.size_hint | escape }}"
+  data-no-size-hint="{{ section.settings.no_size_hint | escape }}"
+  style="
+    --pack-auto-pick-bg: {{ section_bg }};
+    --pack-auto-pick-pt: {{ section.settings.padding_top }}px;
+    --pack-auto-pick-pr: {{ section.settings.padding_right }}px;
+    --pack-auto-pick-pb: {{ section.settings.padding_bottom }}px;
+    --pack-auto-pick-pl: {{ section.settings.padding_left }}px;
+    --pack-auto-pick-button-bg: {{ section.settings.button_background_color }};
+    --pack-auto-pick-button-color: {{ section.settings.button_text_color }};
+    --pack-auto-pick-border-color: {{ section.settings.button_border_color }};
+    --pack-auto-pick-border-width: {{ section.settings.button_border_width }}px;
+    --pack-auto-pick-radius: {{ section.settings.button_border_radius }}px;
+    --pack-auto-pick-font-size: {{ section.settings.button_font_size }}px;
+    --pack-auto-pick-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+    --pack-auto-pick-max-width: {{ section.settings.button_max_width }}px;
+    --pack-auto-pick-accent: {{ section.settings.accent_color }};
+  "
+>
+  <div class="pack-auto-pick__inner pack-auto-pick__inner--align-{{ section.settings.alignment }}">
+    <button type="button" class="pack-auto-pick__trigger" data-auto-pick-open>
+      {{ section.settings.trigger_label }}
+    </button>
+  </div>
+
+  <div class="pack-modal pack-auto-pick__modal" data-auto-pick-modal hidden>
+    <div class="modal-content modal-content--narrow" role="dialog" aria-modal="true" aria-label="{{ section.settings.modal_title | escape }}">
+      <button type="button" class="modal-close" data-auto-pick-close aria-label="Cerrar">x</button>
+      <h3 class="pack-auto-pick__modal-title">{{ section.settings.modal_title }}</h3>
+      <p class="pack-auto-pick__modal-subtitle">{{ section.settings.modal_subtitle }}</p>
+      <div class="pack-auto-pick__sizes" data-auto-pick-sizes></div>
+      <p class="pack-auto-pick__message pack-auto-pick__message--info" data-auto-pick-no-sizes hidden>
+        {{ section.settings.no_size_hint }}
+      </p>
+      <p class="pack-auto-pick__message" data-auto-pick-message hidden></p>
+      <button type="button" class="pack-auto-pick__confirm" data-auto-pick-confirm>
+        {{ section.settings.confirm_label }}
+      </button>
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'pack-page-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'pack-auto-pick.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Escogemos por ti",
+  "tag": "section",
+  "class": "section-pack-auto-pick",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Pack vinculado"
+    },
+    {
+      "type": "select",
+      "id": "pack_target",
+      "label": "Que pack debe llenar",
+      "default": "auto",
+      "info": "Automatico usa el pack mas cercano. Elige basicas o bodys si hay mas de uno en la pagina.",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatico (el mas cercano)"
+        },
+        {
+          "value": "basicas",
+          "label": "Pack basicas"
+        },
+        {
+          "value": "bodys",
+          "label": "Pack bodys"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Textos"
+    },
+    {
+      "type": "text",
+      "id": "trigger_label",
+      "label": "Texto del boton principal",
+      "default": "ESCOGEMOS POR TI"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Titulo del modal",
+      "default": "¿Cuál es tu talla?"
+    },
+    {
+      "type": "text",
+      "id": "modal_subtitle",
+      "label": "Subtitulo del modal",
+      "default": "Escoge tu talla y nosotros seleccionamos los diseños del pack por ti."
+    },
+    {
+      "type": "text",
+      "id": "size_hint",
+      "label": "Mensaje cuando hay tallas",
+      "default": "Selecciona tu talla y nosotros escogemos los diseños."
+    },
+    {
+      "type": "text",
+      "id": "no_size_hint",
+      "label": "Mensaje sin tallas (pack basicas)",
+      "default": "Escogeremos diseños al azar de la coleccion del pack."
+    },
+    {
+      "type": "text",
+      "id": "confirm_label",
+      "label": "Texto del boton confirmar",
+      "default": "Escogelas por mi"
+    },
+    {
+      "type": "header",
+      "content": "Colores y diseno"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_background_transparent",
+      "label": "Fondo de seccion transparente",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Color de fondo de la seccion",
+      "default": "#FADED7"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Color del boton principal",
+      "default": "#FFDE21"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color de letra del boton principal",
+      "default": "#010101"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (tallas y confirmar)",
+      "default": "#5FAE5F"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Color del borde del boton principal",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Grosor del borde",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Redondeo del boton",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamano de letra del boton",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineacion",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_max_width",
+      "min": 280,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho maximo del boton",
+      "default": 680
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding izquierdo",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding derecho",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Escogemos por ti",
+      "category": "Botones",
+      "settings": {
+        "trigger_label": "ESCOGEMOS POR TI",
+        "modal_title": "¿Cuál es tu talla?",
+        "confirm_label": "Escogelas por mi",
+        "pack_target": "auto"
+      }
+    }
+  ]
+}
+{% endschema %}

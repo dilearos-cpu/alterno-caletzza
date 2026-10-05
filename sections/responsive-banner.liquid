@@ -1,0 +1,187 @@
+{{ 'responsive-banner.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign desktop_image = section.settings.image_desktop
+  assign mobile_image = section.settings.image_mobile
+
+  if section.settings.alt != blank
+    assign banner_alt = section.settings.alt
+  elsif desktop_image != blank
+    assign banner_alt = desktop_image.alt
+  else
+    assign banner_alt = mobile_image.alt
+  endif
+%}
+
+<section
+  class="responsive-banner responsive-banner--{{ section.settings.width_layout }}"
+  id="responsive-banner-{{ section.id }}"
+  style="
+    --banner-bg: {{ section.settings.background_color }};
+    --banner-pt: {{ section.settings.padding_top }}px;
+    --banner-pr: {{ section.settings.padding_right }}px;
+    --banner-pb: {{ section.settings.padding_bottom }}px;
+    --banner-pl: {{ section.settings.padding_left }}px;
+    --banner-mt: {{ section.settings.margin_top }}px;
+    --banner-mb: {{ section.settings.margin_bottom }}px;
+    --banner-radius: {{ section.settings.border_radius }}px;
+  "
+>
+  {% if desktop_image == blank and mobile_image == blank %}
+    <div class="responsive-banner__placeholder">
+      Agrega una imagen de escritorio o movil desde la configuracion de la seccion.
+    </div>
+  {% else %}
+  <div class="responsive-banner__media">
+    {% if section.settings.link != blank %}
+      <a href="{{ section.settings.link }}" class="responsive-banner__link">
+    {% endif %}
+
+    <picture class="responsive-banner__picture">
+      {% if mobile_image != blank %}
+        <source
+          media="(max-width: 767px)"
+          srcset="{{ mobile_image | image_url: width: 1200 }}"
+        >
+      {% endif %}
+
+      {% if desktop_image != blank %}
+        {{
+          desktop_image
+          | image_url: width: 2400
+          | image_tag:
+            loading: 'lazy',
+            alt: banner_alt,
+            class: 'responsive-banner__image responsive-banner__image--desktop'
+        }}
+      {% elsif mobile_image != blank %}
+        {{
+          mobile_image
+          | image_url: width: 1200
+          | image_tag:
+            loading: 'lazy',
+            alt: banner_alt,
+            class: 'responsive-banner__image'
+        }}
+      {% endif %}
+    </picture>
+
+    {% if section.settings.link != blank %}
+      </a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Banner responsive",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Imagen escritorio"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Imagen movil"
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Texto alternativo"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace opcional"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado y estilo"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Borde redondeado",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding izquierdo",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding derecho",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin inferior",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner responsive"
+    }
+  ]
+}
+{% endschema %}

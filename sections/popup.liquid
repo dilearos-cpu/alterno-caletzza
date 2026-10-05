@@ -1,0 +1,142 @@
+{% schema %}
+{
+  "name": "Apps Popup",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Apps Popup",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<!-- Botón para abrir el popup -->
+<button id="openAppsPopup">Escoger opciones</button>
+
+<!-- Modal -->
+<div id="appsPopup" class="popup">
+  <div class="popup-content">
+    <span id="closePopup" class="close">&times;</span>
+    <h2>Seleccionar Camisetas</h2>
+
+    <div id="appsList">
+      {% for app in shop.installed_apps %}
+        <div class="app-item">
+          <input type="checkbox" id="app-{{ app.id }}" data-app="{{ app.id }}">
+          <label for="app-{{ app.id }}">{{ app.name }}</label>
+        </div>
+      {% else %}
+        <div id="bundler-container">
+          <div class="bundler-target-element" data-bndlr-ccid="ciat"></div>
+        </div>
+        <div>
+        <div class="bndlr-mnm-selected-products bndlr-toggle" style=""></div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Controles de paginación -->
+    <div id="pagination-controls" style="display: none;">
+      <button id="prevPage">Anterior</button>
+      <span id="pageIndicator">Página 1</span>
+      <button id="nextPage">Siguiente</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Estilos -->
+<style>
+  .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+  .popup-content { background: #fff; padding: 20px; width: 50%; margin: 10% auto; border-radius: 8px; }
+  .close { float: right; cursor: pointer; font-size: 24px; }
+  .app-item { margin: 10px 0; }
+  #pagination-controls { margin-top: 15px; text-align: center; }
+  #pagination-controls button { margin: 5px; padding: 8px 12px; }
+
+  #bundler-container {
+    height: 380px;
+    overflow-y: auto;
+  }
+</style>
+
+<!-- JavaScript -->
+<script>
+  document.getElementById('openAppsPopup').addEventListener('click', function() {
+    document.getElementById('appsPopup').style.display = 'block';
+  });
+
+  document.getElementById('closePopup').addEventListener('click', function() {
+    document.getElementById('appsPopup').style.display = 'none';
+  });
+
+  document.getElementById('saveApps').addEventListener('click', function() {
+    let selectedApps = [];
+    document.querySelectorAll('#appsList input:checked').forEach(input => {
+      selectedApps.push(input.getAttribute('data-app'));
+    });
+    console.log("Apps seleccionadas:", selectedApps);
+    document.getElementById('appsPopup').style.display = 'none';
+  });
+
+  let currentPage = 1;
+  const itemsPerPage = 5;
+  let items = [];
+
+  function showPage(page) {
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    items.forEach((item, index) => {
+      item.style.display = (index >= (page - 1) * itemsPerPage && index < page * itemsPerPage) ? 'block' : 'none';
+    });
+
+    document.getElementById('prevPage').disabled = page === 1;
+    document.getElementById('nextPage').disabled = page === totalPages;
+    document.getElementById('pageIndicator').textContent = `Página ${page}`;
+  }
+
+  function setupPaginationControls() {
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    const paginationControls = document.getElementById('pagination-controls');
+
+    if (totalPages <= 1) {
+      paginationControls.style.display = 'none';
+      return;
+    }
+
+    paginationControls.style.display = 'block';
+
+    document.getElementById('prevPage').addEventListener('click', function() {
+      if (currentPage > 1) {
+        currentPage--;
+        showPage(currentPage);
+      }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', function() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        showPage(currentPage);
+      }
+    });
+
+    showPage(currentPage);
+  }
+
+  function checkBundlerLoaded() {
+    const container = document.querySelector('.bundler-target-element');
+    if (!container) return;
+
+    const observer = new MutationObserver(() => {
+      items = Array.from(container.children);
+      if (items.length > 0) {
+        observer.disconnect();
+        setupPaginationControls();
+      }
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', checkBundlerLoaded);
+</script>

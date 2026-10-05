@@ -1,0 +1,112 @@
+{% comment %}
+  Botón Compra rápida para productos con variantes (color + talla).
+{% endcomment %}
+{%- unless card_product == blank or card_product.has_only_default_variant -%}
+  {%- liquid
+    assign color_option = nil
+    assign size_option = nil
+    for option in card_product.options_with_values
+      assign opt_down = option.name | downcase
+      if color_option == nil
+        if opt_down contains 'color' or opt_down contains 'colour' or opt_down contains 'colo'
+          assign color_option = option
+        endif
+      endif
+      if size_option == nil
+        if opt_down contains 'talla' or opt_down contains 'size' or opt_down contains 'talle'
+          assign size_option = option
+        endif
+      endif
+    endfor
+    assign color_idx = color_option.position | default: 1 | minus: 1
+    assign size_idx = size_option.position | default: 1 | minus: 1
+    assign first_image = card_product.featured_image | image_url: width: 600
+    assign json_id = 'CzQuickBuyJson-' | append: section_id | append: '-' | append: card_product.id
+  -%}
+
+  {%- if color_option != nil or size_option != nil -%}
+    <div class="cz-quick-buy" data-cz-quick-buy>
+      <button
+        type="button"
+        class="cz-quick-buy__btn"
+        data-cz-quick-buy-open
+        aria-haspopup="dialog"
+        aria-controls="CzQuickBuyModal"
+      >
+        Compra rápida
+      </button>
+      <script type="application/json" id="{{ json_id }}">
+        {
+          "id": {{ card_product.id | json }},
+          "title": {{ card_product.title | json }},
+          "image": {{ first_image | json }},
+          "colorName": {{ color_option.name | default: 'Color' | json }},
+          "sizeName": {{ size_option.name | default: 'Talla' | json }},
+          "colors": [
+            {%- if color_option != nil -%}
+              {%- for value in color_option.values -%}
+                {%- liquid
+                  assign value_name = value.name | default: value
+                  assign color_variant = nil
+                  for variant in card_product.variants
+                    if variant.options[color_idx] == value_name
+                      assign color_variant = variant
+                      break
+                    endif
+                  endfor
+                  capture swatch_color
+                    render 'caletzza-resolve-swatch-color', color_name: value_name, variant: color_variant, option_value: value
+                  endcapture
+                  assign swatch_color = swatch_color | strip
+                  capture color_image
+                    render 'variant-card-image', product: card_product, variant: color_variant, image_width: 720
+                  endcapture
+                  assign color_image = color_image | strip
+                -%}
+                {
+                  "name": {{ value_name | json }},
+                  "color": {{ swatch_color | json }},
+                  "image": {{ color_image | json }},
+                  "url": {{ card_product.url | append: '?variant=' | append: color_variant.id | json }}
+                }{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            {%- endif -%}
+          ],
+          "sizes": [
+            {%- if size_option != nil -%}
+              {%- for value in size_option.values -%}
+                {%- assign value_name = value.name | default: value -%}
+                {{ value_name | json }}{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            {%- endif -%}
+          ],
+          "variants": [
+            {%- for variant in card_product.variants -%}
+              {%- liquid
+                assign color_value = ''
+                assign size_value = ''
+                if color_option != nil
+                  assign color_value = variant.options[color_idx]
+                endif
+                if size_option != nil
+                  assign size_value = variant.options[size_idx]
+                endif
+                assign variant_image = first_image
+                if variant.featured_image
+                  assign variant_image = variant.featured_image | image_url: width: 600
+                endif
+              -%}
+              {
+                "id": {{ variant.id | json }},
+                "available": {{ variant.available | json }},
+                "color": {{ color_value | json }},
+                "size": {{ size_value | json }},
+                "image": {{ variant_image | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {%- endfor -%}
+          ]
+        }
+      </script>
+    </div>
+  {%- endif -%}
+{%- endunless -%}

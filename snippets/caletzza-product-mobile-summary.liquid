@@ -1,0 +1,7 @@
+{% comment %} Resumen título + precio visible solo en móvil (estilo Pauly) {% endcomment %}
+<div class="cz-product-mobile-summary large-up-hide">
+  <h1 class="cz-product-mobile-summary__title">{{ product.title | escape }}</h1>
+  <div class="cz-product-mobile-summary__price">
+    {%- render 'price', product: product, use_variant: true, show_badges: true, price_class: 'price--large' -%}
+  </div>
+</div>

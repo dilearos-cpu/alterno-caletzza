@@ -1,0 +1,92 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "hub_buttons": {
+      "type": "caletzza-hub-buttons",
+      "blocks": {
+        "btn_coquett": {
+          "type": "button",
+          "settings": {
+            "label": "Pijamas Coquett",
+            "collection": "pijamas-coquett",
+            "link": "",
+            "slot": "top-left"
+          }
+        },
+        "btn_sublimadas": {
+          "type": "button",
+          "settings": {
+            "label": "Pijamas Sublimadas",
+            "collection": "pijamas-sublimadas",
+            "link": "",
+            "slot": "top-right"
+          }
+        },
+        "btn_short": {
+          "type": "button",
+          "settings": {
+            "label": "Pijamas Short Camiseta",
+            "collection": "pijamas-short-camiseta",
+            "link": "",
+            "slot": "center"
+          }
+        },
+        "btn_tira": {
+          "type": "button",
+          "settings": {
+            "label": "Pijamas Pantalón Tira",
+            "collection": "pijamas-short-camiseta-1",
+            "link": "",
+            "slot": "bottom-left"
+          }
+        },
+        "btn_monos": {
+          "type": "button",
+          "settings": {
+            "label": "Pijamas 3 moños",
+            "collection": "pijamas-3-monos",
+            "link": "",
+            "slot": "bottom-right"
+          }
+        }
+      },
+      "block_order": [
+        "btn_coquett",
+        "btn_sublimadas",
+        "btn_short",
+        "btn_tira",
+        "btn_monos"
+      ],
+      "settings": {
+        "heading": "Pijamas",
+        "subheading": "Elige el estilo que buscas",
+        "background_color": "#FDF5EB",
+        "button_background": "#502F1D",
+        "button_text_color": "#FFFFFF",
+        "button_border_color": "#502F1D",
+        "padding_top": 48,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": [
+    "main",
+    "hub_buttons"
+  ]
+}

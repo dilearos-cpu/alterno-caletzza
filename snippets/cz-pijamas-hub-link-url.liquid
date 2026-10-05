@@ -1,0 +1,32 @@
+{%- comment -%}
+  Reescribe links del menú bajo «Pijamas» hacia el hub con chip activo.
+  Uso: {% render 'cz-pijamas-hub-link-url', menu_link: childlink, parent_link: link %}
+{%- endcomment -%}
+{%- liquid
+  assign cz_out = menu_link.url
+  assign cz_pijamas_ctx = false
+
+  if parent_link != blank
+    assign cz_pt = parent_link.title | downcase
+    assign cz_ph = parent_link.handle | downcase
+    if cz_pt contains 'pijama' or cz_ph contains 'pijama'
+      assign cz_pijamas_ctx = true
+    endif
+  endif
+
+  if cz_pijamas_ctx
+    assign cz_col_handle = ''
+    if menu_link.type == 'collection_link' and menu_link.object != blank
+      assign cz_col_handle = menu_link.object.handle
+    elsif menu_link.url contains '/collections/'
+      assign cz_col_handle = menu_link.url | split: '/collections/' | last | split: '?' | first | split: '/' | first
+    endif
+
+    if cz_col_handle != blank and cz_col_handle != 'all'
+      assign cz_out = routes.collections_url | append: '?view=pijamas&estilo=' | append: cz_col_handle
+    else
+      assign cz_out = routes.collections_url | append: '?view=pijamas'
+    endif
+  endif
+-%}
+{{- cz_out -}}

@@ -1,0 +1,36 @@
+{
+  "name": "caletzza-theme",
+  "version": "1.0.0",
+  "description": "Caletzza Theme — Shopify theme Caletzza Theme con funcionalidades pack/COD",
+  "main": "index.js",
+  "scripts": {
+    "shopify": "shopify",
+    "theme:list": "shopify theme list -e default",
+    "theme:pull": "shopify theme pull -e default -t \"Caletzza Theme\"",
+    "theme:pull:custom": "bash scripts/theme-pull-custom.sh",
+    "theme:push:code": "bash scripts/theme-push-code.sh",
+    "theme:push:code:live": "ALLOW_THEME_LIVE_PUSH=1 bash scripts/theme-push-code-live.sh",
+    "theme:push:rules": "bash scripts/theme-push-rules.sh",
+    "theme:dev": "shopify theme dev -e default",
+    "theme:push": "bash scripts/theme-push-code.sh",
+    "theme:push:draft": "bash scripts/theme-push-code.sh",
+    "theme:push:full": "bash scripts/theme-push-full.sh",
+    "theme:push:full:overwrite-custom": "ALLOW_THEME_CUSTOM_OVERWRITE=1 bash scripts/theme-push-full.sh",
+    "theme:check": "shopify theme check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dilearos-cpu/alterno-caletzza.git"
+  },
+  "keywords": ["shopify", "theme", "caletzza", "lingerie"],
+  "author": "Caletzza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dilearos-cpu/alterno-caletzza/issues"
+  },
+  "homepage": "https://github.com/dilearos-cpu/alterno-caletzza#readme",
+  "dependencies": {
+    "@shopify/cli": "^4.4.0",
+    "@shopify/theme": "^3.58.2"
+  }
+}

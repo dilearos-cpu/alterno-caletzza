@@ -1,0 +1,135 @@
+.google-rating-badge {
+  width: 100%;
+  background: var(--grb-section-bg, transparent);
+  padding: var(--grb-pt, 16px) var(--grb-pr, 16px) var(--grb-pb, 16px) var(--grb-pl, 16px);
+  box-sizing: border-box;
+}
+
+.google-rating-badge__inner {
+  max-width: var(--grb-max-width, 520px);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.google-rating-badge__heading {
+  margin: 0 0 12px;
+  width: 100%;
+  font-size: var(--grb-heading-size, 24px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--grb-heading-color, #202124);
+}
+
+.google-rating-badge__heading--align-left {
+  text-align: left;
+}
+
+.google-rating-badge__heading--align-center {
+  text-align: center;
+}
+
+.google-rating-badge__heading--align-right {
+  text-align: right;
+}
+
+.google-rating-badge__inner--align-left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.google-rating-badge__inner--align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.google-rating-badge__card {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--grb-card-bg, #fff);
+  color: var(--grb-text-color, #202124);
+  border: 1px solid var(--grb-border-color, #dadce0);
+  border-radius: var(--grb-radius, 12px);
+  box-shadow: 0 var(--grb-shadow-y, 1px) var(--grb-shadow-blur, 6px) rgba(32, 33, 36, 0.12);
+  text-align: left;
+}
+
+.google-rating-badge--animate .google-rating-badge__card {
+  animation: google-rating-badge-float 4.5s ease-in-out infinite;
+}
+
+.google-rating-badge__stars {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.google-rating-badge__star {
+  width: var(--grb-star-size, 22px);
+  height: var(--grb-star-size, 22px);
+  flex-shrink: 0;
+}
+
+.google-rating-badge__star svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.google-rating-badge__text {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.6vw, 1.1rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--grb-text-color, #202124);
+}
+
+.google-rating-badge__text strong {
+  font-weight: 700;
+  color: var(--grb-highlight-color, #1a73e8);
+}
+
+.google-rating-badge__phrase {
+  font-size: var(--grb-phrase-size, 16px);
+}
+
+.google-rating-badge__prefix + .google-rating-badge__count,
+.google-rating-badge__count + .google-rating-badge__phrase {
+  margin-left: 0.25em;
+}
+
+@keyframes google-rating-badge-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .google-rating-badge--animate .google-rating-badge__card {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .google-rating-badge__card {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .google-rating-badge__text {
+    font-size: 0.9rem;
+  }
+}

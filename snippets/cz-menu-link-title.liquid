@@ -1,0 +1,14 @@
+{% comment %}
+  Texto visible de un ítem del menú del header.
+  Solo remapea la etiqueta; no cambia URLs ni colecciones.
+  Uso: {% render 'cz-menu-link-title', title: link.title %}
+{% endcomment %}
+{%- liquid
+  assign cz_label = title | default: '' | strip
+  assign cz_label_down = cz_label | downcase
+-%}
+{%- if cz_label_down == 'básicas' or cz_label_down == 'basicas' -%}
+  Camisetas estampadas
+{%- else -%}
+  {{- cz_label | escape -}}
+{%- endif -%}

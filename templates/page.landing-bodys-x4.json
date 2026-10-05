@@ -1,0 +1,438 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "responsive_banner_i9LJGW": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_desktop": "shopify://shop_images/body-intro-140726_1.png",
+        "image_mobile": "shopify://shop_images/body-intro-140726_1.png",
+        "alt": "",
+        "link": "#pack-bodys",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "pack_cta_button_main": {
+      "type": "pack-cta-button",
+      "name": "Boton compra flotante",
+      "settings": {
+        "section_background_transparent": false,
+        "section_background_color": "#d2c3bb",
+        "button_action": "scroll_pack",
+        "button_link_url": "#pack-bodys",
+        "button_link": "",
+        "open_in_new_tab": false,
+        "button_label": "QUIERO PERSONALIZAR MI PACK",
+        "button_background_color": "#ffde21",
+        "button_text_color": "#010101",
+        "button_border_color": "#000000",
+        "button_border_width": 1,
+        "button_border_radius": 20,
+        "button_font_size": 16,
+        "show_icon": true,
+        "icon_preset": "cart",
+        "pack_target": "auto",
+        "floating_background_transparent": true,
+        "floating_background_color": "#ffffff",
+        "position_mode": "fixed_floating",
+        "float_trigger": "pack_buy",
+        "enable_shake_animation": true,
+        "float_bottom_offset": 0,
+        "float_z_index": 90,
+        "alignment": "center",
+        "button_max_width": 680,
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "padding_left": 16,
+        "padding_right": 16
+      }
+    },
+    "photo_carousel_77yLXE": {
+      "type": "photo-carousel",
+      "blocks": {
+        "slide_BWG8Wy": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-3.38.59-PM-1.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_Yfb8AB": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-06-09-at-4.31.47-PM-3.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TFcxrf": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-06-09-at-3.43.26-PM-1.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TRqpqC": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-3.57.46-PM-1.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_ph8aDF": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-12.45.25-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TUWJaL": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-12.57.48-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_G6a9bd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-3.58.21-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_hKkEdn": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-12.53.14-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_Cn7y6r": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-06-10-at-10.19.15-AM-1.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_K4h8PM": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-12.35.18-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_iCe3Ry": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-3.36.48-PM-2.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_8M7WDf": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-4.13.51-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_A83rHe": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-4.14.38-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_x8r4yk": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-12.26.00-PM.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_KcyFGr": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp-Image-2026-05-21-at-3.58.19-PM-1.webp",
+            "alt": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_BWG8Wy",
+        "slide_Yfb8AB",
+        "slide_TFcxrf",
+        "slide_TRqpqC",
+        "slide_ph8aDF",
+        "slide_TUWJaL",
+        "slide_G6a9bd",
+        "slide_hKkEdn",
+        "slide_Cn7y6r",
+        "slide_K4h8PM",
+        "slide_iCe3Ry",
+        "slide_8M7WDf",
+        "slide_A83rHe",
+        "slide_x8r4yk",
+        "slide_KcyFGr"
+      ],
+      "name": "Carrusel de fotos",
+      "settings": {
+        "heading": "",
+        "background_color": "#d7c3b5",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "slide_height": 420,
+        "slides_per_view": 3,
+        "autoplay_speed": 1500,
+        "pause_on_hover": false,
+        "show_arrows": true,
+        "show_dots": false
+      }
+    },
+    "google_rating_badge_main": {
+      "type": "google-rating-badge",
+      "name": "Recuadro estrellas Google",
+      "settings": {
+        "show_heading": true,
+        "heading_text": "¡Renueva tu closet hoy!",
+        "heading_font_size": 24,
+        "heading_alignment": "center",
+        "heading_color": "#202124",
+        "star_count": 5,
+        "prefix_text": "mas de",
+        "customer_count": "5.000",
+        "phrase_text": "clientes felices",
+        "phrase_font_size": 16,
+        "enable_animation": true,
+        "card_background_color": "#ffffff",
+        "text_color": "#202124",
+        "highlight_color": "#1a73e8",
+        "star_color": "#fbbc04",
+        "border_color": "#dadce0",
+        "section_background_transparent": false,
+        "section_background_color": "#d2b49b",
+        "alignment": "center",
+        "max_width": 520,
+        "border_radius": 12,
+        "star_size": 22,
+        "shadow_y": 1,
+        "shadow_blur": 6,
+        "padding_top": 12,
+        "padding_bottom": 12,
+        "padding_left": 16,
+        "padding_right": 16
+      }
+    },
+    "promo_countdown_tiyRGW": {
+      "type": "promo-countdown",
+      "custom_css": [
+        ".promo-countdown__unit {background: #fff; padding: 20px;}",
+        ".promo-countdown__timer-box {background: #ffffff00;}"
+      ],
+      "name": "Contador promo 24h",
+      "settings": {
+        "background_color": "#d2b49b",
+        "number_color": "#d2b49b",
+        "duration_hours": 24,
+        "hours_label": "horas",
+        "minutes_label": "minutos",
+        "seconds_label": "segundos",
+        "timer_number_size": 48,
+        "timer_label_size": 15,
+        "timer_label_color": "#555555",
+        "units_to_complete": 4,
+        "progress_prefix": "Llevas",
+        "progress_suffix": "completado",
+        "completion_message": "¡Pack completo! Toca aquí para Comprar ahora.",
+        "progress_color_low": "#e53935",
+        "progress_color_mid": "#f9a825",
+        "progress_color_high": "#2e7d32",
+        "instruction_bold": "Dale click a los recuadros en blanco",
+        "instruction_regular": "para escoger 4 diseños a tu gusto."
+      }
+    },
+    "pack_bodys4_VPrYwf": {
+      "type": "pack-bodys4",
+      "name": "Pack Bodys 4",
+      "settings": {
+        "heading": "",
+        "anchor_id": "pack-bodys",
+        "background_color": "#d2b49b",
+        "padding_top": 32,
+        "padding_bottom": 32,
+        "padding_left": 32,
+        "padding_right": 32,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "metafield_namespace": "custom",
+        "metafield_key": "custom_second_image",
+        "cod_enabled": true,
+        "cod_form_title": "Finaliza tu pedido",
+        "cod_form_subtitle": "Pago contra entrega. Completa tus datos y confirmamos por WhatsApp.",
+        "cod_submit_label": "Confirmar pedido contra entrega",
+        "cod_enable_online_payment": true,
+        "cod_payment_cod_title": "Contra entrega (COD)",
+        "cod_payment_cod_hint": "Pagas al recibir tu pedido",
+        "cod_payment_online_title": "Mercado Pago",
+        "cod_payment_online_hint": "Checkout seguro de Shopify con tus metodos activos",
+        "cod_online_submit_label": "Continuar al pago seguro",
+        "cod_accent_color": "#1fad66",
+        "cod_storefront_token": "2cbb41e2000dff3ceaa606f7e3a61755",
+        "cod_storefront_api_version": "2025-01",
+        "cod_pack_label": "Pack Bodys",
+        "cod_order_endpoint": "/apps/cod-express-1",
+        "cod_tax_rate": 0,
+        "cod_shipping_flat": 2600000,
+        "cod_free_shipping_threshold": 0,
+        "cod_payment_note": "Pagas al recibir tu pedido en la puerta de tu casa.",
+        "cod_success_title": "¡Gracias por tu compra!",
+        "cod_success_message": "Tu pedido fue registrado correctamente. Te contactaremos pronto para coordinar la entrega.",
+        "cod_show_checkout_fallback": true,
+        "collection": "bodys",
+        "slot_count": 4,
+        "products_limit": 30,
+        "buy_button_label": "Comprar ahora",
+        "loading_button_label": "Procesando...",
+        "reset_button_label": "Borrar todo"
+      }
+    },
+    "pack_auto_pick_NL6Y3i": {
+      "type": "pack-auto-pick",
+      "name": "Escogemos por ti",
+      "settings": {
+        "pack_target": "bodys",
+        "trigger_label": "ESCOGEMOS POR TI",
+        "modal_title": "¿Cuál es tu talla?",
+        "modal_subtitle": "Escoge tu talla y nosotros seleccionamos los diseños del pack por ti.",
+        "size_hint": "Selecciona tu talla y nosotros escogemos los diseños.",
+        "no_size_hint": "Escogeremos diseños al azar de la coleccion del pack.",
+        "confirm_label": "Escogelas por mi",
+        "section_background_transparent": false,
+        "section_background_color": "#D2B49B",
+        "button_background_color": "#FFDE21",
+        "button_text_color": "#010101",
+        "accent_color": "#5FAE5F",
+        "button_border_color": "#000000",
+        "button_border_width": 1,
+        "button_border_radius": 20,
+        "button_font_size": 16,
+        "alignment": "center",
+        "button_max_width": 680,
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "padding_left": 16,
+        "padding_right": 16
+      }
+    },
+    "responsive_banner_8NXxGA": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_desktop": "shopify://shop_images/PackBodys-Pc-2.avif",
+        "image_mobile": "shopify://shop_images/body2_min.png",
+        "alt": "",
+        "link": "",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "responsive_banner_jk7jNV": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_desktop": "shopify://shop_images/body3_min.png",
+        "alt": "",
+        "link": "",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "responsive_banner_RQME36": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_desktop": "shopify://shop_images/body4_min.png",
+        "alt": "",
+        "link": "",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "1783835912d8458a30": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "responsive_banner_i9LJGW",
+    "pack_cta_button_main",
+    "photo_carousel_77yLXE",
+    "google_rating_badge_main",
+    "promo_countdown_tiyRGW",
+    "pack_bodys4_VPrYwf",
+    "pack_auto_pick_NL6Y3i",
+    "responsive_banner_8NXxGA",
+    "responsive_banner_jk7jNV",
+    "responsive_banner_RQME36",
+    "1783835912d8458a30"
+  ]
+}
