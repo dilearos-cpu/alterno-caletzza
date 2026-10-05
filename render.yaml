@@ -24,3 +24,9 @@ services:
       # Opcional: solo si el lookup por handle falla. Preferir functionHandle en API 2025-10+.
       - key: DISCOUNT_FUNCTION_ID
         sync: false
+      - key: MERCADOPAGO_PUBLIC_KEY
+        sync: false
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false
+      - key: MERCADOPAGO_SHOPIFY_GATEWAY_NAME
+        value: Mercado Libre Express
