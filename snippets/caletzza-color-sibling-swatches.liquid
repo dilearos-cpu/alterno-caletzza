@@ -1,0 +1,70 @@
+{% comment %}
+  Colores vinculados entre productos (estilo Pauly).
+  Metafield: custom.colores_relacionados (lista de referencias de producto)
+  Bolitas con color sólido, no imagen de producto.
+{% endcomment %}
+{%- assign linked_products = product.metafields.custom.colores_relacionados.value -%}
+{%- if linked_products == blank -%}
+  {%- assign linked_products = product.metafields.custom.productos_color.value -%}
+{%- endif -%}
+
+{%- if linked_products != blank -%}
+  {%- liquid
+    assign current_handle = product.handle
+    assign current_color_label = product.title | split: ' - ' | last | default: product.title
+    assign current_variant = product.selected_or_first_available_variant
+    capture current_swatch_color
+      render 'caletzza-resolve-swatch-color', color_name: current_color_label, variant: current_variant
+    endcapture
+    assign current_swatch_color = current_swatch_color | strip
+  -%}
+  <div class="cz-color-siblings" data-cz-color-siblings>
+    <p class="cz-color-siblings__label">
+      Color:
+      <span class="cz-color-siblings__current">{{ current_color_label }}</span>
+    </p>
+    <div class="cz-color-siblings__list" role="list">
+      <a
+        href="{{ product.url }}"
+        class="cz-color-siblings__dot is-active"
+        aria-current="page"
+        title="{{ current_color_label | escape }}"
+        role="listitem"
+      >
+        <span
+          class="cz-color-siblings__circle"
+          {% if current_swatch_color != blank %}
+            style="--cz-swatch-color: {{ current_swatch_color }};"
+          {% endif %}
+        ></span>
+        <span class="visually-hidden">{{ product.title }}</span>
+      </a>
+      {%- for linked in linked_products -%}
+        {%- if linked.handle != current_handle -%}
+          {%- liquid
+            assign linked_color_label = linked.title | split: ' - ' | last | default: linked.title
+            assign linked_variant = linked.selected_or_first_available_variant
+            capture linked_swatch_color
+              render 'caletzza-resolve-swatch-color', color_name: linked_color_label, variant: linked_variant
+            endcapture
+            assign linked_swatch_color = linked_swatch_color | strip
+          -%}
+          <a
+            href="{{ linked.url }}"
+            class="cz-color-siblings__dot"
+            title="{{ linked_color_label | escape }}"
+            role="listitem"
+          >
+            <span
+              class="cz-color-siblings__circle"
+              {% if linked_swatch_color != blank %}
+                style="--cz-swatch-color: {{ linked_swatch_color }};"
+              {% endif %}
+            ></span>
+            <span class="visually-hidden">{{ linked.title }}</span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

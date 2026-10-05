@@ -1,0 +1,391 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "responsive_banner_i9LJGW": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_mobile": "shopify://shop_images/ImageToStl.com_basicasx10_intro.avif",
+        "alt": "",
+        "link": "#pack-basicas",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "photo_carousel_77yLXE": {
+      "type": "photo-carousel",
+      "blocks": {
+        "slide_BWG8Wy": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/PERRITO.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_Yfb8AB": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/LINEASNEGRAS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TFcxrf": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/ROSAS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TRqpqC": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/LAGENTE.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_KcyFGr": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/CARTAS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_ph8aDF": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/LOSSIMPSON.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_TUWJaL": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/LINEASROJAS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_8M7WDf": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/TARZAN.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_hKkEdn": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/AMOR.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_G6a9bd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/LLUVIA.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_Cn7y6r": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/PERROS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_K4h8PM": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/BANANA.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_iCe3Ry": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/COSAS.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_A83rHe": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/MOJITO.webp",
+            "alt": "",
+            "link": ""
+          }
+        },
+        "slide_x8r4yk": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/DALMATA.webp",
+            "alt": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_BWG8Wy",
+        "slide_Yfb8AB",
+        "slide_TFcxrf",
+        "slide_TRqpqC",
+        "slide_KcyFGr",
+        "slide_ph8aDF",
+        "slide_TUWJaL",
+        "slide_8M7WDf",
+        "slide_hKkEdn",
+        "slide_G6a9bd",
+        "slide_Cn7y6r",
+        "slide_K4h8PM",
+        "slide_iCe3Ry",
+        "slide_A83rHe",
+        "slide_x8r4yk"
+      ],
+      "name": "Carrusel de fotos",
+      "settings": {
+        "heading": "",
+        "background_color": "#fbdfd8",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "slide_height": 420,
+        "slides_per_view": 3,
+        "autoplay_speed": 1500,
+        "pause_on_hover": false,
+        "show_arrows": true,
+        "show_dots": false
+      }
+    },
+    "promo_countdown_tiyRGW": {
+      "type": "promo-countdown",
+      "custom_css": [
+        ".promo-countdown__unit {background: #fff; padding: 20px;}",
+        ".promo-countdown__timer-box {background: #ffffff00;}",
+        ".promo-countdown__bar-text {font-size: 22px !important;}",
+        ".promo-countdown__instruction {font-size: 28px !important;}"
+      ],
+      "name": "Contador promo 24h",
+      "settings": {
+        "background_color": "#faded7",
+        "number_color": "#faded7",
+        "duration_hours": 24,
+        "hours_label": "horas",
+        "minutes_label": "minutos",
+        "seconds_label": "segundos",
+        "units_to_complete": 10,
+        "progress_prefix": "Llevas",
+        "progress_suffix": "completado",
+        "completion_message": "¡Pack completo! Toca aquí para Comprar ahora.",
+        "progress_color_low": "#E53935",
+        "progress_color_mid": "#F9A825",
+        "progress_color_high": "#2E7D32",
+        "instruction_bold": "Dale click a los recuadros en blanco",
+        "instruction_regular": "para escoger 10 diseños a tu gusto."
+      }
+    },
+    "google_rating_badge_main": {
+      "type": "google-rating-badge",
+      "name": "Recuadro estrellas Google",
+      "settings": {
+        "star_count": 5,
+        "prefix_text": "mas de",
+        "customer_count": "5.000",
+        "phrase_text": "clientes felices",
+        "enable_animation": true,
+        "section_background_transparent": true,
+        "alignment": "center"
+      }
+    },
+    "pack_basicas_mPmnNt": {
+      "type": "pack-basicas",
+      "name": "Pack Basicas",
+      "settings": {
+        "heading": "",
+        "background_color": "#faded7",
+        "padding_top": 20,
+        "padding_bottom": 20,
+        "padding_left": 20,
+        "padding_right": 20,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "collection": "calettza-mujer",
+        "slot_count": 10,
+        "products_limit": 110,
+        "buy_button_label": "Comprar ahora",
+        "loading_button_label": "Procesando...",
+        "reset_button_label": "Borrar todo"
+      }
+    },
+    "pack_cta_button_main": {
+      "type": "pack-cta-button",
+      "name": "Boton compra flotante",
+      "settings": {
+        "button_label": "Compra aqui | Paga en casa",
+        "button_action": "scroll_pack",
+        "button_link_url": "#pack-basicas",
+        "section_background_transparent": false,
+        "section_background_color": "#faded7",
+        "floating_background_transparent": true,
+        "floating_background_color": "#ffffff",
+        "button_background_color": "#ffde21",
+        "button_text_color": "#010101",
+        "button_border_color": "#000000",
+        "button_border_width": 1,
+        "button_border_radius": 20,
+        "button_font_size": 16,
+        "show_icon": true,
+        "icon_preset": "cart",
+        "position_mode": "fixed_floating",
+        "float_trigger": "pack_slots",
+        "enable_shake_animation": true,
+        "float_bottom_offset": 0,
+        "float_z_index": 90,
+        "alignment": "center",
+        "button_max_width": 680,
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "padding_left": 16,
+        "padding_right": 16
+      }
+    },
+    "responsive_banner_8NXxGA": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_desktop": "shopify://shop_images/Basicasx10_colores.avif",
+        "alt": "",
+        "link": "",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "responsive_banner_77ggrY": {
+      "type": "responsive-banner",
+      "name": "Banner responsive",
+      "settings": {
+        "image_mobile": "shopify://shop_images/basicasx10_tallas.png",
+        "alt": "",
+        "link": "",
+        "background_color": "#ffffff",
+        "border_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_left": 0,
+        "padding_right": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "social_proof_popup_fyNE69": {
+      "type": "social-proof-popup",
+      "blocks": {
+        "popup_campaign_VXrxNB": {
+          "type": "popup_campaign",
+          "settings": {
+            "shortcode_id": "pack-bodys-4",
+            "pack_label": "pack de bodys",
+            "units_fixed": 4,
+            "random_units": false,
+            "units_min": 2,
+            "units_max": 10,
+            "names": ""
+          }
+        },
+        "popup_campaign_nUtQrf": {
+          "type": "popup_campaign",
+          "settings": {
+            "shortcode_id": "pack-bodys-10",
+            "pack_label": "pack de bodys",
+            "units_fixed": 10,
+            "random_units": false,
+            "units_min": 2,
+            "units_max": 10,
+            "names": ""
+          }
+        }
+      },
+      "block_order": [
+        "popup_campaign_VXrxNB",
+        "popup_campaign_nUtQrf"
+      ],
+      "name": "Popup prueba social",
+      "settings": {
+        "pack_label": "pack de básicas",
+        "units_fixed": 10,
+        "random_units": false,
+        "units_min": 2,
+        "units_max": 10,
+        "initial_delay": 5,
+        "interval_min": 12,
+        "interval_max": 39,
+        "display_duration": 6,
+        "position": "bottom-left",
+        "show_mobile": true,
+        "show_desktop": true,
+        "message_template": "{name} ha comprado un {pack} hace {time} en {city}",
+        "cities": "Bogotá,Medellín,Cali,Barranquilla,Cartagena,Bucaramanga,Pereira,Manizales,Santa Marta,Ibagué,Cúcuta,Villavicencio,Pasto,Montería,Armenia",
+        "default_names": "Juanita,María,Mariana,Laura,Andrea,Camila,Johana,Valentina,Salomé,Daniela,Fanor,Isabella,Nicolle,Paula,Susana",
+        "time_phrases": "hace un momento,hace 1 minuto,hace 2 minutos,hace 5 minutos,hace 8 minutos,hace 12 minutos,hace 15 minutos",
+        "verified_label": "Compra verificada",
+        "background_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#2e7d32"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "responsive_banner_i9LJGW",
+    "photo_carousel_77yLXE",
+    "promo_countdown_tiyRGW",
+    "google_rating_badge_main",
+    "pack_basicas_mPmnNt",
+    "pack_cta_button_main",
+    "responsive_banner_8NXxGA",
+    "responsive_banner_77ggrY",
+    "social_proof_popup_fyNE69"
+  ]
+}

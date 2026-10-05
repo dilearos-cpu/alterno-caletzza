@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "note": "Mapa oficial Caletzza. Fuente de verdad en snippets/caletzza-resolve-swatch-color.liquid. Subir con npm run theme:push:code",
+  "colors": {
+    "Café": "#744f3b",
+    "Café oscuro": "#744f3b",
+    "Café claro": "#c47d62",
+    "Azul": "#9ac6e7",
+    "Negro": "#000000",
+    "Palo de Rosa": "#f7a39d",
+    "Blanco": "#FFFFFF",
+    "Rojo": "#fc180e",
+    "Vinotinto": "#451216",
+    "Beige": "#d1a990"
+  }
+}

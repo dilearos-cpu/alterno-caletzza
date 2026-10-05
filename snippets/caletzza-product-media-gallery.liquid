@@ -1,0 +1,66 @@
+{% comment %}
+  Galería de producto con soporte de custom.custom_second_image.
+  - Productos simples (1 variante / sin opción color): galería estándar, sin slot extra.
+  - Variables: solo inserta 2ª miniatura si hay URL real del metafield (nunca un slide vacío).
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign enable_second_slot = false
+  if product.variants.size > 1
+    for option in product.options_with_values
+      assign opt_down = option.name | downcase
+      if opt_down contains 'color' or opt_down contains 'colour' or opt_down contains 'colo'
+        assign enable_second_slot = true
+        break
+      endif
+    endfor
+  endif
+
+  assign second_url = ''
+  if enable_second_slot
+    capture second_url_capture
+      render 'variant-second-image-url', variant: current_variant, product: product, image_width: 1200
+    endcapture
+    assign second_url = second_url_capture | strip
+  endif
+-%}
+
+<div
+  class="cz-product-media"
+  data-cz-product-media
+  {% if enable_second_slot %}data-cz-enable-second-image="true"{% endif %}
+>
+  <div class="cz-product-standard-media" data-cz-standard-media>
+    {% render 'product-media-gallery',
+      variant_images: variant_images,
+      cz_second_image_url: second_url,
+      cz_second_image_alt: product.title,
+      cz_enable_second_slot: enable_second_slot
+    %}
+  </div>
+
+  {%- if enable_second_slot -%}
+    <script type="application/json" data-cz-variant-media-data>
+      {
+        "variants": [
+          {%- for variant in product.variants -%}
+            {%- liquid
+              assign variant_primary = variant.image | default: variant.featured_media | default: product.featured_media
+              assign variant_second = ''
+              capture variant_second_capture
+                render 'variant-second-image-url', variant: variant, product: product, image_width: 1200
+              endcapture
+              assign variant_second = variant_second_capture | strip
+            -%}
+            {
+              "id": {{ variant.id | json }},
+              "primary": {% if variant_primary %}{{ variant_primary | image_url: width: 1200 | json }}{% else %}""{% endif %},
+              "second": {{ variant_second | json }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
+</div>

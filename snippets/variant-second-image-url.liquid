@@ -1,0 +1,61 @@
+{% comment %}
+  URL de segunda imagen desde metafield de variante.
+  Keys intentadas (namespace custom): custom_second_image, second_image, segunda_imagen.
+{% endcomment %}
+{% liquid
+  assign ns = namespace | default: 'custom'
+  assign key = metafield_key | default: 'custom_second_image'
+  assign img_width = image_width | default: 600
+  assign variant_second_image_url = ''
+  assign second_meta = blank
+
+  if variant != blank
+    assign second_meta = variant.metafields[ns][key]
+    if second_meta == blank
+      assign second_meta = variant.metafields.custom.custom_second_image
+    endif
+    if second_meta == blank
+      assign second_meta = variant.metafields.custom.second_image
+    endif
+    if second_meta == blank
+      assign second_meta = variant.metafields.custom.segunda_imagen
+    endif
+  endif
+
+  if second_meta == blank and product != blank
+    assign second_meta = product.metafields.custom.custom_second_image
+    if second_meta == blank
+      assign second_meta = product.metafields.custom.second_image
+    endif
+  endif
+
+  if second_meta != blank
+    assign file_ref = second_meta.value
+    if file_ref == blank
+      assign file_ref = second_meta
+    endif
+
+    assign variant_second_image_url = file_ref | image_url: width: img_width
+
+    if variant_second_image_url == blank and file_ref.preview_image != blank
+      assign variant_second_image_url = file_ref.preview_image | image_url: width: img_width
+    endif
+
+    if variant_second_image_url == blank and file_ref.url != blank
+      if file_ref.url contains 'http'
+        assign variant_second_image_url = file_ref.url
+      else
+        assign variant_second_image_url = file_ref.url | image_url: width: img_width
+      endif
+    endif
+
+    if variant_second_image_url == blank
+      assign variant_second_image_url = second_meta | image_url: width: img_width
+    endif
+
+    if variant_second_image_url == blank
+      assign variant_second_image_url = second_meta | file_url
+    endif
+  endif
+%}
+{{- variant_second_image_url -}}

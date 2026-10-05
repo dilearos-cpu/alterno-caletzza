@@ -1,0 +1,533 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign products_limit = section.settings.products_per_collection | default: 48
+  assign columns_desktop = 4
+  assign columns_mobile = section.settings.columns_mobile | default: '2'
+  assign all_label = section.settings.all_label | default: 'Todas'
+  assign empty_message = section.settings.empty_message | default: 'No hay productos en esta colección.'
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .cz-hub-buttons {
+    --cz-hub-bg: {{ section.settings.background_color }};
+    --cz-hub-btn-bg: {{ section.settings.button_background }};
+    --cz-hub-btn-text: {{ section.settings.button_text_color }};
+    --cz-hub-btn-border: {{ section.settings.button_border_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--cz-hub-bg);
+  }
+{%- endstyle -%}
+
+<section
+  class="cz-hub-buttons"
+  id="cz-hub-{{ section.id }}"
+  data-cz-hub
+  aria-label="{{ section.settings.heading | default: 'Colecciones' | escape }}"
+>
+  <div class="page-width cz-hub-buttons__inner">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="cz-hub-buttons__heading">{{ section.settings.heading | escape }}</h1>
+    {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <p class="cz-hub-buttons__subheading">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    {%- comment -%}
+      Slot para el banner de «Banner colección Caletzza» de la colección activa.
+      Visible al filtrar por un chip; oculto en «Todas».
+    {%- endcomment -%}
+    <div
+      class="cz-hub-buttons__banner"
+      data-cz-hub-banner
+      hidden
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <div class="cz-hub-buttons__scroll-wrap" role="tablist" aria-label="Filtrar por estilo">
+      <div class="cz-hub-buttons__scroll" data-cz-hub-scroll>
+        <button
+          type="button"
+          class="cz-hub-buttons__chip is-active"
+          role="tab"
+          aria-selected="true"
+          data-cz-hub-filter="all"
+        >
+          {{ all_label | escape }}
+        </button>
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign btn_label = block.settings.label
+            assign col_handle = ''
+            if block.settings.collection != blank
+              assign col_handle = block.settings.collection.handle
+              if btn_label == blank
+                assign btn_label = block.settings.collection.title
+              endif
+            endif
+          -%}
+          {%- if btn_label != blank and col_handle != blank -%}
+            <button
+              type="button"
+              class="cz-hub-buttons__chip"
+              role="tab"
+              aria-selected="false"
+              data-cz-hub-filter="{{ col_handle | escape }}"
+              data-cz-hub-collection-url="{{ block.settings.collection.url | escape }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ btn_label | escape }}
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="cz-hub-buttons__products" data-cz-hub-products>
+      <ul
+        class="grid product-grid grid--{{ columns_mobile }}-col-tablet-down grid--{{ columns_desktop }}-col-desktop cz-hub-buttons__grid-products"
+        role="list"
+      >
+        {%- assign skip_card_product_styles = false -%}
+        {%- assign rendered_ids = '|' -%}
+        {%- assign product_index = 0 -%}
+
+        {%- comment -%}
+          Todas = unión de las subcolecciones del hub.
+          Cada producto guarda los handles a los que pertenece para filtrar.
+        {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- assign block_col = block.settings.collection -%}
+          {%- if block_col == blank -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- assign bh = block_col.handle -%}
+          {%- for product in block_col.products limit: products_limit -%}
+            {%- assign id_token = '|' | append: product.id | append: '|' -%}
+            {%- if rendered_ids contains id_token -%}
+              {%- continue -%}
+            {%- endif -%}
+
+            {%- liquid
+              assign filter_handles = bh | append: ' '
+              for other in section.blocks
+                assign other_col = other.settings.collection
+                if other_col == blank
+                  continue
+                endif
+                if other_col.handle == bh
+                  continue
+                endif
+                assign oh = other_col.handle
+                for pc in product.collections
+                  if pc.handle == oh
+                    assign filter_handles = filter_handles | append: oh | append: ' '
+                    break
+                  endif
+                endfor
+              endfor
+              assign product_index = product_index | plus: 1
+              assign lazy_load = false
+              if product_index > 2
+                assign lazy_load = true
+              endif
+            -%}
+
+            <li
+              class="grid__item cz-hub-buttons__item"
+              data-cz-hub-item
+              data-cz-hub-collections="{{ filter_handles | strip | escape }}"
+            >
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: section.settings.image_ratio,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: false,
+                show_rating: false,
+                show_color_swatches: section.settings.show_color_swatches,
+                lazy_load: lazy_load,
+                skip_styles: skip_card_product_styles,
+                quick_add: 'none',
+                section_id: section.id
+              %}
+            </li>
+            {%- assign skip_card_product_styles = true -%}
+            {%- assign rendered_ids = rendered_ids | append: product.id | append: '|' -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </ul>
+
+      <p class="cz-hub-buttons__empty" data-cz-hub-empty hidden>{{ empty_message | escape }}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('cz-hub-{{ section.id }}');
+    if (!root) return;
+
+    var chips = root.querySelectorAll('[data-cz-hub-filter]');
+    var items = root.querySelectorAll('[data-cz-hub-item]');
+    var emptyEl = root.querySelector('[data-cz-hub-empty]');
+    var scrollEl = root.querySelector('[data-cz-hub-scroll]');
+    var bannerEl = root.querySelector('[data-cz-hub-banner]');
+    var bannerCache = {};
+    var bannerRequestId = 0;
+    var bannerSectionId = 'template--23892878000278__caletzza_collection_banner';
+    var BANNER_SECTION_RE = /shopify-section-(template--\d+__caletzza_collection_banner)/;
+
+    function collectionUrlForHandle(handle) {
+      var match = null;
+      chips.forEach(function (chip) {
+        if (chip.getAttribute('data-cz-hub-filter') === handle) {
+          match = chip.getAttribute('data-cz-hub-collection-url') || null;
+        }
+      });
+      return match || '/collections/' + encodeURIComponent(handle);
+    }
+
+    function extractBannerMarkup(html) {
+      if (!html) return '';
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var header = doc.querySelector('.cz-collection-header');
+      if (!header) return '';
+
+      var idMatch = html.match(BANNER_SECTION_RE);
+      if (idMatch && idMatch[1]) {
+        bannerSectionId = idMatch[1];
+      }
+
+      var bannerPart = header.querySelector('.cz-collection-header__banner');
+      var hasImage =
+        bannerPart &&
+        (bannerPart.querySelector('img, picture, source') ||
+          bannerPart.querySelector('.cz-collection-banner__image'));
+
+      if (!hasImage) return '';
+
+      var wrap = document.createElement('div');
+      wrap.className =
+        'cz-collection-header cz-collection-header--full cz-collection-header--banner-only';
+      if (header.getAttribute('data-cz-banner-collection')) {
+        wrap.setAttribute(
+          'data-cz-banner-collection',
+          header.getAttribute('data-cz-banner-collection')
+        );
+      }
+      if (header.getAttribute('data-cz-banner-source')) {
+        wrap.setAttribute('data-cz-banner-source', header.getAttribute('data-cz-banner-source'));
+      }
+      wrap.appendChild(bannerPart.cloneNode(true));
+      return wrap.outerHTML;
+    }
+
+    function clearBanner() {
+      if (!bannerEl) return;
+      bannerEl.hidden = true;
+      bannerEl.innerHTML = '';
+      bannerEl.removeAttribute('data-cz-hub-banner-handle');
+    }
+
+    function showBannerMarkup(handle, markup) {
+      if (!bannerEl || !markup) {
+        clearBanner();
+        return;
+      }
+      bannerCache[handle] = markup;
+      bannerEl.innerHTML = markup;
+      bannerEl.hidden = false;
+      bannerEl.setAttribute('data-cz-hub-banner-handle', handle);
+    }
+
+    function fetchBannerSection(url) {
+      var joiner = url.indexOf('?') === -1 ? '?' : '&';
+      return fetch(url + joiner + 'section_id=' + encodeURIComponent(bannerSectionId), {
+        credentials: 'same-origin'
+      }).then(function (res) {
+        if (!res.ok) throw new Error('banner section ' + res.status);
+        return res.text();
+      });
+    }
+
+    function loadBanner(handle) {
+      if (!bannerEl) return;
+      if (!handle || handle === 'all') {
+        clearBanner();
+        return;
+      }
+
+      if (bannerCache[handle]) {
+        showBannerMarkup(handle, bannerCache[handle]);
+        return;
+      }
+
+      var requestId = ++bannerRequestId;
+      var baseUrl = collectionUrlForHandle(handle);
+
+      fetchBannerSection(baseUrl)
+        .then(function (html) {
+          var markup = extractBannerMarkup(html);
+          if (markup) return markup;
+          return fetch(baseUrl, { credentials: 'same-origin' })
+            .then(function (res) {
+              if (!res.ok) throw new Error('banner page ' + res.status);
+              return res.text();
+            })
+            .then(function (pageHtml) {
+              var discovered = pageHtml.match(BANNER_SECTION_RE);
+              if (discovered && discovered[1] && discovered[1] !== bannerSectionId) {
+                bannerSectionId = discovered[1];
+                return fetchBannerSection(baseUrl).then(extractBannerMarkup);
+              }
+              return extractBannerMarkup(pageHtml);
+            });
+        })
+        .then(function (markup) {
+          if (requestId !== bannerRequestId) return;
+          if (markup) {
+            showBannerMarkup(handle, markup);
+          } else {
+            clearBanner();
+          }
+        })
+        .catch(function () {
+          if (requestId !== bannerRequestId) return;
+          clearBanner();
+        });
+    }
+
+    function setFilter(handle) {
+      var visible = 0;
+      items.forEach(function (item) {
+        var cols = (item.getAttribute('data-cz-hub-collections') || '').split(/\s+/).filter(Boolean);
+        var show = handle === 'all' || cols.indexOf(handle) !== -1;
+        item.hidden = !show;
+        item.classList.toggle('is-hidden', !show);
+        if (show) visible += 1;
+      });
+      if (emptyEl) emptyEl.hidden = visible > 0;
+
+      chips.forEach(function (chip) {
+        var active = chip.getAttribute('data-cz-hub-filter') === handle;
+        chip.classList.toggle('is-active', active);
+        chip.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      loadBanner(handle);
+    }
+
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var handle = chip.getAttribute('data-cz-hub-filter') || 'all';
+        setFilter(handle);
+        if (scrollEl && typeof chip.scrollIntoView === 'function') {
+          chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      });
+    });
+
+    function initialFilterFromUrl() {
+      var params = new URLSearchParams(window.location.search);
+      var estilo = (params.get('estilo') || params.get('filter') || '').trim();
+      if (!estilo || estilo === 'all' || estilo === 'todas') return 'all';
+      var found = false;
+      chips.forEach(function (chip) {
+        if (chip.getAttribute('data-cz-hub-filter') === estilo) found = true;
+      });
+      return found ? estilo : 'all';
+    }
+
+    var initialHandle = initialFilterFromUrl();
+    setFilter(initialHandle);
+    if (initialHandle !== 'all' && scrollEl) {
+      var activeChip = root.querySelector(
+        '[data-cz-hub-filter="' + initialHandle.replace(/"/g, '') + '"]'
+      );
+      if (activeChip && typeof activeChip.scrollIntoView === 'function') {
+        activeChip.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hub botones colección",
+  "tag": "section",
+  "class": "section-caletzza-hub-buttons",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Pijamas"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "Elige el estilo que buscas"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Texto filtro «Todas»",
+      "default": "Todas"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Mensaje sin productos",
+      "default": "No hay productos en esta colección."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo",
+      "default": "#FDF5EB"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fondo del chip activo",
+      "default": "#502F1D"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto del chip activo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Borde del chip",
+      "default": "#502F1D"
+    },
+    {
+      "type": "range",
+      "id": "products_per_collection",
+      "min": 8,
+      "max": 100,
+      "step": 4,
+      "label": "Productos por colección",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columnas móvil",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "Adaptar" },
+        { "value": "portrait", "label": "Retrato" },
+        { "value": "square", "label": "Cuadrado" }
+      ],
+      "default": "portrait",
+      "label": "Proporción de imagen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Segunda imagen al pasar el mouse",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatches",
+      "label": "Mostrar swatches de color",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "button",
+      "name": "Colección",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto",
+          "default": "Colección"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace (opcional, no usado en filtro)",
+          "info": "Se ignora: el chip filtra productos en esta página."
+        },
+        {
+          "type": "select",
+          "id": "slot",
+          "label": "Posición (legado)",
+          "options": [
+            { "value": "auto", "label": "Automática (orden del bloque)" },
+            { "value": "top-left", "label": "Arriba izquierda" },
+            { "value": "top-right", "label": "Arriba derecha" },
+            { "value": "center", "label": "Centro" },
+            { "value": "bottom-left", "label": "Abajo izquierda" },
+            { "value": "bottom-right", "label": "Abajo derecha" }
+          ],
+          "default": "auto",
+          "info": "Ya no afecta el layout; se mantiene por compatibilidad."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hub botones colección",
+      "blocks": [
+        { "type": "button", "settings": { "label": "Pijamas Coquett", "slot": "top-left" } },
+        { "type": "button", "settings": { "label": "Pijamas Sublimadas", "slot": "top-right" } },
+        { "type": "button", "settings": { "label": "Pijamas Short Camiseta", "slot": "center" } },
+        { "type": "button", "settings": { "label": "Pijamas Pantalón Tira", "slot": "bottom-left" } },
+        { "type": "button", "settings": { "label": "Pijamas 3 moños", "slot": "bottom-right" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

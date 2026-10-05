@@ -1,0 +1,358 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "media_columns_hero": {
+      "type": "caletzza-media-columns",
+      "blocks": {
+        "column_UgUHnj": {
+          "type": "column",
+          "settings": {
+            "video": "shopify://files/videos/IMG_6869.mp4",
+            "video_url": "",
+            "link": "",
+            "open_in_new_tab": false,
+            "heading": ""
+          }
+        },
+        "col_1": {
+          "type": "column",
+          "settings": {
+            "video": "shopify://files/videos/IMG_8295.mp4",
+            "video_url": "",
+            "link": "",
+            "open_in_new_tab": false,
+            "heading": "Columna izquierda"
+          }
+        }
+      },
+      "block_order": [
+        "column_UgUHnj",
+        "col_1"
+      ],
+      "settings": {
+        "accessibility_label": "Banner principal",
+        "background_color": "#fdf5eb",
+        "column_gap": 4,
+        "corner_radius": 0,
+        "min_height_mobile": 240,
+        "min_height_desktop": 480,
+        "full_bleed": true,
+        "autoplay": true,
+        "autoplay_speed": 2000,
+        "show_dots": true,
+        "show_arrows": false,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "shipping_bar": {
+      "type": "caletzza-shipping-bar",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "ENVÍO SEGURO",
+            "text": "Entrega en menos de 3 días hábiles."
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "check",
+            "title": "ENVÍO MISMO DÍA",
+            "text": "Recibe el mismo día en la ciudad de Cali."
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "heart",
+            "title": "GARANTÍAS",
+            "text": "Cambios fáciles y compra segura."
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "card",
+            "title": "PAGO CON ADDI",
+            "text": "Compra ahora, paga después en cuotas."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {
+        "compact": true,
+        "background_color": "#fdf5eb",
+        "section_heading": "LO QUE NOS HACE DIFERENTES",
+        "stat_line": "MÁS DE 5.000 MUJERES HAN ELEGIDO CALETZZA.",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "category_grid": {
+      "type": "caletzza-category-grid",
+      "blocks": {
+        "c1": {
+          "type": "category",
+          "settings": {
+            "title": "BÁSICAS",
+            "collection": "basicas",
+            "link": "",
+            "image": "shopify://shop_images/WhatsAppImage2026-09-25at11.58.04AM.jpg"
+          }
+        },
+        "c2": {
+          "type": "category",
+          "settings": {
+            "title": "BODYS",
+            "collection": "bodys",
+            "link": "",
+            "image": "shopify://shop_images/larga-redondo.jpg"
+          }
+        },
+        "c3": {
+          "type": "category",
+          "settings": {
+            "title": "BLUSAS",
+            "collection": "blusas",
+            "link": "",
+            "image": "shopify://shop_images/WhatsApp-Image-2026-07-04-at-2.16.58-PM-1-510x907.jpg"
+          }
+        },
+        "c4": {
+          "type": "category",
+          "settings": {
+            "title": "OVERSIZES",
+            "collection": "oversize",
+            "link": "",
+            "image": "shopify://shop_images/70414029-719a-4cf1-9002-2e55d82dd016.png"
+          }
+        },
+        "c5": {
+          "type": "category",
+          "settings": {
+            "title": "PIJAMAS",
+            "collection": "pijamas",
+            "link": "/collections?view=pijamas",
+            "image": "shopify://shop_images/8509742a-c133-46ca-bede-76fef9deaf17.jpg"
+          }
+        },
+        "category_PAnDCF": {
+          "type": "category",
+          "settings": {
+            "title": "Hombres",
+            "collection": "camiseta-hombre",
+            "link": "",
+            "image": "shopify://shop_images/IMG_1782.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "category_PAnDCF"
+      ],
+      "settings": {
+        "heading": "",
+        "background_color": "#fdf5eb",
+        "layout": "carousel",
+        "title_style": "below",
+        "padding_top": 0,
+        "padding_bottom": 32
+      }
+    },
+    "tabs_collection": {
+      "type": "caletzza-tabs-collection",
+      "blocks": {
+        "t1": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Lo nuevo",
+            "collection": "all",
+            "show_view_all": true,
+            "view_all_label": "Ver todo"
+          }
+        },
+        "t2": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Lo más vendido",
+            "collection": "all",
+            "show_view_all": true,
+            "view_all_label": "Ver todo"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2"
+      ],
+      "settings": {
+        "heading": "PRENDAS QUE VAS A QUERER VOLVER A USAR",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "custom_liquid_Rxf94b": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\">\n\n<style>\n  .cz-vl { background:#fdf5eb; color:#878787; padding:48px 16px; width:100%; box-sizing:border-box; touch-action:pan-y; }\n  .cz-vl__wrap { max-width:920px; margin:0 auto; position:relative; }\n  .cz-vl__viewport { overflow:hidden; width:100%; cursor:grab; }\n  .cz-vl__viewport.is-dragging { cursor:grabbing; }\n  .cz-vl__track {\n    display:flex;\n    width:200%;\n    transition:transform .35s ease;\n    will-change:transform;\n  }\n  .cz-vl__track.is-dragging { transition:none; }\n  .cz-vl__slide {\n    width:50%;\n    flex:0 0 50%;\n    box-sizing:border-box;\n  }\n  .cz-vl__grid {\n    display:grid;\n    grid-template-columns:1fr 1fr;\n    gap:1.2rem 2rem;\n  }\n  .cz-vl__item {\n    display:flex;\n    flex-direction:column;\n    align-items:center;\n    text-align:center;\n    padding:.4rem .8rem;\n  }\n  .cz-vl__icon {\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    width:4.8rem;\n    height:4rem;\n    margin:0 auto 1.1rem;\n    color:#502f1d;\n    font-size:2.6rem;\n    line-height:1;\n  }\n  .cz-vl__addi {\n    font-family:\"Avenir Next\", Montserrat, \"Helvetica Neue\", sans-serif;\n    font-weight:800;\n    font-size:2.8rem;\n    line-height:1;\n    letter-spacing:-.03em;\n    color:#1f7ae0;\n    font-style:italic;\n  }\n  .cz-vl__text {\n    margin:0;\n    max-width:28rem;\n    font-size:clamp(.95rem,1.5vw,1.15rem);\n    font-weight:500;\n    letter-spacing:.04em;\n    line-height:1.45;\n    text-transform:uppercase;\n  }\n  .cz-vl__dots {\n    display:flex;\n    justify-content:center;\n    gap:10px;\n    margin-top:1.6rem;\n  }\n  .cz-vl__dot {\n    width:9px;\n    height:9px;\n    border:0;\n    padding:0;\n    border-radius:50%;\n    background:rgba(80,47,29,.28);\n    cursor:pointer;\n  }\n  .cz-vl__dot.is-active {\n    background:#502f1d;\n    transform:scale(1.12);\n  }\n  @media (max-width:749px) {\n    .cz-vl { padding:36px 12px; }\n    .cz-vl__grid { gap:1rem 1.2rem; }\n    .cz-vl__icon { width:3.6rem; height:3.2rem; margin-bottom:.85rem; font-size:2rem; }\n    .cz-vl__addi { font-size:2.1rem; }\n    .cz-vl__text { font-size:.78rem; }\n  }\n</style>\n\n<div class=\"cz-vl\" id=\"cz-vl\">\n  <div class=\"cz-vl__wrap\">\n    <div class=\"cz-vl__viewport\" data-viewport>\n      <div class=\"cz-vl__track\" data-track>\n        <div class=\"cz-vl__slide\">\n          <div class=\"cz-vl__grid\">\n            <div class=\"cz-vl__item\">\n              <div class=\"cz-vl__icon\"><span class=\"cz-vl__addi\">Addi</span></div>\n              <p class=\"cz-vl__text\">COMPRA HOY, PAGA DESPUÉS</p>\n            </div>\n            <div class=\"cz-vl__item\">\n              <div class=\"cz-vl__icon\"><i class=\"fa-solid fa-scissors\"></i></div>\n              <p class=\"cz-vl__text\">HECHO POR MANOS<br>COLOMBIANAS</p>\n            </div>\n          </div>\n        </div>\n\n        <div class=\"cz-vl__slide\">\n          <div class=\"cz-vl__grid\">\n            <div class=\"cz-vl__item\">\n              <div class=\"cz-vl__icon\"><i class=\"fa-solid fa-shirt\"></i></div>\n              <p class=\"cz-vl__text\">SENTIRTE LINDA Y CÓMODA A<br>UN PRECIO JUSTO NUNCA<br>HABÍA SIDO TAN FÁCIL.</p>\n            </div>\n            <div class=\"cz-vl__item\">\n              <div class=\"cz-vl__icon\"><i class=\"fa-solid fa-wand-magic-sparkles\"></i></div>\n              <p class=\"cz-vl__text\">BRILLA DESDE TU INTERIOR</p>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"cz-vl__dots\">\n      <button type=\"button\" class=\"cz-vl__dot is-active\" data-dot=\"0\" aria-label=\"Diapositiva 1\"></button>\n      <button type=\"button\" class=\"cz-vl__dot\" data-dot=\"1\" aria-label=\"Diapositiva 2\"></button>\n    </div>\n  </div>\n</div>\n\n<script>\n(function () {\n  var root = document.getElementById('cz-vl');\n  if (!root) return;\n\n  var viewport = root.querySelector('[data-viewport]');\n  var track = root.querySelector('[data-track]');\n  var dots = root.querySelectorAll('[data-dot]');\n  var total = 2;\n  var current = 0;\n  var timer = null;\n  var startX = 0;\n  var deltaX = 0;\n  var dragging = false;\n\n  function goTo(index) {\n    current = ((index % total) + total) % total;\n    track.style.transform = 'translateX(-' + (current * 50) + '%)';\n    dots.forEach(function (dot, i) {\n      dot.classList.toggle('is-active', i === current);\n    });\n  }\n\n  function next() { goTo(current + 1); }\n  function prev() { goTo(current - 1); }\n\n  function startAutoplay() {\n    clearInterval(timer);\n    timer = setInterval(next, 5000);\n  }\n\n  dots.forEach(function (dot) {\n    dot.addEventListener('click', function () {\n      goTo(Number(dot.getAttribute('data-dot') || 0));\n      startAutoplay();\n    });\n  });\n\n  function onStart(x) {\n    dragging = true;\n    startX = x;\n    deltaX = 0;\n    track.classList.add('is-dragging');\n    viewport.classList.add('is-dragging');\n    clearInterval(timer);\n  }\n\n  function onMove(x) {\n    if (!dragging) return;\n    deltaX = x - startX;\n    var base = -(current * 50);\n    var pct = (deltaX / viewport.offsetWidth) * 50;\n    track.style.transform = 'translateX(' + (base + pct) + '%)';\n  }\n\n  function onEnd() {\n    if (!dragging) return;\n    dragging = false;\n    track.classList.remove('is-dragging');\n    viewport.classList.remove('is-dragging');\n    if (Math.abs(deltaX) > 40) {\n      if (deltaX < 0) next();\n      else prev();\n    } else {\n      goTo(current);\n    }\n    startAutoplay();\n  }\n\n  viewport.addEventListener('touchstart', function (e) {\n    if (!e.touches[0]) return;\n    onStart(e.touches[0].clientX);\n  }, { passive: true });\n\n  viewport.addEventListener('touchmove', function (e) {\n    if (!e.touches[0]) return;\n    onMove(e.touches[0].clientX);\n  }, { passive: true });\n\n  viewport.addEventListener('touchend', onEnd, { passive: true });\n  viewport.addEventListener('touchcancel', onEnd, { passive: true });\n\n  viewport.addEventListener('mousedown', function (e) {\n    e.preventDefault();\n    onStart(e.clientX);\n  });\n  window.addEventListener('mousemove', function (e) {\n    if (!dragging) return;\n    onMove(e.clientX);\n  });\n  window.addEventListener('mouseup', onEnd);\n\n  goTo(0);\n  startAutoplay();\n})();\n</script>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_NTEiDn": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\">\n\n<style>\n.cz-social {\n  width: 100%;\n  padding: 16px 8px;\n  box-sizing: border-box;\n}\n.cz-social__grid {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  gap: 8px;\n  max-width: 1100px;\n  margin: 0 auto;\n}\n.cz-social__item {\n  position: relative;\n  width: 100%;\n  aspect-ratio: 1 / 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n  text-decoration: none;\n  background-size: cover;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n.cz-social__item::before {\n  content: \"\";\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background: #000000;\n  opacity: 0.28;\n}\n.cz-social__icon {\n  position: relative;\n  z-index: 1;\n  color: #ffffff;\n  font-size: 36px;\n  line-height: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.cz-social__item:hover::before {\n  opacity: 0.4;\n}\n.cz-social__item--ig {\n  background-image: url('https://caletzza.com/wp-content/uploads/2025/12/corta-cuadrado-247x296.jpeg');\n}\n.cz-social__item--tt {\n  background-image: url('https://caletzza.com/wp-content/uploads/2025/12/corta-redondo-1-247x296.jpeg');\n}\n.cz-social__item--wa {\n  background-image: url('https://caletzza.com/wp-content/uploads/2025/12/sisa-redondo-247x296.jpeg');\n}\n@media (min-width: 750px) {\n  .cz-social {\n    padding: 24px 16px;\n  }\n  .cz-social__grid {\n    gap: 12px;\n  }\n  .cz-social__icon {\n    font-size: 64px;\n  }\n}\n</style>\n\n<div class=\"cz-social\">\n  <div class=\"cz-social__grid\">\n\n    <a class=\"cz-social__item cz-social__item--ig\"\n       href=\"https://www.instagram.com/caletzza/?hl=es\"\n       target=\"_blank\"\n       rel=\"noopener\"\n       aria-label=\"Instagram Caletzza\">\n      <span class=\"cz-social__icon\"><i class=\"fa-brands fa-instagram\"></i></span>\n    </a>\n\n    <a class=\"cz-social__item cz-social__item--tt\"\n       href=\"https://www.tiktok.com/@caletzza\"\n       target=\"_blank\"\n       rel=\"noopener\"\n       aria-label=\"TikTok Caletzza\">\n      <span class=\"cz-social__icon\"><i class=\"fa-brands fa-tiktok\"></i></span>\n    </a>\n\n    <a class=\"cz-social__item cz-social__item--wa\"\n       href=\"https://wa.me/573148405491\"\n       target=\"_blank\"\n       rel=\"noopener\"\n       aria-label=\"WhatsApp Caletzza\">\n      <span class=\"cz-social__icon\"><i class=\"fa-brands fa-whatsapp\"></i></span>\n    </a>\n\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "promo_slideshow": {
+      "type": "slideshow",
+      "settings": {
+        "layout": "grid",
+        "slide_height": "medium",
+        "slider_visual": "dots",
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "image_behavior": "none",
+        "show_text_below": false,
+        "accessibility_info": "Promociones Rappi y Addi"
+      }
+    },
+    "custom_liquid_Fz8FdT": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .cz-t { width:100%; background:linear-gradient(165deg,#ede0d0 0%,#dcc4a8 100%); color:#3a2215; padding:64px 0; box-sizing:border-box; }\n  .cz-t__header { text-align:center; max-width:42rem; margin:0 auto 2.4rem; padding:0 1.5rem; }\n  .cz-t__heading { margin:0 0 .6rem; color:#502f1d; font-size:2rem; font-weight:500; letter-spacing:.02em; line-height:1.2; }\n  .cz-t__sub { margin:0; color:#7a5a45; font-size:1.05rem; line-height:1.5; }\n  .cz-t__rule { width:3.2rem; height:2px; margin:1.4rem auto 0; background:#8b5e3c; opacity:.75; }\n  .cz-t__scroller { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:.2rem 0 .6rem; }\n  .cz-t__track { display:flex; gap:1.2rem; width:max-content; padding:0 1.5rem .4rem; }\n  .cz-t__card {\n    flex:0 0 320px;\n    display:flex;\n    flex-direction:column;\n    align-items:flex-start;\n    gap:1rem;\n    padding:1.8rem 1.6rem 1.7rem;\n    background:#fff9f2;\n    color:#3a2215;\n    border:1px solid rgba(80,47,29,.08);\n  }\n  .cz-t__stars { display:flex; gap:.15rem; color:#8b5e3c; font-size:1rem; letter-spacing:.05em; }\n  .cz-t__quote { margin:0; font-size:1.1rem; line-height:1.55; font-style:normal; color:#3a2215; }\n  .cz-t__author { display:flex; flex-direction:column; gap:.2rem; margin-top:.4rem; }\n  .cz-t__name { font-size:.95rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#502f1d; }\n  .cz-t__verified { font-size:.8rem; color:#7a5a45; }\n  @media (max-width:749px) {\n    .cz-t { padding:48px 0; }\n    .cz-t__heading { font-size:1.7rem; }\n    .cz-t__card { flex-basis:280px; padding:1.5rem 1.3rem 1.4rem; }\n    .cz-t__track { gap:.9rem; padding:0 1.2rem .3rem; }\n  }\n</style>\n\n<div class=\"cz-t\">\n  <div class=\"cz-t__header\">\n    <h2 class=\"cz-t__heading\">Lo que dicen nuestras clientas</h2>\n    <p class=\"cz-t__sub\">Reseñas reales de quienes ya visten Caletzza</p>\n    <div class=\"cz-t__rule\"></div>\n  </div>\n\n  <div class=\"cz-t__scroller\">\n    <div class=\"cz-t__track\">\n\n      <article class=\"cz-t__card\">\n        <div class=\"cz-t__stars\" aria-label=\"5 de 5\">★★★★★</div>\n        <p class=\"cz-t__quote\">“Hermosas, yo las recomiendo. Una tela super espectacular.”</p>\n        <footer class=\"cz-t__author\">\n          <span class=\"cz-t__name\">Ossa Anyel</span>\n          <span class=\"cz-t__verified\">Cliente verificada</span>\n        </footer>\n      </article>\n\n      <article class=\"cz-t__card\">\n        <div class=\"cz-t__stars\" aria-label=\"5 de 5\">★★★★★</div>\n        <p class=\"cz-t__quote\">“Super espectacular, las recomiendo 100%.”</p>\n        <footer class=\"cz-t__author\">\n          <span class=\"cz-t__name\">Katherine Vega</span>\n          <span class=\"cz-t__verified\">Cliente verificada</span>\n        </footer>\n      </article>\n\n      <article class=\"cz-t__card\">\n        <div class=\"cz-t__stars\" aria-label=\"5 de 5\">★★★★★</div>\n        <p class=\"cz-t__quote\">“Son muy recomendadas.”</p>\n        <footer class=\"cz-t__author\">\n          <span class=\"cz-t__name\">Tatiana Montilla</span>\n          <span class=\"cz-t__verified\">Cliente verificada</span>\n        </footer>\n      </article>\n\n      <article class=\"cz-t__card\">\n        <div class=\"cz-t__stars\" aria-label=\"5 de 5\">★★★★★</div>\n        <p class=\"cz-t__quote\">“Yo compré, y si son muy lindas, las recomiendo. Y muy pronto haré otro pedido.”</p>\n        <footer class=\"cz-t__author\">\n          <span class=\"cz-t__name\">Sugeidis Ortiz Muñoz</span>\n          <span class=\"cz-t__verified\">Cliente verificada</span>\n        </footer>\n      </article>\n\n    </div>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "testimonials": {
+      "type": "testimonials-section",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Hermosas, yo las recomiendo. Una tela super espectacular.",
+            "author": "Cliente verificada",
+            "rating": 5
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Super espectacular, las recomiendo 100%.",
+            "author": "Cliente verificada",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Únete al Caletzza Lovers Club",
+            "heading_size": "h1"
+          }
+        },
+        "paragraph": {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>Recibe novedades, promociones y contenido exclusivo.</p>"
+          }
+        },
+        "email_form": {
+          "type": "email_form",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "paragraph",
+        "email_form"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "full_width": true,
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
+    "social_proof": {
+      "type": "social-proof-popup",
+      "settings": {
+        "pack_label": "pack de bodys",
+        "units_fixed": 4,
+        "random_units": false,
+        "units_min": 2,
+        "units_max": 10,
+        "initial_delay": 5,
+        "interval_min": 12,
+        "interval_max": 25,
+        "display_duration": 6,
+        "position": "bottom-left",
+        "show_mobile": true,
+        "show_desktop": true,
+        "message_template": "{name} ha comprado un {pack} hace {time} en {city}",
+        "cities": "Bogotá,Medellín,Cali,Barranquilla,Cartagena,Bucaramanga,Pereira,Manizales,Santa Marta,Ibagué,Cúcuta,Villavicencio,Pasto,Montería,Armenia",
+        "default_names": "Juanito,María,Carlos,Laura,Andrés,Camila,Diego,Valentina,Santiago,Daniela,Felipe,Isabella,Nicolás,Paula,Sebastián",
+        "time_phrases": "hace un momento,hace 1 minuto,hace 2 minutos,hace 5 minutos,hace 8 minutos,hace 12 minutos,hace 15 minutos",
+        "verified_label": "Compra verificada",
+        "background_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#2e7d32"
+      }
+    }
+  },
+  "order": [
+    "media_columns_hero",
+    "shipping_bar",
+    "category_grid",
+    "tabs_collection",
+    "custom_liquid_Rxf94b",
+    "custom_liquid_NTEiDn",
+    "promo_slideshow",
+    "custom_liquid_Fz8FdT",
+    "testimonials",
+    "newsletter",
+    "social_proof"
+  ]
+}

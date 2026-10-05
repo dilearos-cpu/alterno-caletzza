@@ -1,0 +1,56 @@
+{% comment %}
+  Botón express de agregar al carrito para productos simples (sin variaciones).
+  Ocupa el mismo espacio visual que las bolitas de color en la card.
+{% endcomment %}
+{%- liquid
+  assign express_variant = card_product.selected_or_first_available_variant
+  assign form_id = 'cz-express-' | append: section_id | append: '-' | append: card_product.id
+-%}
+
+{%- if express_variant != blank -%}
+  <div class="cz-card-express" data-cz-card-express>
+    <product-form class="cz-card-express__product-form" data-section-id="{{ section_id }}" data-hide-errors="true">
+      {%- form 'product',
+        card_product,
+        id: form_id,
+        class: 'cz-card-express__form',
+        novalidate: 'novalidate',
+        data-type: 'add-to-cart-form'
+      -%}
+        <input
+          type="hidden"
+          name="id"
+          value="{{ express_variant.id }}"
+          class="product-variant-id"
+          {% unless express_variant.available %}
+            disabled
+          {% endunless %}
+        >
+        <input type="hidden" name="quantity" value="1">
+        <button
+          type="submit"
+          name="add"
+          class="cz-card-express__btn"
+          aria-label="{{ 'products.product.add_to_cart' | t }}: {{ card_product.title | escape }}"
+          aria-live="polite"
+          data-sold-out-message="true"
+          {% unless express_variant.available %}
+            disabled
+          {% endunless %}
+        >
+          <span>
+            {%- if express_variant.available -%}
+              Agregar
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </span>
+          <span class="sold-out-message hidden">
+            {{ 'products.product.sold_out' | t }}
+          </span>
+          {%- render 'loading-spinner' -%}
+        </button>
+      {%- endform -%}
+    </product-form>
+  </div>
+{%- endif -%}

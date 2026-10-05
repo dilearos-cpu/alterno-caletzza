@@ -1,0 +1,457 @@
+{{ 'pack-cta-button.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign button_action = section.settings.button_action
+  assign link_url = section.settings.button_link
+  if link_url == blank and section.settings.button_link_url != blank
+    assign link_url = section.settings.button_link_url
+  endif
+
+  assign is_link = false
+  if button_action == 'link' and link_url != blank
+    assign is_link = true
+  endif
+
+  assign shake_class = ''
+  if section.settings.enable_shake_animation
+    assign shake_class = 'pack-cta__button--shake'
+  endif
+
+  if section.settings.section_background_transparent
+    assign section_bg = 'transparent'
+  else
+    assign section_bg = section.settings.section_background_color
+  endif
+
+  if section.settings.floating_background_transparent
+    assign float_bg = 'transparent'
+  else
+    assign float_bg = section.settings.floating_background_color
+  endif
+%}
+
+<section
+  class="pack-cta pack-cta--align-{{ section.settings.alignment }}"
+  id="pack-cta-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-position-mode="{{ section.settings.position_mode }}"
+  data-float-trigger="{{ section.settings.float_trigger }}"
+  data-pack-target="{{ section.settings.pack_target }}"
+  style="
+    --pack-cta-bg: {{ section_bg }};
+    --pack-cta-float-bg: {{ float_bg }};
+    --pack-cta-pt: {{ section.settings.padding_top }}px;
+    --pack-cta-pr: {{ section.settings.padding_right }}px;
+    --pack-cta-pb: {{ section.settings.padding_bottom }}px;
+    --pack-cta-pl: {{ section.settings.padding_left }}px;
+    --pack-cta-button-bg: {{ section.settings.button_background_color }};
+    --pack-cta-button-color: {{ section.settings.button_text_color }};
+    --pack-cta-border-color: {{ section.settings.button_border_color }};
+    --pack-cta-border-width: {{ section.settings.button_border_width }}px;
+    --pack-cta-radius: {{ section.settings.button_border_radius }}px;
+    --pack-cta-font-size: {{ section.settings.button_font_size }}px;
+    --pack-cta-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+    --pack-cta-max-width: {{ section.settings.button_max_width }}px;
+    --pack-cta-float-offset: {{ section.settings.float_bottom_offset }}px;
+    --pack-cta-z-index: {{ section.settings.float_z_index }};
+  "
+>
+  <div class="pack-cta__inner pack-cta__inner--align-{{ section.settings.alignment }}">
+    <div class="pack-cta__anchor" data-cta-anchor>
+      {% render 'pack-cta-button-control',
+        is_link: is_link,
+        button_action: button_action,
+        button_link: link_url,
+        open_in_new_tab: section.settings.open_in_new_tab,
+        button_label: section.settings.button_label,
+        show_icon: section.settings.show_icon,
+        icon_image: section.settings.icon_image,
+        icon_preset: section.settings.icon_preset,
+        extra_class: '',
+        extra_attributes: 'data-cta-button-inline'
+      %}
+    </div>
+  </div>
+
+  {% if section.settings.position_mode == 'fixed_floating' %}
+    <div
+      class="pack-cta__floating"
+      data-cta-floating
+      data-position="bottom"
+      aria-hidden="true"
+    >
+      <div class="pack-cta__floating-inner">
+        {% render 'pack-cta-button-control',
+          is_link: is_link,
+          button_action: button_action,
+          button_link: link_url,
+          open_in_new_tab: section.settings.open_in_new_tab,
+          button_label: section.settings.button_label,
+          show_icon: section.settings.show_icon,
+          icon_image: section.settings.icon_image,
+          icon_preset: section.settings.icon_preset,
+          extra_class: shake_class,
+          extra_attributes: 'data-cta-button-floating'
+        %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+<script src="{{ 'pack-page-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'pack-cta-button.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Boton compra flotante",
+  "tag": "section",
+  "class": "section-pack-cta",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Fondo de la seccion"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_background_transparent",
+      "label": "Fondo de seccion transparente",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Color de fondo de la seccion",
+      "default": "#D2B49B"
+    },
+    {
+      "type": "header",
+      "content": "Enlace del boton"
+    },
+    {
+      "type": "select",
+      "id": "button_action",
+      "label": "Que hace al pulsar",
+      "default": "scroll_pack",
+      "options": [
+        {
+          "value": "link",
+          "label": "Abrir enlace personalizado"
+        },
+        {
+          "value": "scroll_pack",
+          "label": "Ir al pack en la pagina"
+        },
+        {
+          "value": "trigger_buy",
+          "label": "Comprar ahora (igual que el pack)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button_link_url",
+      "label": "Enlace (URL)",
+      "default": "/",
+      "info": "Pega aqui la URL que quieras. Ej: /pages/mi-landing o https://tusitio.com"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace (selector Shopify)",
+      "info": "Opcional. Si lo llenas, tiene prioridad sobre el campo de texto."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Abrir enlace en nueva pestana",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Texto y colores del boton"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del boton",
+      "default": "Compra aqui | Paga en casa"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Color de fondo del boton",
+      "default": "#FFDE21"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color de letra del boton",
+      "default": "#010101"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Color del borde del boton",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Grosor del borde",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Redondeo del boton",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamano de letra",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Icono"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Mostrar icono",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Icono personalizado (imagen)"
+    },
+    {
+      "type": "select",
+      "id": "icon_preset",
+      "label": "Icono predeterminado",
+      "default": "cart",
+      "options": [
+        {
+          "value": "cart",
+          "label": "Carrito"
+        },
+        {
+          "value": "bag",
+          "label": "Bolsa de compras"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Pack vinculado"
+    },
+    {
+      "type": "select",
+      "id": "pack_target",
+      "label": "Que pack controla este boton",
+      "default": "auto",
+      "info": "Automatico busca el pack mas cercano en la pagina. Usa Pack basicas o Pack bodys si hay mas de uno.",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatico (el mas cercano)"
+        },
+        {
+          "value": "basicas",
+          "label": "Pack basicas (recuadros simples)"
+        },
+        {
+          "value": "bodys",
+          "label": "Pack bodys (con variantes)"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Barra flotante (modo fijo + flotante)"
+    },
+    {
+      "type": "checkbox",
+      "id": "floating_background_transparent",
+      "label": "Fondo de barra flotante transparente",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "floating_background_color",
+      "label": "Color de fondo de la barra flotante",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "position_mode",
+      "label": "Modo de posicion",
+      "default": "fixed_floating",
+      "options": [
+        {
+          "value": "fixed",
+          "label": "Fijo"
+        },
+        {
+          "value": "fixed_floating",
+          "label": "Fijo + flotante"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "float_trigger",
+      "label": "Cuando aparece el flotante",
+      "default": "pack_buy",
+      "options": [
+        {
+          "value": "pack_buy",
+          "label": "Al pasar el boton Comprar ahora del pack"
+        },
+        {
+          "value": "pack_slots",
+          "label": "Al pasar los recuadros del pack"
+        },
+        {
+          "value": "cta_section",
+          "label": "Al pasar este boton en la pagina"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shake_animation",
+      "label": "Animacion shake en el boton flotante",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "float_bottom_offset",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Separacion inferior cuando flota",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "float_z_index",
+      "min": 10,
+      "max": 200,
+      "step": 5,
+      "label": "Capa (z-index) cuando flota",
+      "default": 90
+    },
+    {
+      "type": "header",
+      "content": "Diseno"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineacion",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_max_width",
+      "min": 280,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho maximo del boton",
+      "default": 680
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior de la seccion",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior de la seccion",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding izquierdo de la seccion",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding derecho de la seccion",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Boton compra flotante",
+      "category": "Botones",
+      "settings": {
+        "button_label": "Compra aqui | Paga en casa",
+        "button_action": "scroll_pack",
+        "button_link_url": "/",
+        "section_background_transparent": false,
+        "section_background_color": "#D2B49B",
+        "button_background_color": "#FFDE21",
+        "button_text_color": "#010101",
+        "button_border_color": "#000000",
+        "button_border_radius": 20,
+        "icon_preset": "cart",
+        "position_mode": "fixed_floating",
+        "float_trigger": "pack_buy",
+        "enable_shake_animation": true
+      }
+    }
+  ]
+}
+{% endschema %}

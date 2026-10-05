@@ -1,0 +1,23 @@
+{%- if card_product and card_product != empty -%}
+  {%- liquid
+    assign discount_collection_handles = card_product.collections | map: 'handle' | join: ','
+    assign discount_product_tags = card_product.tags | join: ','
+    assign discount_variant_price = card_product.selected_or_first_available_variant.price
+  -%}
+  <div
+    class="discount-rules-card-price"
+    data-discount-rules-card
+    data-product-id="{{ card_product.id }}"
+    data-product-handle="{{ card_product.handle }}"
+    data-variant-price="{{ discount_variant_price }}"
+    data-collection-handles="{{ discount_collection_handles }}"
+    data-tags="{{ discount_product_tags }}"
+  >
+    {% render 'price',
+      product: card_product,
+      price_class: price_class,
+      show_compare_at_price: show_compare_at_price,
+      use_variant: use_variant
+    %}
+  </div>
+{%- endif -%}

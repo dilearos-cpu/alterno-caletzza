@@ -1,0 +1,334 @@
+{{ 'social-proof-popup.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="social-proof-popup"
+  id="social-proof-popup-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-initial-delay="{{ section.settings.initial_delay }}"
+  data-interval-min="{{ section.settings.interval_min }}"
+  data-interval-max="{{ section.settings.interval_max }}"
+  data-display-duration="{{ section.settings.display_duration }}"
+  data-position="{{ section.settings.position }}"
+  data-show-mobile="{{ section.settings.show_mobile }}"
+  data-show-desktop="{{ section.settings.show_desktop }}"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div class="social-proof-popup__toast" hidden>
+    <button type="button" class="social-proof-popup__close" aria-label="Cerrar notificación">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="social-proof-popup__content">
+      <div class="social-proof-popup__image-wrap" hidden>
+        <img class="social-proof-popup__image" alt="" width="48" height="48" loading="lazy">
+      </div>
+      <p class="social-proof-popup__message"></p>
+    </div>
+    <span class="social-proof-popup__verified">
+      <svg class="social-proof-popup__check" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm-1 15l-5-5 1.41-1.41L9 12.17l7.59-7.59L18 6l-9 9z"/>
+      </svg>
+      {{ section.settings.verified_label }}
+    </span>
+  </div>
+
+  {%- liquid
+    assign spp_message_template = section.settings.message_template
+    if spp_message_template == blank
+      assign spp_message_template = '{name} ha comprado un {pack} hace {time} en {city}'
+    endif
+  -%}
+
+  <script type="application/json" data-social-proof-config>
+    {
+      "cities": {{ section.settings.cities | default: 'Bogotá,Medellín,Cali,Barranquilla,Cartagena,Bucaramanga,Pereira,Manizales,Santa Marta,Ibagué,Cúcuta,Villavicencio,Pasto,Montería,Armenia' | split: ',' | json }},
+      "defaultNames": {{ section.settings.default_names | default: 'Juanito,María,Carlos,Laura,Andrés,Camila,Diego,Valentina,Santiago,Daniela,Felipe,Isabella,Nicolás,Paula,Sebastián' | split: ',' | json }},
+      "messageTemplate": {{ spp_message_template | json }},
+      "timePhrases": {{ section.settings.time_phrases | default: 'hace un momento,hace 1 minuto,hace 2 minutos,hace 5 minutos,hace 8 minutos,hace 12 minutos,hace 15 minutos' | split: ',' | json }},
+      "campaigns": [
+        {
+          "id": "default",
+          "packLabel": {{ section.settings.pack_label | default: 'pack de bodys' | json }},
+          "unitsFixed": {{ section.settings.units_fixed | default: 4 | json }},
+          "randomUnits": {{ section.settings.random_units | json }},
+          "unitsMin": {{ section.settings.units_min | default: 2 | json }},
+          "unitsMax": {{ section.settings.units_max | default: 10 | json }},
+          "names": [],
+          "image": {% if section.settings.product_image != blank %}{{ section.settings.product_image | image_url: width: 96 | json }}{% else %}null{% endif %}
+        }
+        {%- assign campaign_blocks = section.blocks | where: 'type', 'popup_campaign' -%}
+        {%- if campaign_blocks.size > 0 -%},{%- endif -%}
+        {%- for block in campaign_blocks -%}
+          {
+            "id": {{ block.settings.shortcode_id | default: block.id | json }},
+            "packLabel": {{ block.settings.pack_label | default: 'pack de bodys' | json }},
+            "unitsFixed": {{ block.settings.units_fixed | default: 4 | json }},
+            "randomUnits": {{ block.settings.random_units | json }},
+            "unitsMin": {{ block.settings.units_min | default: 2 | json }},
+            "unitsMax": {{ block.settings.units_max | default: 10 | json }},
+            "names": {{ block.settings.names | default: '' | split: ',' | json }},
+            "image": {% if block.settings.product_image != blank %}{{ block.settings.product_image | image_url: width: 96 | json }}{% else %}null{% endif %}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+</div>
+
+<script src="{{ 'social-proof-popup.js' | asset_url }}" defer></script>
+
+{% style %}
+  #social-proof-popup-{{ section.id }} {
+    --spp-bg: {{ section.settings.background_color }};
+    --spp-text: {{ section.settings.text_color }};
+    --spp-accent: {{ section.settings.accent_color }};
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Popup prueba social",
+  "tag": "section",
+  "class": "social-proof-popup-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Pack / Producto"
+    },
+    {
+      "type": "text",
+      "id": "pack_label",
+      "label": "Nombre del pack",
+      "default": "pack de bodys",
+      "info": "Ejemplo: pack de bodys, pack básicas, set premium"
+    },
+    {
+      "type": "range",
+      "id": "units_fixed",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Unidades del pack",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "random_units",
+      "label": "Usar unidades aleatorias",
+      "default": false,
+      "info": "Si está activo, ignora las unidades fijas y elige un número al azar entre el mínimo y el máximo."
+    },
+    {
+      "type": "range",
+      "id": "units_min",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Unidades mínimas (aleatorio)",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "units_max",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Unidades máximas (aleatorio)",
+      "default": 10
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Imagen del producto (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Comportamiento"
+    },
+    {
+      "type": "range",
+      "id": "initial_delay",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "label": "Retraso antes del primer popup",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "interval_min",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "s",
+      "label": "Intervalo mínimo entre popups",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "interval_max",
+      "min": 10,
+      "max": 90,
+      "step": 1,
+      "unit": "s",
+      "label": "Intervalo máximo entre popups",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "display_duration",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "label": "Duración visible del popup",
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Posición en pantalla",
+      "options": [
+        { "value": "bottom-left", "label": "Abajo izquierda" },
+        { "value": "bottom-right", "label": "Abajo derecha" }
+      ],
+      "default": "bottom-left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile",
+      "label": "Mostrar en móvil",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_desktop",
+      "label": "Mostrar en escritorio",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Textos y datos aleatorios"
+    },
+    {
+      "type": "textarea",
+      "id": "message_template",
+      "label": "Plantilla del mensaje",
+      "info": "Variables: {name}, {pack}, {units}, {time}, {city}",
+      "default": "{name} ha comprado un {pack} hace {time} en {city}"
+    },
+    {
+      "type": "textarea",
+      "id": "cities",
+      "label": "Ciudades de Colombia (separadas por coma)",
+      "default": "Bogotá,Medellín,Cali,Barranquilla,Cartagena,Bucaramanga,Pereira,Manizales,Santa Marta,Ibagué,Cúcuta,Villavicencio,Pasto,Montería,Armenia"
+    },
+    {
+      "type": "textarea",
+      "id": "default_names",
+      "label": "Nombres por defecto (separados por coma)",
+      "default": "Juanito,María,Carlos,Laura,Andrés,Camila,Diego,Valentina,Santiago,Daniela,Felipe,Isabella,Nicolás,Paula,Sebastián"
+    },
+    {
+      "type": "textarea",
+      "id": "time_phrases",
+      "label": "Frases de tiempo (separadas por coma)",
+      "default": "hace un momento,hace 1 minuto,hace 2 minutos,hace 5 minutos,hace 8 minutos,hace 12 minutos,hace 15 minutos"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Texto de verificación",
+      "default": "Compra verificada"
+    },
+    {
+      "type": "header",
+      "content": "Estilo"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#2e7d32"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "popup_campaign",
+      "name": "Campaña adicional",
+      "settings": [
+        {
+          "type": "text",
+          "id": "shortcode_id",
+          "label": "ID del shortcode",
+          "info": "Identificador unico. Usalo en el snippet con el parametro campaign_id."
+        },
+        {
+          "type": "text",
+          "id": "pack_label",
+          "label": "Nombre del pack",
+          "default": "pack de bodys",
+          "info": "Ejemplo: pack de bodys, pack básicas, set premium"
+        },
+        {
+          "type": "number",
+          "id": "units_fixed",
+          "label": "Unidades fijas",
+          "default": 4
+        },
+        {
+          "type": "checkbox",
+          "id": "random_units",
+          "label": "Usar unidades aleatorias",
+          "default": false
+        },
+        {
+          "type": "number",
+          "id": "units_min",
+          "label": "Unidades mínimas (aleatorio)",
+          "default": 2
+        },
+        {
+          "type": "number",
+          "id": "units_max",
+          "label": "Unidades máximas (aleatorio)",
+          "default": 10
+        },
+        {
+          "type": "textarea",
+          "id": "names",
+          "label": "Nombres personalizados (separados por coma)",
+          "info": "Opcional. Si está vacío, usa los nombres globales de la sección."
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Imagen del producto (opcional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup prueba social",
+      "settings": {
+        "pack_label": "pack de bodys",
+        "units_fixed": 4
+      }
+    }
+  ]
+}
+{% endschema %}

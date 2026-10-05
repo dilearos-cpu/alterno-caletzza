@@ -1,0 +1,19 @@
+# Caletzza Theme — configuración Shopify CLI
+#
+# Live = fuente de verdad del editor (banners, templates, reglas).
+# Deploy habitual: npm run theme:push:code (solo liquid/css/js).
+
+[environments.default]
+store = "tienda-dev-cuunda.myshopify.com"
+theme = "Caletzza Theme"
+
+[environments.production]
+store = "caletzza.myshopify.com"
+theme = "Caletzza Theme (migrado dem 2026-08-16)"
+
+[environments.production-draft]
+store = "caletzza.myshopify.com"
+theme = "Caletzza Theme (migrado dem 2026-08-16)"
+
+[environments.draft]
+store = "tienda-dev-cuunda.myshopify.com"

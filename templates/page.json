@@ -1,0 +1,173 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "collage_MDU84w": {
+      "type": "collage",
+      "blocks": {
+        "image_VYDk3N": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Landing_6.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "image_VYDk3N"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h1",
+        "desktop_layout": "left",
+        "mobile_layout": "column",
+        "card_styles": "product-card-wrapper",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 24
+      }
+    },
+    "countdown_rjXxAk": {
+      "type": "countdown",
+      "settings": {
+        "countdown_date": "2025-05-01T23:59:59Z"
+      }
+    },
+    "progress_bar_jdPMm3": {
+      "type": "progress-bar",
+      "settings": {
+        "promo_text": "¡Solo 5 promos disponibles!"
+      }
+    },
+    "popup_storefront_copy_dkXmeB": {
+      "type": "popup-storefront-copy",
+      "settings": {}
+    },
+    "collage_cGLRbi": {
+      "type": "collage",
+      "blocks": {
+        "image_kDmceF": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/022_caletzza.png"
+          }
+        }
+      },
+      "block_order": [
+        "image_kDmceF"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h1",
+        "desktop_layout": "left",
+        "mobile_layout": "column",
+        "card_styles": "product-card-wrapper",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "collage_c7fJcL": {
+      "type": "collage",
+      "blocks": {
+        "image_dwEzHH": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/tablas_medidas_Caletzza_mujer_1.png"
+          }
+        }
+      },
+      "block_order": [
+        "image_dwEzHH"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h1",
+        "desktop_layout": "left",
+        "mobile_layout": "column",
+        "card_styles": "product-card-wrapper",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "testimonials_section_TyKtCp": {
+      "type": "testimonials-section",
+      "blocks": {
+        "testimonial_JTAC7k": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Hermosas yo las recomiendo, una tela super espectacular",
+            "author": "Ossa Anyel",
+            "rating": 5
+          }
+        },
+        "testimonial_gKWtgU": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Super espectacular, las recomiendo 100%",
+            "author": "Katherine Vega",
+            "rating": 5
+          }
+        },
+        "testimonial_BfgFp3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Son muy recomendadas",
+            "author": "Tatiana Montilla",
+            "rating": 5
+          }
+        },
+        "testimonial_3riC3y": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Yo compré, y si son muy lindas, las recomiendo. Y muy pronto haré otro pedido",
+            "author": "Sugeidis Ortiz Muñoz",
+            "rating": 5
+          }
+        },
+        "testimonial_MDr8qB": {
+          "type": "testimonial",
+          "disabled": true,
+          "settings": {
+            "quote": "Yo compré ya dos veces la promo y todas salieron muy bonitas tal como las escogí. Y lo mejor es que tienen pago contraentrega. Aunque el envío hasta Leticia Amazonas sale un poquito altico. De todos modos vale la pena comprar.",
+            "author": "Gema Yadaami Rubio Nuñez",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_JTAC7k",
+        "testimonial_gKWtgU",
+        "testimonial_BfgFp3",
+        "testimonial_3riC3y",
+        "testimonial_MDr8qB"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "collage_MDU84w",
+    "countdown_rjXxAk",
+    "progress_bar_jdPMm3",
+    "popup_storefront_copy_dkXmeB",
+    "collage_cGLRbi",
+    "collage_c7fJcL",
+    "testimonials_section_TyKtCp"
+  ]
+}

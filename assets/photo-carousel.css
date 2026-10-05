@@ -1,0 +1,122 @@
+.photo-carousel {
+  width: 100%;
+  max-width: 100%;
+  background: var(--carousel-bg, transparent);
+  padding-top: var(--carousel-pt, 0);
+  padding-right: var(--carousel-pr, 0);
+  padding-bottom: var(--carousel-pb, 0);
+  padding-left: var(--carousel-pl, 0);
+  margin-top: var(--carousel-mt, 0);
+  margin-bottom: var(--carousel-mb, 0);
+  box-sizing: border-box;
+}
+
+.photo-carousel__heading {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.photo-carousel__empty {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.photo-carousel__viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  --slides-per-view: 1;
+  --slide-gap: 10px;
+}
+
+.photo-carousel__track {
+  display: flex;
+  gap: var(--slide-gap);
+  transition: transform 0.6s ease;
+  will-change: transform;
+  touch-action: pan-y;
+}
+
+.photo-carousel__slide {
+  box-sizing: border-box;
+  flex: 0 0 calc((100% - ((var(--slides-per-view) - 1) * var(--slide-gap))) / var(--slides-per-view));
+  width: calc((100% - ((var(--slides-per-view) - 1) * var(--slide-gap))) / var(--slides-per-view));
+  height: var(--carousel-height, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+.photo-carousel__link,
+.photo-carousel__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.photo-carousel__image {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.photo-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.photo-carousel__arrow--prev {
+  left: 12px;
+}
+
+.photo-carousel__arrow--next {
+  right: 12px;
+}
+
+.photo-carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.photo-carousel__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: #ccc;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.photo-carousel__dot.is-active {
+  background: #111;
+}
+
+@media (max-width: 767px) {
+  .photo-carousel__viewport {
+    --slides-per-view: 2;
+  }
+
+  .photo-carousel__arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}

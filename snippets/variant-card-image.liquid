@@ -1,0 +1,38 @@
+{% comment %}
+  Resuelve la imagen de variante para swatches en cards.
+  Prioridad: featured_media → image → imagen del producto ligada a la variante → featured del producto.
+  Uso: {% capture url %}{% render 'variant-card-image', product: card_product, variant: variant_for_color, image_width: 720 %}{% endcapture %}
+{% endcomment %}
+{%- liquid
+  assign img_width = image_width | default: 720
+  assign resolved = blank
+
+  if variant != blank
+    if variant.featured_media != blank
+      assign resolved = variant.featured_media.preview_image | default: variant.featured_media
+    endif
+    if resolved == blank and variant.image != blank
+      assign resolved = variant.image
+    endif
+    if resolved == blank
+      for image in product.images
+        for image_variant in image.variants
+          if image_variant.id == variant.id
+            assign resolved = image
+            break
+          endif
+        endfor
+        if resolved != blank
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  if resolved == blank
+    assign resolved = product.featured_media.preview_image | default: product.featured_image
+  endif
+-%}
+{%- if resolved != blank -%}
+  {{- resolved | image_url: width: img_width -}}
+{%- endif -%}

@@ -1,0 +1,401 @@
+{%- liquid
+  assign cod_sync_endpoint = section.settings.sync_rules_endpoint | strip
+  if cod_sync_endpoint == blank
+    assign cod_sync_endpoint = settings.cod_sync_rules_endpoint
+  endif
+  if cod_sync_endpoint == blank
+    assign cod_sync_endpoint = '/apps/cod-express/sync-rules'
+  endif
+-%}
+
+{{ 'pack-discount-rules.css' | asset_url | stylesheet_tag }}
+
+<script type="application/json" data-discount-rules>
+[
+{%- assign first_rule = true -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'rule' -%}
+    {%- liquid
+      assign rule_enabled = block.settings.enabled
+      if rule_enabled == nil
+        assign rule_enabled = true
+      endif
+
+      assign filter_type = block.settings.filter_type | default: 'collection'
+      assign rule_product = blank
+      assign rule_collection = blank
+      assign product_handle_setting = blank
+      assign has_filter = false
+      assign effective_title_prefix = block.settings.title_prefix | strip
+
+      if filter_type == 'all_products'
+        assign has_filter = true
+      elsif filter_type == 'collection'
+        assign collection_handle_setting = blank
+        if block.settings.collection != blank
+          assign rule_collection = block.settings.collection
+        elsif block.settings.collection_handle != blank
+          assign collection_handle_setting = block.settings.collection_handle
+          assign rule_collection = collections[block.settings.collection_handle]
+        endif
+        if rule_collection != blank or collection_handle_setting != blank
+          assign has_filter = true
+        endif
+      elsif filter_type == 'product' and block.settings.product != blank
+        if block.settings.product.handle != blank
+          assign product_handle_setting = block.settings.product.handle
+          assign rule_product = block.settings.product
+        else
+          assign product_handle_setting = block.settings.product
+          assign rule_product = all_products[product_handle_setting]
+        endif
+        if rule_product != blank
+          assign has_filter = true
+        elsif product_handle_setting != blank
+          assign has_filter = true
+        endif
+      elsif filter_type == 'tag' and block.settings.product_tag != blank
+        assign has_filter = true
+      endif
+
+      assign rule_index = forloop.index0
+      assign tier_count = 0
+    -%}
+    {%- if rule_enabled and has_filter -%}
+      {%- capture rule_ranges -%}
+        {%- assign first_tier = true -%}
+        {%- for tier_block in section.blocks -%}
+          {%- assign tier_pos = forloop.index0 -%}
+          {%- if tier_pos <= rule_index -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- if tier_block.type == 'rule' -%}
+            {%- break -%}
+          {%- endif -%}
+          {%- if tier_block.type != 'tier' -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- assign tier_min = tier_block.settings.min_quantity | default: 1 -%}
+          {%- assign tier_max = tier_block.settings.max_quantity | default: tier_min -%}
+          {%- assign tier_price_cop = tier_block.settings.unit_price | default: 0 -%}
+          {%- if tier_price_cop <= 0 -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- assign tier_value_cents = tier_price_cop | times: 100 -%}
+          {%- unless first_tier -%},{%- endunless -%}
+          {
+            "min": {{ tier_min }},
+            "max": {{ tier_max }},
+            "type": "fixed_price_per_item",
+            "value": {{ tier_value_cents }},
+            "label": {{ tier_block.settings.label | json }},
+            "highlight": {{ tier_block.settings.highlight | json }}
+          }
+          {%- assign first_tier = false -%}
+          {%- assign tier_count = tier_count | plus: 1 -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- if tier_count == 0 and block.settings.tiers_json != blank -%}
+        {%- assign rule_ranges = block.settings.tiers_json -%}
+        {%- assign tier_count = 1 -%}
+      {%- endif -%}
+
+      {%- if tier_count > 0 -%}
+        {%- unless first_rule -%},{%- endunless -%}
+        {%- assign first_rule = false -%}
+  {
+    "id": {{ block.id | json }},
+    "title": {{ block.settings.title | default: 'Regla' | json }},
+    "enabled": true,
+    "scope": {{ block.settings.scope | default: 'both' | json }},
+    "priority": {{ block.settings.priority | default: 10 }},
+    "exclusive": {% if block.settings.exclusive %}true{% else %}false{% endif %},
+    "count_mode": {{ block.settings.count_mode | json }},
+    "filter": {
+      "type": {{ filter_type | json }}{% if filter_type == 'collection' and rule_collection != blank %},
+      "collection": {{ rule_collection.handle | json }},
+      "collections": [{{ rule_collection.handle | json }}],
+      "collection_id": {{ rule_collection.id | prepend: 'gid://shopify/Collection/' | json }},
+      "collection_ids": [{{ rule_collection.id | prepend: 'gid://shopify/Collection/' | json }}]{% if rule_collection.products_count > 0 and rule_collection.products_count <= 50 %},
+      "product_ids": [
+        {%- assign first_product_id = true -%}
+        {%- for collection_product in rule_collection.products limit: 50 -%}
+          {%- unless first_product_id -%},{%- endunless -%}
+          {{ collection_product.id }}
+          {%- assign first_product_id = false -%}
+        {%- endfor -%}
+      ]{% endif %}{% if effective_title_prefix != blank %},
+      "title_prefixes": [{{ effective_title_prefix | json }}]{% endif %}{% elsif filter_type == 'collection' and collection_handle_setting != blank %},
+      "collection": {{ collection_handle_setting | json }},
+      "collections": [{{ collection_handle_setting | json }}]{% if effective_title_prefix != blank %},
+      "title_prefixes": [{{ effective_title_prefix | json }}]{% endif %}{% elsif filter_type == 'product' %}{% if rule_product != blank %},
+      "product_id": {{ rule_product.id | json }},
+      "product_handle": {{ rule_product.handle | json }}{% elsif product_handle_setting != blank %},
+      "product_handle": {{ product_handle_setting | json }}{% endif %}{% elsif filter_type == 'tag' %},
+      "tag": {{ block.settings.product_tag | json }},
+      "tags": [{{ block.settings.product_tag | json }}]{% if effective_title_prefix != blank %},
+      "title_prefixes": [{{ effective_title_prefix | json }}]{% endif %}{% endif %}
+    },
+    "ranges": [{{ rule_ranges }}],
+    "conditions": {% if block.settings.conditions_json != blank %}{{ block.settings.conditions_json }}{% else %}[]{% endif %}
+  }
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+]
+</script>
+
+<div
+  class="discount-rules-cart-config"
+  data-discount-rules-cart-config
+  data-sync-rules-endpoint="{{ cod_sync_endpoint | escape }}"
+  data-sync-rules-fallback="https://cod-express-r15e.onrender.com/sync-rules"
+  data-preview-discounts-endpoint="/apps/cod-express/preview-discounts"
+  data-preview-discounts-fallback="https://cod-express-r15e.onrender.com/preview-discounts"
+  data-checkout-endpoint="/apps/cod-express/checkout"
+  data-checkout-fallback="https://cod-express-r15e.onrender.com/checkout"
+  hidden
+></div>
+
+{% comment %}
+  Cart totals/lines are painted only by assets/discount-rules-cart.js
+  (editor rules). Do not add a second inline applicator here — it duplicates
+  Subtotal/Descuento/Total in the slide cart and makes prices jump.
+{% endcomment %}
+
+{% schema %}
+{
+  "name": "Reglas de precio (global)",
+  "tag": "section",
+  "class": "section-discount-rules-global",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Cada regla aplica a UNA colección (o producto/tag). Dentro de cada regla agrega los tramos con cantidad mínima, máxima y precio por unidad en COP. Puedes crear varias reglas para distintas colecciones."
+    },
+    {
+      "type": "paragraph",
+      "content": "Ejemplo bodys: 1-3 → $35.000 | 4-6 → $30.000 | 7-12 → $25.000. Los precios los defines tú en cada tramo."
+    },
+    {
+      "type": "text",
+      "id": "sync_rules_endpoint",
+      "label": "Endpoint sincronizacion reglas (opcional)",
+      "info": "Dejar vacio para usar Configuracion del tema → Integraciones COD Express."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "rule",
+      "name": "Regla por colección",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Activa",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Nombre interno",
+          "default": "Regla tienda"
+        },
+        {
+          "type": "select",
+          "id": "scope",
+          "label": "Alcance",
+          "default": "both",
+          "options": [
+            {
+              "value": "storefront",
+              "label": "Solo tienda (Home, coleccion, producto)"
+            },
+            {
+              "value": "pack",
+              "label": "Solo packs + checkout COD"
+            },
+            {
+              "value": "both",
+              "label": "Tienda y packs"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "filter_type",
+          "label": "Aplicar a",
+          "default": "collection",
+          "options": [
+            {
+              "value": "collection",
+              "label": "Una colección"
+            },
+            {
+              "value": "product",
+              "label": "Un producto específico"
+            },
+            {
+              "value": "tag",
+              "label": "Productos con etiqueta"
+            }
+          ]
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección",
+          "info": "Elige la colección a la que aplica esta regla (ej. Bodys, Básicas…)"
+        },
+        {
+          "type": "text",
+          "id": "collection_handle",
+          "label": "Handle de coleccion (respaldo)",
+          "info": "Si el selector de coleccion esta vacio, usa el handle. Ejemplo: bodys"
+        },
+        {
+          "type": "text",
+          "id": "title_prefix",
+          "label": "Prefijo de titulo (opcional)",
+          "info": "Solo si lo defines en el editor. Vacio = sin prefijo; aplica la coleccion/tag elegidos."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto"
+        },
+        {
+          "type": "text",
+          "id": "product_tag",
+          "label": "Etiqueta del producto"
+        },
+        {
+          "type": "select",
+          "id": "count_mode",
+          "label": "Contar cantidades por",
+          "default": "filter_set",
+          "options": [
+            {
+              "value": "filter_set",
+              "label": "Todo el conjunto del filtro"
+            },
+            {
+              "value": "individual_product",
+              "label": "Por producto individual"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "priority",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "label": "Prioridad (mayor gana primero)",
+          "default": 10
+        },
+        {
+          "type": "checkbox",
+          "id": "exclusive",
+          "label": "Exclusiva (ignorar otras reglas si coincide)",
+          "default": false
+        },
+        {
+          "type": "textarea",
+          "id": "conditions_json",
+          "label": "Condiciones extra (JSON, opcional)",
+          "default": "[]"
+        }
+      ]
+    },
+    {
+      "type": "tier",
+      "name": "Tramo de precio",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Coloca este bloque justo DEBAJO de la regla de colección a la que pertenece. Los tramos se agrupan hasta la siguiente regla."
+        },
+        {
+          "type": "number",
+          "id": "min_quantity",
+          "label": "Cantidad mínima",
+          "default": 1
+        },
+        {
+          "type": "number",
+          "id": "max_quantity",
+          "label": "Cantidad máxima",
+          "default": 3,
+          "info": "Ej. 4 a 6 unidades → min 4, max 6."
+        },
+        {
+          "type": "number",
+          "id": "unit_price",
+          "label": "Precio por unidad (COP)",
+          "default": 35000,
+          "info": "Sin puntos. Ejemplo: 35000 = $35.000"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta (opcional)",
+          "info": "Ej. Ahorra, Mejor precio"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Destacar fila",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reglas de precio global",
+      "blocks": [
+        {
+          "type": "rule",
+          "settings": {
+            "title": "Bodys",
+            "scope": "both",
+            "filter_type": "collection",
+            "collection_handle": "bodys"
+          }
+        },
+        {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 3,
+            "unit_price": 35000
+          }
+        },
+        {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 4,
+            "max_quantity": 6,
+            "unit_price": 30000,
+            "label": "Ahorra"
+          }
+        },
+        {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 7,
+            "max_quantity": 12,
+            "unit_price": 25000,
+            "label": "Mejor precio",
+            "highlight": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

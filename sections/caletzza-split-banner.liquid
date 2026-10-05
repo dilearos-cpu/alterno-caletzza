@@ -1,0 +1,123 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  <div class="cz-split-banner page-width">
+    {%- for block in section.blocks -%}
+      <a
+        class="cz-split-banner__item"
+        href="{{ block.settings.link | default: '#' }}"
+        {{ block.shopify_attributes }}
+      >
+        {%- if block.settings.image != blank -%}
+          {{
+            block.settings.image
+            | image_url: width: 900
+            | image_tag: loading: 'lazy', alt: block.settings.title
+          }}
+        {%- else -%}
+          {{ 'hero-apparel-1' | placeholder_svg_tag }}
+        {%- endif -%}
+        <div class="cz-split-banner__content">
+          {%- if block.settings.subtitle != blank -%}
+            <p class="cz-split-banner__subtitle">{{ block.settings.subtitle }}</p>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="cz-split-banner__title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          {%- if block.settings.button_label != blank -%}
+            <span class="button button--primary">{{ block.settings.button_label }}</span>
+          {%- endif -%}
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Banner dividido Caletzza",
+  "tag": "section",
+  "class": "section-caletzza-split-banner",
+  "max_blocks": 2,
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtítulo",
+          "default": "CON RAPPI"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Nueva colección"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Texto del botón",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner dividido Caletzza",
+      "blocks": [
+        { "type": "banner", "settings": { "title": "Lo nuevo", "button_label": "Ver colección" } },
+        { "type": "banner", "settings": { "title": "Rebajas", "button_label": "Comprar ahora" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

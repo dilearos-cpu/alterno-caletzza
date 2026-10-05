@@ -1,0 +1,165 @@
+{% schema %}
+{
+  "name": "Testimonios de Clientes",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "quote",
+          "label": "Comentario"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Autor"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Estrellas",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonios de Clientes",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Hermosas yo las recomiendo, una tela super espectacular",
+            "author": "Ossa Anyel",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Super espectacular, las recomiendo 100%",
+            "author": "Katherine Vega",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Son muy recomendadas",
+            "author": "Tatiana Montilla",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Yo compré, y si son muy lindas, las recomiendo. Y muy pronto haré otro pedido",
+            "author": "Sugeidis Ortiz Muñoz",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Yo compré ya dos veces la promo y todas salieron muy bonitas tal como las escogí. Y lo mejor es que tienen pago contraentrega. Aunque el envío hasta Leticia Amazonas sale un poquito altico. De todos modos vale la pena comprar.",
+            "author": "Gema Yadaami Rubio Nuñez",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="testimonial-section page-width">
+  <h2 class="testimonial-title">Lo que dicen nuestras clientas 💬</h2>
+  <div class="testimonial-grid">
+    {% for block in section.blocks %}
+      <div class="testimonial-item">
+        <div class="testimonial-stars">
+          {% for i in (1..block.settings.rating) %}
+            ⭐
+          {% endfor %}
+        </div>
+        <p class="testimonial-quote">"{{ block.settings.quote }}"</p>
+        <p class="testimonial-author">- {{ block.settings.author }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .testimonial-section {
+    padding: 40px 0;
+    background-color: white;
+    text-align: center;
+  }
+
+    @media screen and (max-width: 768px) {
+      .testimonial-section {
+      margin-right: 40px;
+      margin-left: 40px;
+
+  }
+  .testimonial-grid {
+    display: grid;
+    grid-auto-flow: column; /* 👈 cambia a flujo horizontal */
+    grid-auto-columns: 80%;  /* 👈 ancho de cada item, puedes ajustar */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .testimonial-grid > * {
+    scroll-snap-align: start; /* 👈 para un scroll más suave */
+  }
+  }
+
+  .testimonial-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .testimonial-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .testimonial-stars {
+    color: #FFD700;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .testimonial-quote {
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .testimonial-author {
+    font-weight: bold;
+    color: #333;
+  }
+</style>

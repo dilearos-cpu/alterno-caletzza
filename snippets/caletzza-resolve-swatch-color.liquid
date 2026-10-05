@@ -1,0 +1,86 @@
+{% comment %}
+  Mapa oficial de colores Caletzza (códigos hex).
+  Este archivo es CÓDIGO — se sube con npm run theme:push:code.
+  NO se borra con cambios en el editor (banners, imágenes, etc.).
+
+  Misma etiqueta de color = mismo hex en todas las cards/PDP.
+  El mapa por nombre gana sobre el swatch nativo de Shopify (que
+  puede devolver RGB distintos por producto para el mismo nombre).
+
+  Colores:
+  - Café / Café oscuro  #744f3b
+  - Café claro          #c47d62
+  - Azul                #9ac6e7
+  - Negro               #000
+  - Palo de Rosa        #f7a39d
+  - Blanco              #FFF
+  - Rojo                #fc180e
+  - Vinotinto           #451216
+  - Beige               #d1a990
+{% endcomment %}
+{%- liquid
+  assign color_label = color_name | default: ''
+  if option_value != blank and option_value.name != blank
+    assign color_label = option_value.name
+  endif
+  assign color_down = color_label | downcase | strip
+  assign css_color = ''
+
+  comment
+    Prioridad 1: mapa Caletzza — coincidencia exacta
+  endcomment
+  if color_down == 'café claro' or color_down == 'cafe claro'
+    assign css_color = '#c47d62'
+  elsif color_down == 'café oscuro' or color_down == 'cafe oscuro' or color_down == 'café' or color_down == 'cafe'
+    assign css_color = '#744f3b'
+  elsif color_down == 'palo de rosa' or color_down == 'rosa palo'
+    assign css_color = '#f7a39d'
+  elsif color_down == 'vinotinto' or color_down == 'vino tinto'
+    assign css_color = '#451216'
+  elsif color_down == 'azul' or color_down == 'blue'
+    assign css_color = '#9ac6e7'
+  elsif color_down == 'negro' or color_down == 'black'
+    assign css_color = '#000'
+  elsif color_down == 'blanco' or color_down == 'white'
+    assign css_color = '#FFF'
+  elsif color_down == 'rojo' or color_down == 'red'
+    assign css_color = '#fc180e'
+  elsif color_down == 'beige' or color_down == 'nude'
+    assign css_color = '#d1a990'
+
+  comment
+    Prioridad 2: coincidencia parcial (nombres compuestos en catálogo)
+  endcomment
+  elsif color_down contains 'café claro' or color_down contains 'cafe claro'
+    assign css_color = '#c47d62'
+  elsif color_down contains 'café oscuro' or color_down contains 'cafe oscuro' or color_down contains 'café' or color_down contains 'cafe'
+    assign css_color = '#744f3b'
+  elsif color_down contains 'palo de rosa' or color_down contains 'rosa palo'
+    assign css_color = '#f7a39d'
+  elsif color_down contains 'vinotinto' or color_down contains 'vino tinto'
+    assign css_color = '#451216'
+  elsif color_down contains 'azul' or color_down contains 'blue'
+    assign css_color = '#9ac6e7'
+  elsif color_down contains 'negro' or color_down contains 'black'
+    assign css_color = '#000'
+  elsif color_down contains 'blanco' or color_down contains 'white'
+    assign css_color = '#FFF'
+  elsif color_down contains 'rojo' or color_down contains 'red'
+    assign css_color = '#fc180e'
+  elsif color_down contains 'beige' or color_down contains 'nude' or color_down contains 'arena'
+    assign css_color = '#d1a990'
+
+  comment
+    Prioridad 3: metafield por variante (solo colores fuera del mapa)
+  endcomment
+  elsif variant != blank and variant.metafields.custom.swatch_color != blank
+    assign css_color = variant.metafields.custom.swatch_color
+
+  comment
+    Prioridad 4: swatch nativo de Shopify (último recurso)
+  endcomment
+  elsif option_value != blank and option_value.swatch.color != blank
+    assign css_color = 'rgb(' | append: option_value.swatch.color.rgb | append: ')'
+  endif
+-%}
+{{- css_color -}}

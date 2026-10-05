@@ -1,0 +1,514 @@
+{% schema %}
+    {
+      "name": "Product Selection Grid",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "product_collection",
+          "label": "Select Collection"
+        }
+      ],
+      "presets": [
+        {
+          "name": "Product Selection Grid",
+          "category": "Custom"
+        }
+      ]
+    }
+    {% endschema %}
+    
+    <div class="page-width">
+      <div id="product-selection-grid">
+        {% for i in (1..10) %}
+          <div class="product-slot" data-index="{{ i }}">
+            <span class="add-product">+</span>
+            <img class="selected-product-img" src="" alt="" style="display:none;">
+            <p class="selected-product-title" style="display:none;"></p>
+            <select class="selected-variant" style="display:none;"></select>
+          </div>
+        {% endfor %}
+      </div>
+    
+      <div class="global-quantity-control" style="display:none; margin:20px 0; text-align:center;">
+        <div style="display:inline-flex; align-items:center; gap:10px;">
+          <label style="font-weight:bold;">Cantidad:</label>
+          <div style="display:flex; align-items:center; border:1px solid #ddd; border-radius:4px;">
+            <button id="decrease-quantity" style="width:40px; height:40px; border:none; background:#f5f5f5; cursor:pointer; font-size:18px;">-</button>
+            <input type="number" id="global-quantity" value="1" min="1" style="width:60px; text-align:center; border:none; border-left:1px solid #ddd; border-right:1px solid #ddd; height:40px; font-size:16px;">
+            <button id="increase-quantity" style="width:40px; height:40px; border:none; background:#f5f5f5; cursor:pointer; font-size:18px;">+</button>
+          </div>
+        </div>
+      </div>
+    
+      <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+        <button id="buy-now-btn" disabled>Comprar ahora</button>
+        
+        <button id="clear-all-btn" style="background: #f44336; color: white; padding: 12px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 4px;">Borrar todo</button>
+      </div>
+    </div>
+    
+    <div id="product-popup" class="popup-overlay" style="display:none;">
+      <div class="popup-content">
+        <span class="close-popup">X</span>
+        <div id="product-list">
+          {% if section.settings.product_collection != blank %}
+            {% assign collection_products = collections[section.settings.product_collection].products %}
+            {% for product in collection_products %}
+              <div class="product-item" data-id="{{ product.id }}" style="display:{% if forloop.index > 8 %}none{% else %}block{% endif %}">
+                <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="product-image">
+                <p>{{ product.title }}</p>
+                <select class="variant-selector" style="display:none;">
+                  {% for variant in product.variants %}
+                    <option value="{{ variant.id }}" data-img="{{ variant.image | default: product.featured_image | img_url: 'medium' }}">
+                      {{ variant.title }} - {{ variant.price | money }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>Please select a collection in the section settings.</p>
+          {% endif %}
+        </div>
+        <div id="pagination-controls">
+          <button id="prev-page" disabled>Previous</button>
+          <span id="page-info">Page 1 of {{ collection_products.size | divided_by: 8.0 | ceil }}</span>
+          <button id="next-page" {% if collection_products.size <= 8 %}disabled{% endif %}>Next</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="upsell-popup" class="popup-overlay" style="display:none;">
+      <div class="popup-box">
+        <p>Quieres añadir otro combo de <strong>10%</strong> camisetas?</p>
+        <button id="accept-offer">Sí, añadir más</button>
+        <button id="decline-offer">No, finalizar compra</button>
+      </div>
+    </div>
+    
+    <style>
+      #product-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
+      }
+      .product-slot {
+        border: 2px dashed #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        background: #f8f8f8;
+        border-radius: 4px;
+        aspect-ratio: 1/1;
+      }
+      @media screen and (min-width: 769px) {
+        .product-slot { height: 200px; }
+        .add-product { font-size: 24px; }
+      }
+      @media screen and (max-width: 768px) {
+        .product-slot { height: 180px; width: 64px; }
+        .add-product { font-size: 18px; }
+        p.selected-product-title {font-size: 10px;}
+      }
+      .add-product { color: #666; font-weight: bold; }
+      .selected-product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      #product-popup .popup-content {
+        background: white;
+        width: 90%;
+        max-width: 800px;
+        height: 80vh;
+        padding: 20px;
+        position: relative;
+        overflow-y: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+      }
+      .close-popup {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        background: #000;
+        padding: 2px 10px;
+        color: #fff;
+        font-weight: 900;
+        border-radius: 6px;
+        z-index: 1;
+      }
+      #product-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+      }
+      .product-item {
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        width: 150px;
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+      .product-item:hover { transform: scale(1.05); }
+      .product-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+      .variant-selector {
+        width: 100%;
+        max-width: 100%;
+        white-space: normal;
+        word-wrap: break-word;
+        font-size: 12px;
+        padding: 5px;
+        margin-top: 5px;
+        box-sizing: border-box;
+      }
+      .variant-selector option {
+        white-space: normal;
+        word-break: break-word;
+        padding: 5px;
+      }
+      #global-quantity::-webkit-outer-spin-button,
+      #global-quantity::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      #global-quantity { -moz-appearance: textfield; }
+      .popup-box {
+        background: white;
+        padding: 30px;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 400px;
+      }
+      .popup-box button {
+        margin: 10px;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+      #accept-offer { background: green; color: white; }
+      #decline-offer { background: red; color: white; }
+      #buy-now-btn {
+        background: green;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        width: 100%;
+        max-width: 300px;
+      }
+      #buy-now-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+      #pagination-controls {
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 15px;
+      }
+      #pagination-controls button {
+        background: #000;
+        color: #fff;
+        padding: 5px 20px;
+        font-weight: 700;
+        border: 0px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      #pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+      #page-info { font-weight: 600; }
+      #clear-all-btn:hover {
+        background: #d32f2f !important;
+      }
+    </style>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let selectedProducts = [];
+      let currentSlot = null;
+      let offerAccepted = 0;
+      const quantityControl = document.querySelector('.global-quantity-control');
+      const quantityInput = document.getElementById('global-quantity');
+      const decreaseBtn = document.getElementById('decrease-quantity');
+      const increaseBtn = document.getElementById('increase-quantity');
+      
+      // Pagination variables
+      const productsPerPage = 15;
+      let currentPage = 1;
+      const productItems = document.querySelectorAll('.product-item');
+      const totalProducts = productItems.length;
+      const totalPages = Math.ceil(totalProducts / productsPerPage);
+      const prevPageBtn = document.getElementById('prev-page');
+      const nextPageBtn = document.getElementById('next-page');
+      const pageInfo = document.getElementById('page-info');
+    
+      // Initialize pagination
+      updatePaginationControls();
+    
+      // Pagination event handlers
+      prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+          currentPage--;
+          updateProductDisplay();
+          updatePaginationControls();
+        }
+      });
+    
+      nextPageBtn.addEventListener('click', function() {
+        if (currentPage < totalPages) {
+          currentPage++;
+          updateProductDisplay();
+          updatePaginationControls();
+        }
+      });
+    
+      function updateProductDisplay() {
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        
+        productItems.forEach((item, index) => {
+          if (index >= startIndex && index < endIndex) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+    
+      function updatePaginationControls() {
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      }
+    
+      // Product selection functionality
+      document.querySelectorAll(".product-slot").forEach(slot => {
+        slot.addEventListener("click", function(e) {
+          if (e.target !== this && !e.target.classList.contains('add-product')) return;
+          currentSlot = this;
+          document.getElementById("product-popup").style.display = "flex";
+          document.body.style.overflow = "hidden";
+        });
+      });
+    
+      // Variant selection
+     document.addEventListener('click', function(e) {
+      const productItem = e.target.closest('.product-item');
+      if (productItem) {
+        const variantSelector = productItem.querySelector('.variant-selector');
+        
+        if (variantSelector.options.length > 1) {
+          variantSelector.style.display = 'block';
+          document.querySelectorAll('.variant-selector').forEach(selector => {
+            if (selector !== variantSelector) selector.style.display = 'none';
+          });
+        } else if (variantSelector.options.length === 1) {
+          variantSelector.value = variantSelector.options[0].value;
+          variantSelector.dispatchEvent(new Event('change'));
+        }
+      }
+    });
+    
+      // Quantity control
+      decreaseBtn.addEventListener('click', function() {
+        if (parseInt(quantityInput.value) > 1) {
+          quantityInput.value = parseInt(quantityInput.value) - 1;
+          updateAllQuantities();
+        }
+      });
+    
+      increaseBtn.addEventListener('click', function() {
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+        updateAllQuantities();
+      });
+    
+      quantityInput.addEventListener('change', function() {
+        if (parseInt(this.value) < 1) this.value = 1;
+        updateAllQuantities();
+      });
+    
+      function updateAllQuantities() {
+        const newQuantity = parseInt(quantityInput.value);
+        selectedProducts = selectedProducts.map(product => {
+          return { id: product.id, quantity: newQuantity };
+        });
+      }
+    
+      // Variant selection handler
+      document.querySelectorAll(".variant-selector").forEach(selector => {
+        selector.addEventListener("change", function() {
+          if (!currentSlot) return;
+    
+          const variantId = this.value;
+          const variantOption = this.options[this.selectedIndex];
+          const variantImg = variantOption.getAttribute("data-img");
+          const productTitle = this.closest(".product-item").querySelector("p").innerText;
+    
+          if (selectedProducts.some(item => item.id === variantId)) {
+            alert("This variant is already selected. Choose another.");
+            this.value = "";
+            return;
+          }
+    
+          const prevProductId = currentSlot.getAttribute("data-product-id");
+          if (prevProductId) {
+            selectedProducts = selectedProducts.filter(item => item.id !== prevProductId);
+          }
+    
+          currentSlot.querySelector(".selected-product-img").src = variantImg;
+          currentSlot.querySelector(".selected-product-img").style.display = "block";
+          currentSlot.querySelector(".add-product").style.display = "none";
+          currentSlot.querySelector(".selected-product-title").textContent = productTitle;
+          currentSlot.querySelector(".selected-product-title").style.display = "block";
+          currentSlot.setAttribute("data-product-id", variantId);
+          
+          selectedProducts.push({ id: variantId, quantity: parseInt(quantityInput.value) });
+          
+          if (selectedProducts.length === 1) quantityControl.style.display = "block";
+          
+          document.getElementById("product-popup").style.display = "none";
+          document.body.style.overflow = "auto";
+    
+
+    
+          document.getElementById("buy-now-btn").disabled = selectedProducts.length < 10;
+             
+    
+    
+        });
+      });
+    
+      // Clear all button functionality
+      document.getElementById("clear-all-btn").addEventListener("click", function() {
+        // Reset all product slots
+        document.querySelectorAll(".product-slot").forEach(slot => {
+          slot.querySelector(".add-product").style.display = "block";
+          slot.querySelector(".selected-product-img").style.display = "none";
+          slot.querySelector(".selected-product-title").style.display = "none";
+          slot.removeAttribute("data-product-id");
+        });
+        
+        // Reset selected products array
+        selectedProducts = [];
+        
+        // Hide quantity control
+        quantityControl.style.display = "none";
+        
+        // Disable buy now button
+        document.getElementById("buy-now-btn").disabled = true;
+        
+        // Reset quantity to 1
+        quantityInput.value = 1;
+        
+        // Close any open popups
+        document.querySelectorAll('.popup-overlay').forEach(popup => {
+          popup.style.display = "none";
+        });
+        document.body.style.overflow = "auto";
+      });
+    
+      // Upsell popup buttons
+      document.getElementById("accept-offer").addEventListener("click", function() {
+        offerAccepted++;
+        document.getElementById("upsell-popup").style.display = "none";
+        document.body.style.overflow = "auto";
+      });
+    
+      document.getElementById("decline-offer").addEventListener("click", function() {
+        document.getElementById("upsell-popup").style.display = "none";
+        document.body.style.overflow = "auto";
+        addToCart();
+      });
+    
+      // Add to cart button
+      document.getElementById("buy-now-btn").addEventListener("click", addToCart);
+    
+      function addToCart() {
+        if (selectedProducts.length === 0) return;
+    
+        const items = selectedProducts.map((item, index) => {
+          const discountGroup = Math.floor(index / 10);
+          const properties = discountGroup > 0 ? { "Discount": `10% off batch ${discountGroup}` } : {};
+          return { 
+            id: item.id, 
+            quantity: item.quantity,
+            properties: properties 
+          };
+        });
+    
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items })
+        }).then(() => {
+          window.location.href = "/checkout";
+        }).catch(error => {
+          console.error('Error:', error);
+        });
+      }
+    
+      // Close popups
+      document.querySelector(".close-popup").addEventListener("click", function() {
+        document.getElementById("product-popup").style.display = "none";
+        document.body.style.overflow = "auto";
+      });
+    
+      document.querySelectorAll('.popup-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === this) {
+            this.style.display = "none";
+            document.body.style.overflow = "auto";
+          }
+        });
+      });
+    
+      document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") {
+          document.querySelectorAll('.popup-overlay').forEach(popup => {
+            popup.style.display = "none";
+          });
+          document.body.style.overflow = "auto";
+        }
+      });
+    });
+    </script>

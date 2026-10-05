@@ -1,0 +1,103 @@
+{% doc %}
+Renderiza un popup de prueba social en páginas específicas (equivalente a shortcode).
+
+@param {string} [campaign_id] - ID de campaña para filtrar un bloque específico de la sección
+@param {string} [pack_label] - Nombre del pack (ej: pack de bodys)
+@param {number} [units] - Unidades fijas del pack
+@param {boolean} [random_units] - Si true, usa unidades aleatorias entre units_min y units_max
+@param {number} [units_min] - Mínimo de unidades aleatorias
+@param {number} [units_max] - Máximo de unidades aleatorias
+@param {string} [names] - Nombres separados por coma
+@param {image} [product_image] - Imagen opcional del producto
+@param {number} [initial_delay] - Segundos antes del primer popup
+@param {number} [interval_min] - Intervalo mínimo entre popups
+@param {number} [interval_max] - Intervalo máximo entre popups
+@param {number} [display_duration] - Segundos visibles
+@param {string} [position] - bottom-left o bottom-right
+@param {string} [message_template] - Plantilla con {name}, {pack}, {units}, {time}, {city}
+@example
+{% render 'social-proof-popup', pack_label: 'pack de bodys', units: 4 %}
+{% enddoc %}
+
+{{ 'social-proof-popup.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign pack_label_value = pack_label | default: 'pack de bodys'
+  assign units_fixed_value = units | default: 4
+  assign random_units_value = random_units | default: false
+  assign units_min_value = units_min | default: 2
+  assign units_max_value = units_max | default: 10
+  assign initial_delay_value = initial_delay | default: 5
+  assign interval_min_value = interval_min | default: 12
+  assign interval_max_value = interval_max | default: 25
+  assign display_duration_value = display_duration | default: 6
+  assign position_value = position | default: 'bottom-left'
+  assign message_template_value = message_template | default: '{name} ha comprado un {pack} hace {time} en {city}'
+  assign cities_value = cities | default: 'Bogotá,Medellín,Cali,Barranquilla,Cartagena,Bucaramanga,Pereira,Manizales,Santa Marta,Ibagué,Cúcuta,Villavicencio,Pasto,Montería,Armenia'
+  assign default_names_value = default_names | default: 'Juanito,María,Carlos,Laura,Andrés,Camila,Diego,Valentina,Santiago,Daniela,Felipe,Isabella,Nicolás,Paula,Sebastián'
+  assign time_phrases_value = time_phrases | default: 'hace un momento,hace 1 minuto,hace 2 minutos,hace 5 minutos,hace 8 minutos,hace 12 minutos,hace 15 minutos'
+  assign verified_label_value = verified_label | default: 'Compra verificada'
+  assign names_value = names | default: ''
+  if campaign_id != blank
+    assign snippet_id = 'spp-snippet-' | append: campaign_id
+    assign campaign_id_value = campaign_id
+  else
+    assign snippet_id = 'spp-snippet-' | append: pack_label_value | handleize | append: '-' | append: units_fixed_value
+    assign campaign_id_value = snippet_id
+  endif
+-%}
+
+<div
+  class="social-proof-popup"
+  id="{{ snippet_id }}"
+  data-initial-delay="{{ initial_delay_value }}"
+  data-interval-min="{{ interval_min_value }}"
+  data-interval-max="{{ interval_max_value }}"
+  data-display-duration="{{ display_duration_value }}"
+  data-position="{{ position_value }}"
+  data-show-mobile="true"
+  data-show-desktop="true"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div class="social-proof-popup__toast" hidden>
+    <button type="button" class="social-proof-popup__close" aria-label="Cerrar notificación">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="social-proof-popup__content">
+      <div class="social-proof-popup__image-wrap" hidden>
+        <img class="social-proof-popup__image" alt="" width="48" height="48" loading="lazy">
+      </div>
+      <p class="social-proof-popup__message"></p>
+    </div>
+    <span class="social-proof-popup__verified">
+      <svg class="social-proof-popup__check" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm-1 15l-5-5 1.41-1.41L9 12.17l7.59-7.59L18 6l-9 9z"/>
+      </svg>
+      {{ verified_label_value }}
+    </span>
+  </div>
+
+  <script type="application/json" data-social-proof-config>
+    {
+      "cities": {{ cities_value | split: ',' | json }},
+      "defaultNames": {{ default_names_value | split: ',' | json }},
+      "messageTemplate": {{ message_template_value | json }},
+      "timePhrases": {{ time_phrases_value | split: ',' | json }},
+      "campaigns": [
+        {
+          "id": {{ campaign_id_value | json }},
+          "packLabel": {{ pack_label_value | json }},
+          "unitsFixed": {{ units_fixed_value | json }},
+          "randomUnits": {{ random_units_value | json }},
+          "unitsMin": {{ units_min_value | json }},
+          "unitsMax": {{ units_max_value | json }},
+          "names": {{ names_value | split: ',' | json }},
+          "image": {% if product_image != blank %}{{ product_image | image_url: width: 96 | json }}{% else %}null{% endif %}
+        }
+      ]
+    }
+  </script>
+</div>
+
+<script src="{{ 'social-proof-popup.js' | asset_url }}" defer></script>

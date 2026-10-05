@@ -1,0 +1,68 @@
+<div class="promo-bar-wrapper">
+  <p class="promo-bar-text">{{ section.settings.promo_text }}</p>
+  <div class="progress-bar">
+    <div class="progress-fill">
+      <span class="sr-only">40%</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .promo-bar-wrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    text-align: center;
+    font-family: sans-serif;
+  }
+
+  @media screen and (max-width: 768px) {
+    .promo-bar-wrapper { max-width: 320px; } 
+  }
+
+  .promo-bar-text {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .progress-bar {
+    width: 100%; /* Aseguramos que tenga ancho */
+    height: 20px;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background-color: #48c78e;
+    width: 40%;
+    transition: width 0.4s ease-in-out;
+  }
+
+  /* Accesibilidad opcional */
+  .sr-only {
+    position: absolute;
+    left: -9999px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Barra de progreso promo",
+  "settings": [
+    {
+      "type": "text",
+      "id": "promo_text",
+      "label": "Texto de promoción",
+      "default": "¡Solo 5 promos disponibles!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra de progreso promo"
+    }
+  ]
+}
+{% endschema %}

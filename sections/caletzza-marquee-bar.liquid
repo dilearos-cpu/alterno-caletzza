@@ -1,0 +1,117 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .cz-marquee-bar {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.font_size }}px;
+    --cz-marquee-speed: {{ section.settings.animation_speed }}s;
+  }
+
+  #shopify-section-{{ section.id }} .cz-marquee-bar__item a {
+    color: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .cz-marquee-bar__track {
+    animation-duration: var(--cz-marquee-speed);
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+{%- endstyle -%}
+
+{%- if section.blocks.size > 0 -%}
+  <div class="cz-marquee-bar section-{{ section.id }}-padding" role="region" aria-label="Anuncios">
+    <div class="cz-marquee-bar__track">
+      {%- for i in (1..2) -%}
+        {%- for block in section.blocks -%}
+          <div class="cz-marquee-bar__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>
+            {%- else -%}
+              {{ block.settings.text | escape }}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Barra marquee Caletzza",
+  "tag": "section",
+  "class": "section-caletzza-marquee",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño del texto",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "label": "Velocidad del scroll",
+      "default": 28
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Mensaje",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "Envío gratis en compras superiores a $150.000"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace (opcional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra marquee Caletzza",
+      "settings": {
+        "background_color": "#ffffff",
+        "text_color": "#000000"
+      },
+      "blocks": [
+        { "type": "message", "settings": { "text": "✨ Crea tu Pack · 💛 3 Bodies $174.000 (WELOVE3)" } },
+        { "type": "message", "settings": { "text": "6 Bodies $342.000 (WELOVE6)" } },
+        { "type": "message", "settings": { "text": "🎁 Envío gratis desde $199.000" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

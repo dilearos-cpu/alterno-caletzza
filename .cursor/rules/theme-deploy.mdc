@@ -1,0 +1,69 @@
+---
+description: Reglas de deploy del tema Shopify — live como fuente de verdad, proteger editor
+globs:
+  - scripts/theme-push*.sh
+  - package.json
+  - sections/discount-rules-group.json
+  - .shopifyignore
+alwaysApply: true
+---
+
+# Deploy del tema Caletzza
+
+## Fuente de verdad = tema LIVE
+
+El tema publicado (`Caletzza Theme`, id `148217954454`) es la base del repo (`main`).
+
+Si el repo se desfasó o hay riesgo de pisar cambios del editor:
+
+```bash
+bash scripts/theme-sync-repo-from-live.sh
+git add assets sections snippets layout templates config locales
+git commit -m "Sync main from live theme"
+git push origin main
+```
+
+**Antes de editar código que ya existe en live**, sincroniza o trabaja solo sobre archivos que acabas de sacar del live. No asumas que `main` local está fresco tras varios PRs.
+
+## Flujo por defecto: BORRADOR (no live)
+
+Por defecto **nunca** subir al tema live. Subir a borrador; el merchant activa.
+
+| Comando | Uso |
+|---------|-----|
+| `npm run theme:push:code` | Duplica LIVE → **Caletzza 1.0.0.N** + sube solo código. **Seguro de previsualizar.** |
+| `npm run theme:push:draft` | Igual que `push:code` (borrador). |
+| `npm run theme:push` | Igual que `push:code` (borrador). |
+
+## Solo si el usuario lo pide explícitamente
+
+| Comando | Requisito |
+|---------|-----------|
+| `ALLOW_THEME_LIVE_PUSH=1 npm run theme:push:code:live` | Código al live (**usa `--nodelete`**: no borra archivos solo-remotos) |
+| Push puntual | Preferir `shopify theme push --allow-live --nodelete --only <archivo>` |
+| `ALLOW_THEME_RULES_OVERWRITE=1 npm run theme:push:rules` | Subir reglas (pisará el editor) |
+| `ALLOW_THEME_CUSTOM_OVERWRITE=1 npm run theme:push:full` | Subida total templates/config/reglas |
+
+No ejecutar live / rules / custom overwrite por iniciativa propia.
+
+## Nunca sobrescribir sin solicitud explícita del usuario
+
+En cualquier subida (borrador o live), **no tocar**:
+
+- `config/settings_data.json`
+- `templates/*.json` (home, colección, producto, banners…)
+- `sections/header-group.json`, `sections/footer-group.json`
+- `sections/discount-rules-group.json` — reglas de precio del editor
+
+La fuente de verdad de esa personalización es el **editor live**, no el JSON del repo (salvo sync explícito).
+
+## `.shopifyignore`
+
+Debe ignorar `templates/*.json`, `config/settings_data.json` y groups JSON en push habitual.
+
+## Antes de un deploy
+
+1. Preferir borrador (`theme:push:code`).
+2. Si vas a live: sincroniza desde live o sube **solo** los archivos tocados (`--only`) con `--nodelete`.
+3. No “arreglar” precios editando `discount-rules-group.json` en el repo.
+4. Tras cambios en scripts de deploy, verificar `--ignore`, `--nodelete` y `.shopifyignore`.

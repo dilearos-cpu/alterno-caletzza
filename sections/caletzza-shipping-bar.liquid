@@ -1,0 +1,173 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #shopify-section-{{ section.id }} .cz-shipping-bar {
+    background: {{ section.settings.background_color }};
+  }
+{%- endstyle -%}
+
+<div class="cz-shipping-bar section-{{ section.id }}-padding{% if section.settings.compact %} cz-shipping-bar--compact{% endif %}">
+  <div class="page-width">
+    {%- assign shipping_heading = section.settings.section_heading | strip -%}
+    {%- assign shipping_stat = section.settings.stat_line | strip -%}
+    {%- if shipping_heading != blank or shipping_stat != blank -%}
+      <div class="cz-shipping-bar__head">
+        {%- if shipping_heading != blank -%}
+          <h2 class="cz-shipping-bar__section-heading">{{ shipping_heading }}</h2>
+        {%- endif -%}
+        {%- if shipping_stat != blank -%}
+          <p class="cz-shipping-bar__stat">{{ shipping_stat }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="cz-shipping-bar__grid">
+      {%- for block in section.blocks -%}
+        <div class="cz-shipping-bar__item" {{ block.shopify_attributes }}>
+          <div class="cz-shipping-bar__icon" aria-hidden="true">
+            {%- if block.settings.icon_image != blank -%}
+              {{
+                block.settings.icon_image
+                | image_url: width: 120
+                | image_tag: loading: 'lazy', class: 'cz-shipping-bar__icon-img', alt: ''
+              }}
+            {%- else -%}
+            {%- case block.settings.icon -%}
+              {%- when 'truck' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a49.902 49.902 0 00-2.553-9.402M18.75 4.5H15.75m3 0v3m0-3l-3 3"/></svg>
+              {%- when 'heart' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+              {%- when 'card' -%}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+              {%- else -%}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {%- endcase -%}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.title != blank -%}
+            <h3 class="cz-shipping-bar__title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="cz-shipping-bar__text">{{ block.settings.text }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Beneficios envío Caletzza",
+  "tag": "section",
+  "class": "section-caletzza-shipping",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "compact",
+      "label": "Estilo compacto (Home)",
+      "default": true,
+      "info": "Barra fina de 4 columnas, sin título grande."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#FDF5EB"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Título de sección",
+      "info": "Opcional. Vacío = oculto (estilo Home compacto)."
+    },
+    {
+      "type": "text",
+      "id": "stat_line",
+      "label": "Línea destacada",
+      "info": "Opcional. Vacío = oculto (estilo Home compacto)."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icono personalizado (opcional)"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            { "value": "truck", "label": "Envío" },
+            { "value": "heart", "label": "Corazón" },
+            { "value": "card", "label": "Pago" },
+            { "value": "check", "label": "Check" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "COMPRA HOY, PAGA DESPUÉS"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Descripción",
+          "default": "Paga contra entrega al recibir tu pedido"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Beneficios envío Caletzza",
+      "settings": {
+        "compact": true
+      },
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "truck", "title": "ENVÍO SEGURO", "text": "Entrega en menos de 3 días hábiles." } },
+        { "type": "benefit", "settings": { "icon": "check", "title": "ENVÍO MISMO DÍA", "text": "Recibe el mismo día en la ciudad de Cali." } },
+        { "type": "benefit", "settings": { "icon": "heart", "title": "GARANTÍAS", "text": "Cambios fáciles y compra segura." } },
+        { "type": "benefit", "settings": { "icon": "card", "title": "PAGO CON ADDI", "text": "Compra ahora, paga después en cuotas." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

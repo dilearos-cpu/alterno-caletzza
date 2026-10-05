@@ -1,0 +1,107 @@
+{% comment %}
+  Bolitas de color sólido en tarjeta de producto.
+  Muestra código de color (no foto de variante).
+{% endcomment %}
+{%- liquid
+  assign color_idx = color_option_index
+  assign color_option = nil
+  for option in card_product.options_with_values
+    assign opt_down = option.name | downcase
+    if opt_down contains 'color' or opt_down contains 'colour' or opt_down contains 'colo'
+      if color_idx == nil
+        assign color_idx = option.position | minus: 1
+      endif
+      assign color_position = color_idx | plus: 1
+      if option.position == color_position
+        assign color_option = option
+        break
+      endif
+    endif
+  endfor
+-%}
+
+{%- if color_option != nil -%}
+  <div class="cz-card-swatches" data-cz-swatches>
+    <div class="cz-card-swatches__list" role="list">
+      {%- for value in color_option.values -%}
+        {%- liquid
+          assign value_name = value.name | default: value
+          assign variant_for_color = nil
+          for variant in card_product.variants
+            if variant.options[color_idx] == value_name
+              assign variant_for_color = variant
+              break
+            endif
+          endfor
+          if variant_for_color == nil
+            assign variant_for_color = card_product.variants | where: 'option1', value_name | first
+            if variant_for_color == nil and color_idx == 1
+              assign variant_for_color = card_product.variants | where: 'option2', value_name | first
+            endif
+            if variant_for_color == nil and color_idx == 2
+              assign variant_for_color = card_product.variants | where: 'option3', value_name | first
+            endif
+          endif
+          if variant_for_color == nil
+            continue
+          endif
+
+          capture swatch_image_url
+            render 'variant-card-image', product: card_product, variant: variant_for_color, image_width: 720
+          endcapture
+          assign swatch_image_url = swatch_image_url | strip
+          capture swatch_image_360
+            render 'variant-card-image', product: card_product, variant: variant_for_color, image_width: 360
+          endcapture
+          assign swatch_image_360 = swatch_image_360 | strip
+          capture swatch_image_533
+            render 'variant-card-image', product: card_product, variant: variant_for_color, image_width: 533
+          endcapture
+          assign swatch_image_533 = swatch_image_533 | strip
+
+          capture second_image
+            render 'variant-second-image-url', variant: variant_for_color, image_width: 1066
+          endcapture
+          assign second_image = second_image | strip
+
+          capture swatch_color
+            render 'caletzza-resolve-swatch-color', color_name: value_name, variant: variant_for_color, option_value: value
+          endcapture
+          assign swatch_color = swatch_color | strip
+
+          assign is_active = false
+          if variant_for_color.id == card_product.selected_or_first_available_variant.id
+            assign is_active = true
+          endif
+        -%}
+        <button
+          type="button"
+          class="cz-card-swatches__dot{% if is_active %} is-active{% endif %}"
+          role="listitem"
+          aria-label="{{ value_name | escape }}"
+          aria-pressed="{% if is_active %}true{% else %}false{% endif %}"
+          title="{{ value_name | escape }}"
+          data-variant-id="{{ variant_for_color.id }}"
+          {% if swatch_image_url != blank %}
+            data-image-src="{{ swatch_image_url }}"
+            data-image-srcset="{{ swatch_image_360 }} 360w, {{ swatch_image_533 }} 533w, {{ swatch_image_url }} 720w"
+          {% endif %}
+          {% if second_image != blank %}
+            data-second-image-src="{{ second_image }}"
+          {% endif %}
+          {% if card_product.media[1] %}
+            data-fallback-second-image-src="{{ card_product.media[1] | image_url: width: 1066 }}"
+          {% endif %}
+          data-product-url="{{ card_product.url }}?variant={{ variant_for_color.id }}"
+          data-price="{{ variant_for_color.price | money }}"
+          data-compare-price="{% if variant_for_color.compare_at_price > variant_for_color.price %}{{ variant_for_color.compare_at_price | money }}{% endif %}"
+          {% if swatch_color != blank %}
+            style="--cz-swatch-color: {{ swatch_color }};"
+          {% endif %}
+        >
+          <span class="visually-hidden">{{ value_name }}</span>
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

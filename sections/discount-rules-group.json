@@ -1,0 +1,494 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "aside",
+  "name": "Reglas de precio",
+  "sections": {
+    "discount_rules_global_PhhLCC": {
+      "type": "discount-rules-global",
+      "blocks": {
+        "rule_UgxtBJ": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Blusas",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "blusas",
+            "collection_handle": "",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": false,
+            "conditions_json": "[]"
+          }
+        },
+        "tier_xcbWdc": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 3,
+            "unit_price": 25000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_PdekAC": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 4,
+            "max_quantity": 11,
+            "unit_price": 18000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_Q4bJ8N": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 12,
+            "max_quantity": 100,
+            "unit_price": 16000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_idmUCd": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Oversize",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "oversize",
+            "collection_handle": "",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": false,
+            "conditions_json": "[]"
+          }
+        },
+        "tier_8nKdJG": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 1,
+            "unit_price": 25000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_p86dkV": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 2,
+            "max_quantity": 99,
+            "unit_price": 15000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_H9i3M6": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Básicas",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "basicas",
+            "collection_handle": "",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": false,
+            "conditions_json": "[]"
+          }
+        },
+        "tier_YJzC4w": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 4,
+            "unit_price": 30000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_kmU7Ar": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 5,
+            "max_quantity": 23,
+            "unit_price": 13000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_iyCxRm": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 24,
+            "max_quantity": 47,
+            "unit_price": 11000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_jM8dM7": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 48,
+            "max_quantity": 99,
+            "unit_price": 10000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_888FHp": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Bodys",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "bodys",
+            "collection_handle": "",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": false,
+            "conditions_json": "[]"
+          }
+        },
+        "tier_bgW7i7": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 2,
+            "unit_price": 35000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_zymT7h": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 3,
+            "max_quantity": 11,
+            "unit_price": 25000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "tier_xtBEFL": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 12,
+            "max_quantity": 23,
+            "unit_price": 20000,
+            "label": "",
+            "highlight": true
+          }
+        },
+        "tier_rqwhEK": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 24,
+            "max_quantity": 99,
+            "unit_price": 18000,
+            "label": "",
+            "highlight": true
+          }
+        },
+        "rule_pij_short": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pijamas Short Camiseta",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pijamas-short-camiseta",
+            "collection_handle": "pijamas-short-camiseta",
+            "title_prefix": "Pijamas",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_short_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 3,
+            "unit_price": 35000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_short_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 4,
+            "max_quantity": 99,
+            "unit_price": 20000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        },
+        "rule_pij_tira": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pijamas Pantalón Tira",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pijamas-short-camiseta-1",
+            "collection_handle": "pijamas-short-camiseta-1",
+            "title_prefix": "Pijamas",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_tira_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 2,
+            "unit_price": 45000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_tira_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 3,
+            "max_quantity": 99,
+            "unit_price": 30000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        },
+        "rule_pij_pantcam": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pantalón Camiseta",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pantalon-camiseta",
+            "collection_handle": "pantalon-camiseta",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_pantcam_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 2,
+            "unit_price": 47000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_pantcam_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 3,
+            "max_quantity": 99,
+            "unit_price": 32000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        },
+        "rule_pij_coquett": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pijamas Coquett",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pijamas-coquett",
+            "collection_handle": "pijamas-coquett",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_coquett_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 3,
+            "unit_price": 30000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_coquett_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 4,
+            "max_quantity": 99,
+            "unit_price": 21000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        },
+        "rule_pij_monos": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pijamas 3 moños",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pijamas-3-monos",
+            "collection_handle": "pijamas-3-monos",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_monos_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 3,
+            "unit_price": 25000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_monos_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 4,
+            "max_quantity": 99,
+            "unit_price": 18000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        },
+        "rule_pij_subli": {
+          "type": "rule",
+          "settings": {
+            "enabled": true,
+            "title": "Pijamas Sublimadas",
+            "scope": "storefront",
+            "filter_type": "collection",
+            "collection": "pijamas-sublimadas",
+            "collection_handle": "pijamas-sublimadas",
+            "title_prefix": "",
+            "product": "",
+            "product_tag": "",
+            "count_mode": "filter_set",
+            "priority": 10,
+            "exclusive": true,
+            "conditions_json": "[]"
+          }
+        },
+        "rule_pij_subli_t1": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 1,
+            "max_quantity": 4,
+            "unit_price": 25000,
+            "label": "",
+            "highlight": false
+          }
+        },
+        "rule_pij_subli_t2": {
+          "type": "tier",
+          "settings": {
+            "min_quantity": 5,
+            "max_quantity": 99,
+            "unit_price": 15000,
+            "label": "Ahorra",
+            "highlight": true
+          }
+        }
+      },
+      "block_order": [
+        "rule_UgxtBJ",
+        "tier_xcbWdc",
+        "tier_PdekAC",
+        "tier_Q4bJ8N",
+        "rule_idmUCd",
+        "tier_8nKdJG",
+        "tier_p86dkV",
+        "rule_H9i3M6",
+        "tier_YJzC4w",
+        "tier_kmU7Ar",
+        "tier_iyCxRm",
+        "tier_jM8dM7",
+        "rule_888FHp",
+        "tier_bgW7i7",
+        "tier_zymT7h",
+        "tier_xtBEFL",
+        "tier_rqwhEK",
+        "rule_pij_short",
+        "rule_pij_short_t1",
+        "rule_pij_short_t2",
+        "rule_pij_tira",
+        "rule_pij_tira_t1",
+        "rule_pij_tira_t2",
+        "rule_pij_pantcam",
+        "rule_pij_pantcam_t1",
+        "rule_pij_pantcam_t2",
+        "rule_pij_coquett",
+        "rule_pij_coquett_t1",
+        "rule_pij_coquett_t2",
+        "rule_pij_monos",
+        "rule_pij_monos_t1",
+        "rule_pij_monos_t2",
+        "rule_pij_subli",
+        "rule_pij_subli_t1",
+        "rule_pij_subli_t2"
+      ],
+      "name": "Reglas de precio global",
+      "settings": {
+        "sync_rules_endpoint": "/apps/cod-express/sync-rules"
+      }
+    }
+  },
+  "order": [
+    "discount_rules_global_PhhLCC"
+  ]
+}

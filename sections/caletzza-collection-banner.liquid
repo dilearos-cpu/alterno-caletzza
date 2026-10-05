@@ -1,0 +1,392 @@
+{{ 'caletzza-theme.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  comment
+    Prioridad del banner (siempre por colección actual, nunca imagen global):
+    1) Bloque «Banner por colección» con la colección seleccionada
+    2) Metafields de la colección: custom.banner_desktop / custom.banner_mobile
+    3) Imagen nativa de la colección (collection.image)
+  endcomment
+
+  assign matched_block = nil
+  for block in section.blocks
+    if block.type == 'banner'
+      assign block_collection = block.settings.collection
+      if block_collection != blank
+        if block_collection.handle == collection.handle or block_collection.id == collection.id
+          assign matched_block = block
+          break
+        endif
+      endif
+    endif
+  endfor
+
+  assign show_banner = false
+  assign banner_desktop = blank
+  assign banner_mobile = blank
+  assign banner_link = blank
+  assign banner_alt = collection.title
+  assign banner_source = blank
+
+  if matched_block != nil
+    assign banner_desktop = matched_block.settings.image_desktop
+    assign banner_mobile = matched_block.settings.image_mobile
+    assign banner_link = matched_block.settings.link
+    if matched_block.settings.alt_text != blank
+      assign banner_alt = matched_block.settings.alt_text
+    endif
+    if banner_desktop != blank or banner_mobile != blank
+      assign show_banner = true
+      assign banner_source = 'block'
+    endif
+  endif
+
+  unless show_banner
+    assign meta_desktop = collection.metafields.custom.banner_desktop
+    assign meta_mobile = collection.metafields.custom.banner_mobile
+    if meta_desktop == blank
+      assign meta_desktop = collection.metafields.custom.imagen_banner_escritorio
+    endif
+    if meta_mobile == blank
+      assign meta_mobile = collection.metafields.custom.imagen_banner_movil
+    endif
+
+    if meta_desktop != blank and meta_desktop.value != blank
+      assign banner_desktop = meta_desktop.value
+    elsif meta_desktop != blank
+      assign banner_desktop = meta_desktop
+    endif
+    if meta_mobile != blank and meta_mobile.value != blank
+      assign banner_mobile = meta_mobile.value
+    elsif meta_mobile != blank
+      assign banner_mobile = meta_mobile
+    endif
+
+    if banner_desktop != blank or banner_mobile != blank
+      assign show_banner = true
+      assign banner_source = 'metafield'
+    endif
+  endunless
+
+  unless show_banner
+    if section.settings.use_collection_image and collection.image != blank
+      assign banner_desktop = collection.image
+      assign banner_mobile = collection.image
+      assign show_banner = true
+      assign banner_source = 'collection_image'
+    endif
+  endunless
+
+  if banner_mobile == blank and banner_desktop != blank
+    assign banner_mobile = banner_desktop
+  endif
+
+  if banner_desktop == blank and banner_mobile != blank
+    assign banner_desktop = banner_mobile
+  endif
+
+  assign show_pricing_table = section.settings.show_pricing_table
+  assign pricing_source = section.settings.pricing_source | default: 'discount_rules'
+  assign has_manual_tiers = false
+
+  for block in section.blocks
+    if block.type == 'tier'
+      assign tier_collection = block.settings.collection
+      if tier_collection == blank or tier_collection.handle == collection.handle or tier_collection.id == collection.id
+        assign has_manual_tiers = true
+        break
+      endif
+    endif
+  endfor
+
+  assign show_manual_pricing = false
+  assign show_rules_pricing = false
+
+  if show_pricing_table
+    if pricing_source == 'manual' and has_manual_tiers
+      assign show_manual_pricing = true
+    else
+      assign show_rules_pricing = true
+    endif
+  endif
+
+  assign show_header = false
+  if show_banner or show_manual_pricing or show_rules_pricing
+    assign show_header = true
+  endif
+-%}
+
+{%- if show_header -%}
+  <div
+    id="CZCollectionBanner-{{ section.id }}"
+    class="cz-collection-header{% if section.settings.full_width %} cz-collection-header--full{% endif %}{% unless show_pricing_table %} cz-collection-header--banner-only{% endunless %}"
+    {% if banner_source != blank %}data-cz-banner-source="{{ banner_source }}"{% endif %}
+    data-cz-banner-collection="{{ collection.handle }}"
+  >
+    {%- if show_banner -%}
+      <div class="cz-collection-header__banner cz-collection-banner">
+        {%- if banner_link != blank -%}
+          <a href="{{ banner_link }}" class="cz-collection-banner__link" aria-label="{{ banner_alt | escape }}">
+        {%- endif -%}
+
+        <picture class="cz-collection-banner__picture">
+          {%- if banner_mobile != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="
+                {{ banner_mobile | image_url: width: 750 }} 750w,
+                {{ banner_mobile | image_url: width: 1100 }} 1100w
+              "
+              sizes="100vw"
+            >
+          {%- endif -%}
+          {%- if banner_desktop != blank -%}
+            {{
+              banner_desktop
+              | image_url: width: 2400
+              | image_tag:
+                class: 'cz-collection-banner__image',
+                loading: 'eager',
+                fetchpriority: 'high',
+                alt: banner_alt,
+                widths: '750, 1100, 1500, 1800, 2400',
+                sizes: '100vw'
+            }}
+          {%- endif -%}
+        </picture>
+
+        {%- if banner_link != blank -%}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <div class="cz-collection-header__banner cz-collection-banner cz-collection-banner--empty">
+        <p class="cz-collection-banner__placeholder">
+          Sin banner para «{{ collection.title | escape }}». Agrega un bloque
+          <strong>Banner por colección</strong>, elige esta colección y sube imagen de escritorio y móvil.
+        </p>
+      </div>
+    {%- endif -%}
+
+    {%- if show_manual_pricing or show_rules_pricing -%}
+      <div class="cz-collection-header__pricing">
+        {%- if show_rules_pricing -%}
+          {% render 'discount-rules-collection-tier-table', section: section, collection: collection %}
+        {%- endif -%}
+
+        {%- if show_manual_pricing -%}
+          <div class="cz-collection-pricing cz-collection-pricing--fallback" data-cz-collection-pricing-manual-wrap>
+            {% render 'caletzza-collection-pricing-table',
+            collection: collection,
+            blocks: section.blocks,
+            heading: section.settings.pricing_heading,
+            col_units: section.settings.col_units,
+            col_unit_price: section.settings.col_unit_price,
+            col_total: section.settings.col_total,
+            show_total_column: section.settings.show_total_column,
+            note: section.settings.pricing_note
+          %}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="cz-collection-header cz-collection-header--placeholder page-width">
+    <p class="cz-collection-banner__placeholder">
+      Cabezote de colección: agrega un bloque <strong>Banner por colección</strong> para
+      «{{ collection.title | escape }}» con imagen escritorio y móvil (un bloque por colección).
+    </p>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Banner colección Caletzza",
+  "tag": "section",
+  "class": "section-caletzza-collection-banner",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Cada colección tiene su propio banner. Agrega un bloque «Banner por colección» por cada colección (elige la colección + imagen escritorio + imagen móvil). No uses una sola imagen para todas."
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Ancho completo",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_collection_image",
+      "label": "Usar imagen de la colección si no hay bloque",
+      "default": true,
+      "info": "Solo la imagen de ESA colección (Admin → Colecciones → Imagen). No comparte banners entre colecciones."
+    },
+    {
+      "type": "header",
+      "content": "Tabla de descuentos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pricing_table",
+      "label": "Mostrar tabla de precios por cantidad",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "pricing_source",
+      "label": "Origen de precios",
+      "default": "discount_rules",
+      "options": [
+        {
+          "value": "discount_rules",
+          "label": "Reglas globales de precio"
+        },
+        {
+          "value": "manual",
+          "label": "Filas manuales de esta sección"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "pricing_heading",
+      "label": "Título de la tabla",
+      "default": "Precios por cantidad"
+    },
+    {
+      "type": "text",
+      "id": "col_units",
+      "label": "Columna cantidad",
+      "default": "Unidades"
+    },
+    {
+      "type": "text",
+      "id": "col_unit_price",
+      "label": "Columna precio unitario",
+      "default": "Precio c/u"
+    },
+    {
+      "type": "text",
+      "id": "col_total",
+      "label": "Columna total",
+      "default": "Total"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_total_column",
+      "label": "Mostrar columna total",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "reference_unit_price",
+      "label": "Precio base de referencia (centavos, opcional)",
+      "info": "Para reglas globales. Vacío = primer producto de la colección."
+    },
+    {
+      "type": "text",
+      "id": "pricing_note",
+      "label": "Nota al pie",
+      "default": "Descuentos aplicados al agregar al carrito."
+    },
+    {
+      "type": "paragraph",
+      "content": "Opcional: también puedes usar metafields de colección custom.banner_desktop y custom.banner_mobile (tipo archivo/imagen)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner por colección",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "1 bloque = 1 colección. Elige la colección y sube sus dos imágenes."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección",
+          "info": "Obligatorio. Sin colección seleccionada este bloque no se muestra."
+        },
+        {
+          "type": "image_picker",
+          "id": "image_desktop",
+          "label": "Imagen superior · escritorio",
+          "info": "Ancho 100%, sin recorte: sube la imagen con la proporción que quieras mostrar."
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Imagen superior · móvil",
+          "info": "Ancho 100%, sin recorte. Si está vacía, se usa la de escritorio."
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Texto alternativo",
+          "info": "Vacío = nombre de la colección."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace del banner"
+        }
+      ]
+    },
+    {
+      "type": "tier",
+      "name": "Tramo de precio",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección (opcional)",
+          "info": "Vacío = visible en todas las colecciones con esta sección"
+        },
+        {
+          "type": "number",
+          "id": "min_quantity",
+          "label": "Cantidad minima",
+          "default": 1
+        },
+        {
+          "type": "number",
+          "id": "max_quantity",
+          "label": "Cantidad maxima",
+          "default": 1
+        },
+        {
+          "type": "number",
+          "id": "unit_price",
+          "label": "Precio por unidad (COP)",
+          "default": 72900
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta (ej. Ahorra)"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Destacar fila",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner colección Caletzza",
+      "blocks": [
+        {
+          "type": "banner"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

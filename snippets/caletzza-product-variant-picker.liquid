@@ -1,0 +1,156 @@
+{% comment %}
+  Selector de variantes estilo Pauly Lingerie.
+  - Color: bolitas con color sólido (código de color)
+  - Talla: pastillas compactas + guía de tallas
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  {%- liquid
+    assign linked_products = product.metafields.custom.colores_relacionados.value
+    if linked_products == blank
+      assign linked_products = product.metafields.custom.productos_color.value
+    endif
+  -%}
+  {%- render 'caletzza-color-sibling-swatches', product: product, section: section -%}
+
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    class="cz-variant-picker"
+    data-section="{{ section.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign option_down = option.name | downcase
+        assign option_index = option.position | minus: 1
+        assign picker_type = block.settings.picker_type
+
+        if option_down contains 'color' or option_down contains 'colour' or option_down contains 'colo'
+          assign picker_type = 'swatch_solid'
+        elsif option_down contains 'talla' or option_down contains 'size' or option_down contains 'tamaño'
+          assign picker_type = 'pill'
+        endif
+      -%}
+
+      {%- if picker_type == 'swatch_solid' -%}
+        {%- unless linked_products != blank -%}
+        <fieldset class="js product-form__input product-form__input--swatch cz-variant-picker__color">
+          <legend class="form__label cz-variant-picker__legend">
+            {{ option.name }}:
+            <span data-selected-value>{{ option.selected_value }}</span>
+          </legend>
+          <div class="cz-variant-picker__swatch-list">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign value_name = value.name | default: value
+                assign variant_for_color = nil
+                for variant in product.variants
+                  if variant.options[option_index] == value_name
+                    assign variant_for_color = variant
+                    break
+                  endif
+                endfor
+
+                assign option_disabled = true
+                if value.available
+                  assign option_disabled = false
+                endif
+
+                capture swatch_color
+                  render 'caletzza-resolve-swatch-color', color_name: value_name, variant: variant_for_color, option_value: value
+                endcapture
+                assign swatch_color = swatch_color | strip
+              -%}
+              {%- capture input_id -%}{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{%- endcapture -%}
+              {%- capture input_name -%}{{ option.name }}-{{ option.position }}{%- endcapture -%}
+              <input
+                type="radio"
+                id="{{ input_id }}"
+                name="{{ input_name | escape }}"
+                value="{{ value_name | escape }}"
+                form="{{ product_form_id }}"
+                class="cz-variant-picker__radio{% if option_disabled %} disabled{% endif %}"
+                {% if value.selected %}checked{% endif %}
+                data-product-url="{{ value.product_url }}"
+                data-option-value-id="{{ value.id }}"
+              >
+              <label
+                for="{{ input_id }}"
+                class="cz-variant-picker__swatch-dot{% if value.selected %} is-selected{% endif %}"
+                {% if swatch_color != blank %}
+                  style="--cz-swatch-color: {{ swatch_color }};"
+                {% endif %}
+                title="{{ value_name | escape }}"
+              >
+                <span class="visually-hidden">{{ value_name }}</span>
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+        {%- endunless -%}
+
+      {%- elsif picker_type == 'pill' -%}
+        <fieldset class="js product-form__input product-form__input--pill cz-variant-picker__size">
+          <legend class="form__label cz-variant-picker__legend cz-variant-picker__legend--size">
+            <span>
+              {{ option.name }}:
+              <span data-selected-value class="cz-variant-picker__current">{{ option.selected_value }}</span>
+            </span>
+            {%- if section.settings.size_guide_image != blank -%}
+              <button
+                type="button"
+                class="cz-size-guide-link link"
+                data-cz-size-guide-open
+                aria-haspopup="dialog"
+              >
+                {{ section.settings.size_guide_label | default: 'Guía de tallas' }}
+              </button>
+            {%- elsif section.settings.size_guide_url != blank -%}
+              <a href="{{ section.settings.size_guide_url }}" class="cz-size-guide-link link">
+                {{ section.settings.size_guide_label | default: 'Guía de tallas' }}
+              </a>
+            {%- endif -%}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: 'button'
+          %}
+        </fieldset>
+
+      {%- else -%}
+        <fieldset class="js product-form__input product-form__input--pill">
+          <legend class="form__label cz-variant-picker__legend">
+            {{ option.name }}:
+            <span data-selected-value>{{ option.selected_value }}</span>
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-selects>
+
+  {%- if section.settings.size_guide_image != blank -%}
+    <dialog class="cz-size-guide-modal" data-cz-size-guide-modal>
+      <div class="cz-size-guide-modal__inner">
+        <button type="button" class="cz-size-guide-modal__close" data-cz-size-guide-close aria-label="Cerrar">
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+        {{
+          section.settings.size_guide_image
+          | image_url: width: 1200
+          | image_tag: loading: 'lazy', class: 'cz-size-guide-modal__image', alt: section.settings.size_guide_label
+        }}
+      </div>
+    </dialog>
+  {%- endif -%}
+{%- endunless -%}

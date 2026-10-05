@@ -1,0 +1,89 @@
+.section-pack-discount-rules,
+.section-discount-rules-global {
+  display: none;
+}
+
+.discount-rules--active .price-item--regular {
+  text-decoration: line-through;
+  color: rgba(var(--color-foreground), 0.55);
+}
+
+.discount-rules__badge {
+  margin-top: 0.4rem;
+}
+
+.discount-rules-tier-table {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 0.6rem;
+}
+
+.discount-rules-tier-table__title {
+  margin: 0 0 0.6rem;
+  font-weight: 700;
+}
+
+.discount-rules-tier-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.discount-rules-tier-table__table th,
+.discount-rules-tier-table__table td {
+  padding: 0.45rem 0.35rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.discount-rules-tier-table__row--active td {
+  font-weight: 700;
+  color: #067647;
+}
+
+.discount-rules-cart-totals {
+  margin-bottom: 1rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(var(--color-foreground), 0.08);
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.discount-rules-cart-totals__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.discount-rules-cart-totals__row--discount {
+  color: #067647;
+  font-weight: 700;
+}
+
+.discount-rules-cart-totals__row--total strong {
+  font-size: 1.05rem;
+}
+
+.discount-rules-cart-totals__note {
+  margin: 0.5rem 0 0;
+  color: rgba(var(--color-foreground), 0.65);
+  font-size: 0.85rem;
+}
+
+/* Hide Dawn native totals while reglas-de-precio block is shown */
+.discount-rules-cart-totals__native-hidden {
+  display: none !important;
+}
+
+/* Never show the removed inline duplicate applicator leftovers */
+[data-dr-inline-totals],
+[data-dr-inline-unit] {
+  display: none !important;
+}
+
+.pack-cod__item-price--final {
+  display: block;
+  font-weight: 700;
+}

@@ -1,0 +1,177 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "caletzza_collection_banner": {
+      "type": "caletzza-collection-banner",
+      "blocks": {
+        "banner_QK6FHk": {
+          "type": "banner",
+          "settings": {
+            "collection": "oversize",
+            "image_desktop": "shopify://shop_images/oversize.png",
+            "image_mobile": "shopify://shop_images/oversize.png",
+            "alt_text": "",
+            "link": ""
+          }
+        },
+        "banner_bodys": {
+          "type": "banner",
+          "settings": {
+            "collection": "bodys",
+            "image_desktop": "shopify://shop_images/body-banners.png",
+            "image_mobile": "shopify://shop_images/body-banners.png",
+            "alt_text": "Bodys",
+            "link": ""
+          }
+        },
+        "banner_basicas": {
+          "type": "banner",
+          "settings": {
+            "collection": "basicas",
+            "image_desktop": "shopify://shop_images/basicas_banner.png",
+            "image_mobile": "shopify://shop_images/basicas_banner.png",
+            "alt_text": "Básicas",
+            "link": ""
+          }
+        },
+        "banner_mujer": {
+          "type": "banner",
+          "settings": {
+            "collection": "blusas",
+            "image_desktop": "shopify://shop_images/blusas-banner2.png",
+            "image_mobile": "shopify://shop_images/blusas-banner2.png",
+            "alt_text": "Blusas",
+            "link": ""
+          }
+        },
+        "banner_pijamas_coquett": {
+          "type": "banner",
+          "settings": {
+            "collection": "pijamas-coquett",
+            "image_desktop": "shopify://shop_images/coquett-banner.png",
+            "image_mobile": "shopify://shop_images/coquett-banner.png",
+            "alt_text": "Pijamas Coquett",
+            "link": ""
+          }
+        },
+        "banner_pijamas_sublimadas": {
+          "type": "banner",
+          "settings": {
+            "collection": "pijamas-sublimadas",
+            "image_desktop": "shopify://shop_images/pijamas-sublimadas_9558021b-e871-4158-bce2-3e14182ea93b.png",
+            "image_mobile": "shopify://shop_images/pijamas-sublimadas_9558021b-e871-4158-bce2-3e14182ea93b.png",
+            "alt_text": "Pijamas Sublimadas",
+            "link": ""
+          }
+        },
+        "banner_pijamas_short": {
+          "type": "banner",
+          "settings": {
+            "collection": "pijamas-short-camiseta",
+            "image_desktop": "shopify://shop_images/short-camiseta.png",
+            "image_mobile": "shopify://shop_images/short-camiseta.png",
+            "alt_text": "Pijamas Short Camiseta",
+            "link": ""
+          }
+        },
+        "banner_pijamas_tira": {
+          "type": "banner",
+          "settings": {
+            "collection": "pijamas-short-camiseta-1",
+            "image_desktop": "shopify://shop_images/tira-pantalon_a9457c5b-1c97-44e8-8032-a8204c793fce.png",
+            "image_mobile": "shopify://shop_images/tira-pantalon_a9457c5b-1c97-44e8-8032-a8204c793fce.png",
+            "alt_text": "Pijamas Pantalón Tira",
+            "link": ""
+          }
+        },
+        "banner_pijamas_monos": {
+          "type": "banner",
+          "settings": {
+            "collection": "pijamas-3-monos",
+            "image_desktop": "shopify://shop_images/pijamas-3-monos_4cc11164-e665-4f37-b0fe-306b458cd29d.png",
+            "image_mobile": "shopify://shop_images/pijamas-3-monos_4cc11164-e665-4f37-b0fe-306b458cd29d.png",
+            "alt_text": "Pijamas 3 moños",
+            "link": ""
+          }
+        },
+        "banner_pantalon_camiseta": {
+          "type": "banner",
+          "settings": {
+            "collection": "pantalon-camiseta",
+            "image_desktop": "shopify://shop_images/pantalon-camiseta.png",
+            "image_mobile": "shopify://shop_images/pantalon-camiseta.png",
+            "alt_text": "Pantalón Camiseta",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "banner_QK6FHk",
+        "banner_bodys",
+        "banner_basicas",
+        "banner_mujer",
+        "banner_pijamas_coquett",
+        "banner_pijamas_sublimadas",
+        "banner_pijamas_short",
+        "banner_pijamas_tira",
+        "banner_pijamas_monos",
+        "banner_pantalon_camiseta"
+      ],
+      "settings": {
+        "full_width": true,
+        "use_collection_image": true,
+        "show_pricing_table": false,
+        "pricing_source": "discount_rules",
+        "pricing_heading": "Precios por cantidad",
+        "col_units": "Unidades",
+        "col_unit_price": "Precio c/u",
+        "col_total": "Total",
+        "show_total_column": true,
+        "pricing_note": "Descuentos aplicados al agregar al carrito."
+      }
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": true,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_color_swatches": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "caletzza_collection_banner",
+    "banner",
+    "product-grid"
+  ]
+}

@@ -1,0 +1,56 @@
+{%- liquid
+  assign reference_variant = nil
+  assign sample_product = nil
+  assign sample_tags = ''
+  assign sample_title = ''
+
+  if collection.products.size > 0
+    assign sample_product = collection.products.first
+    assign reference_variant = sample_product.selected_or_first_available_variant
+    assign sample_tags = sample_product.tags | join: ','
+    assign sample_title = sample_product.title
+  endif
+
+  if section.settings.reference_unit_price != blank and section.settings.reference_unit_price > 0
+    assign reference_price = section.settings.reference_unit_price
+  elsif reference_variant != blank
+    assign reference_price = reference_variant.price
+  else
+    assign reference_price = 0
+  endif
+
+  comment
+    En colección solo Cantidad + Precio (sin columna Total).
+  endcomment
+  assign table_heading_text = section.settings.pricing_heading | default: 'Precios por cantidad'
+-%}
+
+<div
+  class="cz-collection-pricing discount-rules-collection-tier-table"
+  data-discount-rules-collection-tier-table
+  data-collection-handle="{{ collection.handle }}"
+  data-variant-price="{{ reference_price }}"
+  data-sample-tags="{{ sample_tags | escape }}"
+  data-sample-title="{{ sample_title | escape }}"
+  hidden
+>
+  {%- if table_heading_text != blank -%}
+    <p class="cz-collection-pricing__heading">{{ table_heading_text }}</p>
+  {%- endif -%}
+
+  <div
+    class="cz-unit-price-table__wrap cz-unit-price-table__wrap--2col"
+    role="table"
+    aria-label="{{ table_heading_text | escape }}"
+  >
+    <div class="cz-unit-price-table__head" role="row">
+      <span role="columnheader">{{ section.settings.col_units | default: 'Cantidad' }}</span>
+      <span role="columnheader">{{ section.settings.col_unit_price | default: 'Precio' }}</span>
+    </div>
+    <div class="cz-unit-price-table__body" data-discount-rules-collection-tier-body></div>
+  </div>
+
+  {%- if section.settings.pricing_note != blank -%}
+    <p class="cz-unit-price-table__note">{{ section.settings.pricing_note }}</p>
+  {%- endif -%}
+</div>
