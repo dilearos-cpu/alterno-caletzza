@@ -82,6 +82,10 @@ En el editor del theme, seccion **Pack Bodys 4** → **Checkout express COD**:
 
 Si la app no responde, el formulario muestra **Continuar al checkout de Shopify** (opcional en settings).
 
+## Mercado Libre Express
+
+Pago in-modal (Payment Brick) sin checkout nativo. Ver [MERCADOLIBRE-EXPRESS.md](MERCADOLIBRE-EXPRESS.md).
+
 ## Desarrollo local
 
 ```bash

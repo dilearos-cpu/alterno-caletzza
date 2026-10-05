@@ -425,6 +425,63 @@
   content: " →";
 }
 
+.pack-cod__single-method {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--pack-cod-border, #e5e5e5);
+  border-radius: 12px;
+  background: #fafafa;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  color: #333;
+}
+
+.pack-cod__single-method strong {
+  color: #111;
+}
+
+.pack-cod__pay-icon--mp {
+  color: #009ee3;
+}
+
+.pack-cod__mp-brick {
+  margin: 8px 0 12px;
+  padding: 12px;
+  border: 1px solid var(--pack-cod-border, #e5e5e5);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.pack-cod__mp-title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pack-cod__mp-hint {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: #555;
+}
+
+.pack-cod__mp-back {
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #009ee3;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pack-cod__mp-back:hover {
+  color: #0077b3;
+}
+
 .pack-cod__submit:disabled {
   opacity: 0.72;
   cursor: wait;

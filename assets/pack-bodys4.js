@@ -342,7 +342,13 @@
           onlineLoadingLabel: "Redirigiendo al checkout...",
           paymentNoteCod: section.dataset.codPaymentNote || "",
           paymentNoteOnline: section.dataset.codOnlinePaymentNote || "",
+          paymentNoteMp: section.dataset.codMpPaymentNote || "",
+          paymentMode: section.dataset.codPaymentMode || "",
           enableOnlinePayment: section.dataset.codEnableOnline !== "false",
+          mpSubmitLabel:
+            section.dataset.codMpSubmitLabel || "Continuar al pago con Mercado Libre",
+          mpLoadingLabel: "Preparando pago...",
+          mpPublicKey: section.dataset.codMpPublicKey || "",
           showCheckoutFallback: section.dataset.codFallback !== "false",
           storefrontToken: section.dataset.codStorefrontToken || "",
           storefrontApiUrl:
