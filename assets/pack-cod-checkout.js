@@ -201,10 +201,16 @@
     this.orderNameNode = section.querySelector("[data-cod-order-name]");
     this.paymentNoteNode = section.querySelector("[data-cod-payment-note]");
     this.paymentsFieldset = section.querySelector("[data-cod-payments]");
+    this.fieldsNode = section.querySelector("[data-cod-fields]");
+    this.mpBrickWrap = section.querySelector("[data-cod-mp-brick]");
+    this.mpBrickMount = section.querySelector("[data-cod-mp-brick-mount]");
+    this.mpBackButton = section.querySelector("[data-cod-mp-back]");
     this.grid = section.querySelector(".pack-cod__grid");
     this.pendingItems = [];
     this.pendingLineItems = [];
     this.pendingSummary = null;
+    this.pendingCustomer = null;
+    this.mpBrickController = null;
     this.onComplete = null;
     this.isLoading = false;
     this.bindEvents();
@@ -266,11 +272,28 @@
       });
     }
 
+    if (this.mpBackButton) {
+      this.mpBackButton.addEventListener("click", function () {
+        self.hideMercadoPagoBrick();
+      });
+    }
+
     if (this.itemsNode) {
       this.itemsNode.addEventListener("scroll", function () {
         self.updateItemsScrollState();
       });
     }
+  };
+
+  PackCodCheckout.prototype.getPaymentMode = function () {
+    var mode = String(this.config.paymentMode || "").trim();
+    if (mode) {
+      return mode;
+    }
+    if (this.root && this.root.getAttribute("data-payment-mode")) {
+      return this.root.getAttribute("data-payment-mode");
+    }
+    return this.config.enableOnlinePayment ? "online_invoice" : "cod";
   };
 
   PackCodCheckout.prototype.updateItemsScrollState = function () {
@@ -295,11 +318,25 @@
   };
 
   PackCodCheckout.prototype.getPaymentMethod = function () {
-    if (!this.config.enableOnlinePayment || !this.form) {
+    if (!this.form) {
       return "cod";
     }
+    var fixed = this.form.querySelector("[data-cod-payment-fixed]");
+    if (fixed && fixed.value) {
+      return fixed.value;
+    }
     var selected = this.form.querySelector('input[name="payment_method"]:checked');
-    return selected && selected.value === "online" ? "online" : "cod";
+    if (selected && selected.value) {
+      return selected.value;
+    }
+    var mode = this.getPaymentMode();
+    if (mode === "mercadopago") {
+      return "mercadopago";
+    }
+    if (mode === "online_invoice" && this.config.enableOnlinePayment) {
+      return "cod";
+    }
+    return "cod";
   };
 
   PackCodCheckout.prototype.updatePaymentUI = function () {
@@ -309,26 +346,35 @@
 
     var method = this.getPaymentMethod();
     var isOnline = method === "online";
+    var isMp = method === "mercadopago";
 
     if (this.isLoading) {
       this.submitButton.textContent = isOnline
         ? this.config.onlineLoadingLabel || "Redirigiendo al checkout..."
-        : this.config.loadingLabel || "Procesando...";
+        : isMp
+          ? this.config.mpLoadingLabel || "Preparando pago..."
+          : this.config.loadingLabel || "Procesando...";
     } else {
       this.submitButton.textContent = isOnline
         ? this.config.onlineSubmitLabel || "Continuar al pago seguro"
-        : this.config.submitLabel || "Confirmar pedido";
+        : isMp
+          ? this.config.mpSubmitLabel || "Continuar al pago con Mercado Libre"
+          : this.config.submitLabel || "Confirmar pedido";
     }
 
     if (this.paymentNoteNode) {
       this.paymentNoteNode.textContent = isOnline
         ? this.config.paymentNoteOnline || "Checkout seguro de Shopify con tus metodos activos."
-        : this.config.paymentNoteCod || "Pagas al recibir tu pedido.";
-      this.paymentNoteNode.classList.toggle("pack-cod__payment-note--online", isOnline);
+        : isMp
+          ? this.config.paymentNoteMp ||
+            "Pagas con Mercado Libre aqui mismo. El pedido entra a Shopify como pago offline."
+          : this.config.paymentNoteCod || "Pagas al recibir tu pedido.";
+      this.paymentNoteNode.classList.toggle("pack-cod__payment-note--online", isOnline || isMp);
     }
 
     if (this.submitButton) {
-      this.submitButton.classList.toggle("pack-cod__submit--online", isOnline);
+      this.submitButton.classList.toggle("pack-cod__submit--online", isOnline || isMp);
+      this.submitButton.hidden = Boolean(this.mpBrickWrap && !this.mpBrickWrap.hidden);
     }
   };
 
@@ -557,6 +603,7 @@
       });
     }
 
+    this.hideMercadoPagoBrick();
     this.updatePaymentUI();
 
     if (this.mainPanel) {
@@ -583,6 +630,7 @@
     if (!this.root) {
       return;
     }
+    this.hideMercadoPagoBrick();
     this.root.hidden = true;
     document.body.classList.remove("pack-modal-open");
   };
@@ -1070,14 +1118,63 @@
       });
   };
 
-  PackCodCheckout.prototype.submitCod = function (customer) {
+  PackCodCheckout.prototype.submitMercadoPago = function (customer) {
     var self = this;
-    var payload = {
+    this.pendingCustomer = customer;
+    this.setLoading(true);
+    this.loadMercadoPagoSdk()
+      .then(function () {
+        return self.mountMercadoPagoBrick(customer);
+      })
+      .then(function () {
+        self.setLoading(false);
+      })
+      .catch(function (error) {
+        console.warn("Mercado Libre Brick failed:", error);
+        self.setLoading(false);
+        self.showError(
+          (error && error.message) ||
+            "No se pudo iniciar Mercado Libre. Revisa las credenciales de Mercado Pago en la app."
+        );
+      });
+  };
+
+  PackCodCheckout.prototype.loadMercadoPagoSdk = function () {
+    if (global.MercadoPago) {
+      return Promise.resolve(global.MercadoPago);
+    }
+    return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[data-mp-sdk="v2"]');
+      if (existing) {
+        existing.addEventListener("load", function () {
+          resolve(global.MercadoPago);
+        });
+        existing.addEventListener("error", function () {
+          reject(new Error("No se pudo cargar el SDK de Mercado Pago."));
+        });
+        return;
+      }
+      var script = document.createElement("script");
+      script.src = "https://sdk.mercadopago.com/js/v2";
+      script.async = true;
+      script.setAttribute("data-mp-sdk", "v2");
+      script.onload = function () {
+        resolve(global.MercadoPago);
+      };
+      script.onerror = function () {
+        reject(new Error("No se pudo cargar el SDK de Mercado Pago."));
+      };
+      document.head.appendChild(script);
+    });
+  };
+
+  PackCodCheckout.prototype.buildOrderPayload = function (customer, paymentMethod) {
+    return {
       customer: {
         firstName: customer.names.firstName,
         lastName: customer.names.lastName,
         phone: customer.phone,
-        email: customer.email
+        email: customer.email || checkoutEmail(customer)
       },
       shippingAddress: {
         address1: customer.address1,
@@ -1099,8 +1196,169 @@
       note: customer.note,
       shippingPrice: this.pendingSummary ? this.pendingSummary.shipping : 0,
       discountAmount: this.pendingSummary ? this.pendingSummary.discountTotal : 0,
-      packLabel: this.config.packLabel || "Pack Bodys"
+      packLabel: this.config.packLabel || "Pack Bodys",
+      paymentMethod: paymentMethod || "mercadopago",
+      currency: this.config.currency || "COP",
+      totalCents: this.pendingSummary ? this.pendingSummary.total : 0
     };
+  };
+
+  PackCodCheckout.prototype.proxyUrls = function (suffix) {
+    var base = this.config.orderEndpoint || "/apps/cod-express";
+    var path = String(suffix || "").replace(/^\//, "");
+    var urls = [
+      base,
+      "/apps/cod-express-1",
+      "/apps/cod-express-1/order",
+      "/apps/cod-express/order",
+      "https://cod-express-r15e.onrender.com" + (path ? "/" + path : "/order")
+    ];
+    if (path && base.indexOf("http") !== 0) {
+      urls.unshift(base.replace(/\/$/, "") + "/" + path);
+    }
+    return urls;
+  };
+
+  PackCodCheckout.prototype.postExpressAction = function (action, payload) {
+    var body = Object.assign({}, payload, { action: action });
+    var urls = this.proxyUrls(action === "mercadopago_pay" ? "order" : "order");
+    return postOrderWithFallback(urls, body);
+  };
+
+  PackCodCheckout.prototype.hideMercadoPagoBrick = function () {
+    if (this.mpBrickController && typeof this.mpBrickController.unmount === "function") {
+      try {
+        this.mpBrickController.unmount();
+      } catch (error) {
+        // ignore
+      }
+    }
+    this.mpBrickController = null;
+    if (this.mpBrickMount) {
+      this.mpBrickMount.innerHTML = "";
+    }
+    if (this.mpBrickWrap) {
+      this.mpBrickWrap.hidden = true;
+    }
+    if (this.fieldsNode) {
+      this.fieldsNode.hidden = false;
+    }
+    if (this.paymentsFieldset) {
+      this.paymentsFieldset.hidden = false;
+    }
+    if (this.submitButton) {
+      this.submitButton.hidden = false;
+    }
+    this.updatePaymentUI();
+  };
+
+  PackCodCheckout.prototype.mountMercadoPagoBrick = function (customer) {
+    var self = this;
+    if (!this.mpBrickMount || !this.mpBrickWrap) {
+      return Promise.reject(new Error("No hay contenedor para Mercado Libre."));
+    }
+
+    var totalCents = this.pendingSummary ? Number(this.pendingSummary.total || 0) : 0;
+    if (totalCents <= 0) {
+      return Promise.reject(new Error("Total invalido para cobro."));
+    }
+    var amount = Math.round(totalCents) / 100;
+    var currency = this.config.currency || "COP";
+    var orderPayload = this.buildOrderPayload(customer, "mercadopago");
+
+    return this.postExpressAction("mercadopago_config", {
+      shop: this.getShopDomain(),
+      currency: currency,
+      totalCents: totalCents
+    }).then(function (config) {
+      var publicKey = config.publicKey || self.config.mpPublicKey;
+      if (!publicKey) {
+        throw new Error("Falta MERCADOPAGO_PUBLIC_KEY en la app COD Express.");
+      }
+      if (!global.MercadoPago) {
+        throw new Error("SDK de Mercado Pago no disponible.");
+      }
+
+      self.hideError();
+      if (self.fieldsNode) {
+        self.fieldsNode.hidden = true;
+      }
+      if (self.paymentsFieldset) {
+        self.paymentsFieldset.hidden = true;
+      }
+      if (self.submitButton) {
+        self.submitButton.hidden = true;
+      }
+      self.mpBrickWrap.hidden = false;
+      self.mpBrickMount.innerHTML = "";
+
+      var mp = new global.MercadoPago(publicKey, { locale: "es-CO" });
+      var bricksBuilder = mp.bricks();
+
+      return bricksBuilder.create("payment", self.mpBrickMount.id, {
+        initialization: {
+          amount: amount,
+          payer: {
+            email: orderPayload.customer.email
+          }
+        },
+        customization: {
+          paymentMethods: {
+            maxInstallments: 12
+          }
+        },
+        callbacks: {
+          onReady: function () {},
+          onError: function (error) {
+            console.warn("MP Brick error", error);
+            self.showError((error && error.message) || "Error en el formulario de pago.");
+          },
+          onSubmit: function (_param) {
+            var formData = _param && _param.formData ? _param.formData : _param;
+            return new Promise(function (resolve, reject) {
+              self
+                .postExpressAction("mercadopago_pay", {
+                  shop: self.getShopDomain(),
+                  formData: formData,
+                  order: orderPayload,
+                  amount: amount,
+                  currency: currency
+                })
+                .then(function (data) {
+                  if (data && data.orderName) {
+                    self.showSuccess(data.orderName);
+                    resolve({ status: "success" });
+                    return;
+                  }
+                  if (data && data.status === "pending") {
+                    self.showError(
+                      "Tu pago quedo pendiente (" +
+                        (data.mpStatus || "pending") +
+                        "). Te confirmamos cuando Mercado Libre lo acredite."
+                    );
+                    reject(data);
+                    return;
+                  }
+                  reject(new Error((data && data.error) || "No se pudo confirmar el pago."));
+                })
+                .catch(function (error) {
+                  self.showError(
+                    (error && error.message) || "No se pudo procesar el pago con Mercado Libre."
+                  );
+                  reject(error);
+                });
+            });
+          }
+        }
+      }).then(function (controller) {
+        self.mpBrickController = controller;
+      });
+    });
+  };
+
+  PackCodCheckout.prototype.submitCod = function (customer) {
+    var self = this;
+    var payload = this.buildOrderPayload(customer, "cod");
 
     var orderUrls = [
       this.config.orderEndpoint || "/apps/cod-express",
@@ -1141,6 +1399,11 @@
 
     if (paymentMethod === "online") {
       this.submitOnline(customer);
+      return;
+    }
+
+    if (paymentMethod === "mercadopago") {
+      this.submitMercadoPago(customer);
       return;
     }
 

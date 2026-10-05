@@ -38,6 +38,10 @@ const DISCOUNT_FUNCTION_HANDLE = process.env.DISCOUNT_FUNCTION_HANDLE || "quanti
 const DISCOUNT_FUNCTION_TITLE = process.env.DISCOUNT_FUNCTION_TITLE || "Descuento por cantidad";
 const OFFLINE_TOKENS_PATH =
   process.env.SHOPIFY_OFFLINE_TOKENS_PATH || path.join(__dirname, "data", "shop-offline-tokens.json");
+const MP_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN || "";
+const MP_PUBLIC_KEY = process.env.MERCADOPAGO_PUBLIC_KEY || "";
+const MP_GATEWAY_NAME = process.env.MERCADOPAGO_SHOPIFY_GATEWAY_NAME || "Mercado Libre Express";
+const MP_API_BASE = (process.env.MERCADOPAGO_API_BASE || "https://api.mercadopago.com").replace(/\/$/, "");
 
 let cachedFunctionId = process.env.DISCOUNT_FUNCTION_ID || "";
 const tokenCacheByShop = new Map();
@@ -314,6 +318,26 @@ async function handleProxyOrder(req, res) {
       return res.json(result);
     }
 
+    // Mercado Libre Express: Payment Brick in-modal (no checkout nativo).
+    if (body.action === "mercadopago_config") {
+      if (!MP_PUBLIC_KEY) {
+        return res.status(400).json({
+          error: "Falta MERCADOPAGO_PUBLIC_KEY en la app COD Express."
+        });
+      }
+      return res.json({
+        ok: true,
+        publicKey: MP_PUBLIC_KEY,
+        gatewayName: MP_GATEWAY_NAME,
+        shop: shopDomain
+      });
+    }
+
+    if (body.action === "mercadopago_pay" || body.paymentMethod === "mercadopago") {
+      const result = await processMercadoPagoExpressPayment(body, shopDomain);
+      return res.json(result);
+    }
+
     if (!body.lineItems || !body.lineItems.length) {
       return res.status(400).json({ error: "No se recibieron productos. Revisa app proxy POST." });
     }
@@ -471,6 +495,281 @@ async function createCodOrder(body, shopDomain = SHOP_DOMAIN) {
     orderName: order.name,
     discountTotal: discountTotalCents,
     shop: shopDomain
+  };
+}
+
+async function mercadoPagoFetch(pathname, { method = "GET", body } = {}) {
+  if (!MP_ACCESS_TOKEN) {
+    throw new Error("Falta MERCADOPAGO_ACCESS_TOKEN en la app COD Express.");
+  }
+  const response = await fetch(`${MP_API_BASE}${pathname}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${MP_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      "X-Idempotency-Key": crypto.randomUUID()
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message =
+      payload?.message ||
+      payload?.error ||
+      payload?.cause?.[0]?.description ||
+      `Mercado Pago HTTP ${response.status}`;
+    throw new Error(message);
+  }
+  return payload;
+}
+
+/**
+ * Cobra con Payment Brick (Checkout API) y crea pedido Shopify PAGADO
+ * con gateway offline "Mercado Libre Express" (sin checkout nativo).
+ */
+async function processMercadoPagoExpressPayment(body, shopDomain = SHOP_DOMAIN) {
+  const orderBody = body.order && typeof body.order === "object" ? body.order : body;
+  const formData = body.formData && typeof body.formData === "object" ? body.formData : {};
+  const currency = String(body.currency || orderBody.currency || "COP").toUpperCase();
+  const amountMajor = Number(
+    body.amount != null
+      ? body.amount
+      : Number(orderBody.totalCents || 0) / 100
+  );
+
+  if (!(amountMajor > 0)) {
+    throw new Error("Monto invalido para Mercado Libre.");
+  }
+
+  const paymentPayload = {
+    ...formData,
+    transaction_amount: amountMajor,
+    description: orderBody.packLabel || "Pack Express Caletzza",
+    external_reference: `${shopDomain}:${Date.now()}`,
+    metadata: {
+      shop: shopDomain,
+      pack_label: orderBody.packLabel || "",
+      source: "landing_express",
+      gateway: MP_GATEWAY_NAME
+    },
+    payer: {
+      ...(formData.payer || {}),
+      email: formData?.payer?.email || orderBody?.customer?.email,
+      first_name: orderBody?.customer?.firstName,
+      last_name: orderBody?.customer?.lastName
+    }
+  };
+
+  const payment = await mercadoPagoFetch("/v1/payments", {
+    method: "POST",
+    body: paymentPayload
+  });
+
+  const status = String(payment.status || "").toLowerCase();
+  if (status !== "approved") {
+    return {
+      ok: false,
+      status: "pending",
+      mpStatus: payment.status,
+      mpPaymentId: payment.id,
+      error:
+        status === "rejected"
+          ? "El pago fue rechazado por Mercado Libre."
+          : `Pago en estado ${payment.status || "pendiente"}.`
+    };
+  }
+
+  const shopifyOrder = await createPaidOfflineOrder(
+    {
+      ...orderBody,
+      note: [
+        orderBody.packLabel,
+        `${MP_GATEWAY_NAME} (MP #${payment.id})`,
+        orderBody.note
+      ]
+        .filter(Boolean)
+        .join(" | "),
+      paymentMethodLabel: MP_GATEWAY_NAME,
+      mpPaymentId: String(payment.id),
+      mpStatus: payment.status
+    },
+    shopDomain
+  );
+
+  return {
+    ok: true,
+    status: "approved",
+    mpPaymentId: payment.id,
+    mpStatus: payment.status,
+    gatewayName: MP_GATEWAY_NAME,
+    ...shopifyOrder
+  };
+}
+
+/**
+ * Pedido Shopify pagado con metodo offline personalizado (no COD pendiente).
+ * Usa draftOrder + complete(paymentPending:false) y etiqueta el gateway en nota/tags.
+ */
+async function createPaidOfflineOrder(body, shopDomain = SHOP_DOMAIN) {
+  const customer = body.customer || {};
+  const shippingAddress = body.shippingAddress || {};
+  const rawItems = body.lineItems || body.items || [];
+  const variantLineItems = rawItems.map((item) => ({
+    variantId: variantGid(item.variantId || item.variant_id || item.id),
+    quantity: Number(item.quantity || 1)
+  }));
+
+  if (!variantLineItems.length) {
+    throw new Error("No hay productos en el pedido.");
+  }
+
+  let discountTotalCents = Number(body.discountAmount || body.discountTotal || 0);
+  try {
+    const previewItems = rawItems.map((item) => ({
+      key: item.key || "",
+      product_id: String(item.product_id || item.productId || ""),
+      quantity: Number(item.quantity || 1),
+      unit_price: Number(item.unit_price ?? item.unitPrice ?? item.price ?? 0),
+      title: item.title || item.product_title || ""
+    }));
+    const preview = await previewCartDiscounts(
+      {
+        items: previewItems,
+        rules: normalizeRulesPayload(body)
+      },
+      shopDomain
+    );
+    if (Number(preview.discountTotal || 0) > 0) {
+      discountTotalCents = Number(preview.discountTotal || 0);
+    }
+  } catch (error) {
+    console.warn("No se pudo calcular descuento MP express:", error.message);
+  }
+
+  const gatewayLabel = body.paymentMethodLabel || MP_GATEWAY_NAME;
+  const draftInput = {
+    email: customer.email || undefined,
+    phone: customer.phone || undefined,
+    note: body.note || undefined,
+    tags: [
+      "MercadoLibre-Express",
+      "Pack-Express",
+      "MP-Paid",
+      body.packLabel,
+      discountTotalCents > 0 ? "qty-discount" : null
+    ].filter(Boolean),
+    customAttributes: [
+      { key: "payment_method", value: gatewayLabel },
+      { key: "mp_payment_id", value: String(body.mpPaymentId || "") },
+      { key: "mp_status", value: String(body.mpStatus || "approved") },
+      { key: "checkout_source", value: "landing_express" }
+    ],
+    shippingAddress: {
+      firstName: customer.firstName || "Cliente",
+      lastName: customer.lastName || "ML",
+      address1: shippingAddress.address1,
+      city: shippingAddress.city,
+      province: shippingAddress.province,
+      countryCode: "CO",
+      zip: shippingAddress.zip || "000000",
+      phone: customer.phone || undefined
+    },
+    lineItems: variantLineItems,
+    shippingLine: {
+      title: "Envio",
+      price: moneyFromCents(body.shippingPrice)
+    }
+  };
+
+  if (discountTotalCents > 0) {
+    draftInput.appliedDiscount = {
+      title: "Descuento por cantidad",
+      description: "Reglas de precio Caletzza",
+      valueType: "FIXED_AMOUNT",
+      value: Number(moneyFromCents(discountTotalCents))
+    };
+  }
+
+  const createMutation = `
+    mutation draftOrderCreate($input: DraftOrderInput!) {
+      draftOrderCreate(input: $input) {
+        draftOrder { id name }
+        userErrors { field message }
+      }
+    }
+  `;
+
+  const createData = await shopifyGraphql(createMutation, { input: draftInput }, shopDomain);
+  const createResult = createData.draftOrderCreate;
+  if (createResult.userErrors?.length) {
+    throw new Error(createResult.userErrors.map((error) => error.message).join(" "));
+  }
+
+  const draftId = createResult.draftOrder?.id;
+  if (!draftId) {
+    throw new Error("No se pudo crear el borrador del pedido Mercado Libre.");
+  }
+
+  // paymentPending:false => pedido pagado (offline / manual) en Shopify.
+  const completeMutation = `
+    mutation draftOrderComplete($id: ID!) {
+      draftOrderComplete(id: $id, paymentPending: false) {
+        draftOrder {
+          order { id name legacyResourceId }
+        }
+        userErrors { field message }
+      }
+    }
+  `;
+
+  const completeData = await shopifyGraphql(completeMutation, { id: draftId }, shopDomain);
+  const completeResult = completeData.draftOrderComplete;
+  if (completeResult.userErrors?.length) {
+    throw new Error(completeResult.userErrors.map((error) => error.message).join(" "));
+  }
+
+  const order = completeResult.draftOrder?.order;
+  if (!order) {
+    throw new Error("No se pudo completar el pedido Mercado Libre.");
+  }
+
+  // Refuerza el nombre del metodo de pago en el pedido (columna / notas).
+  try {
+    await shopifyGraphql(
+      `
+      mutation orderUpdate($input: OrderInput!) {
+        orderUpdate(input: $input) {
+          order { id }
+          userErrors { field message }
+        }
+      }
+    `,
+      {
+        input: {
+          id: order.id,
+          tags: [
+            "MercadoLibre-Express",
+            "Pack-Express",
+            "MP-Paid",
+            body.packLabel,
+            gatewayLabel
+          ].filter(Boolean),
+          note: body.note,
+          customAttributes: draftInput.customAttributes
+        }
+      },
+      shopDomain
+    );
+  } catch (error) {
+    console.warn("No se pudo etiquetar el pedido MP:", error.message);
+  }
+
+  return {
+    orderId: order.legacyResourceId,
+    orderName: order.name,
+    discountTotal: discountTotalCents,
+    shop: shopDomain,
+    gatewayName: gatewayLabel
   };
 }
 
@@ -2126,8 +2425,39 @@ app.post("/checkout", (req, res) => handleDiscountedCheckout(req, res, { require
 
 app.post("/order", async (req, res) => {
   try {
+    const body = req.body || {};
     const shopDomain = resolveShopDomain(req);
-    const result = await createCodOrder(req.body || {}, shopDomain);
+
+    if (body.action === "mercadopago_config") {
+      if (!MP_PUBLIC_KEY) {
+        return res.status(400).json({
+          error: "Falta MERCADOPAGO_PUBLIC_KEY en la app COD Express."
+        });
+      }
+      return res.json({
+        ok: true,
+        publicKey: MP_PUBLIC_KEY,
+        gatewayName: MP_GATEWAY_NAME,
+        shop: shopDomain
+      });
+    }
+
+    if (body.action === "mercadopago_pay" || body.paymentMethod === "mercadopago") {
+      const result = await processMercadoPagoExpressPayment(body, shopDomain);
+      return res.json(result);
+    }
+
+    if (
+      body.action === "discounted_checkout" ||
+      body.mode === "draft_invoice" ||
+      body.invoiceCheckout === true ||
+      body.paymentMethod === "online"
+    ) {
+      const result = await createDiscountedInvoiceCheckout(body, shopDomain);
+      return res.json(result);
+    }
+
+    const result = await createCodOrder(body, shopDomain);
     return res.json(result);
   } catch (error) {
     return res.status(400).json({ error: error.message || "No se pudo crear el pedido." });

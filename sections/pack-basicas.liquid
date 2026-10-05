@@ -58,10 +58,14 @@
   data-cod-submit-label="{{ section.settings.cod_submit_label | escape }}"
   data-cod-loading-label="{{ section.settings.loading_button_label | escape }}"
   data-cod-fallback="{{ section.settings.cod_show_checkout_fallback }}"
+  data-cod-payment-mode="{{ section.settings.cod_payment_mode | default: '' }}"
   data-cod-enable-online="{{ section.settings.cod_enable_online_payment }}"
   data-cod-online-submit-label="{{ section.settings.cod_online_submit_label | escape }}"
+  data-cod-mp-submit-label="{{ section.settings.cod_mp_submit_label | escape }}"
+  data-cod-mp-public-key="{{ section.settings.cod_mp_public_key | escape }}"
   data-cod-payment-note="{{ section.settings.cod_payment_note | escape }}"
   data-cod-online-payment-note="{{ section.settings.cod_payment_online_hint | escape }}"
+  data-cod-mp-payment-note="{{ section.settings.cod_payment_mp_hint | escape }}"
   data-cod-accent="{{ section.settings.cod_accent_color }}"
   data-cod-storefront-token="{{ section.settings.cod_storefront_token | escape }}"
   data-cod-storefront-api="{{ section.settings.cod_storefront_api_version | escape }}"
@@ -283,11 +287,24 @@
       "default": "Confirmar pedido contra entrega"
     },
     {
+      "type": "select",
+      "id": "cod_payment_mode",
+      "label": "Metodo(s) de pago en el express",
+      "default": "cod",
+      "options": [
+        { "value": "cod", "label": "Solo contra entrega (COD)" },
+        { "value": "mercadopago", "label": "Solo Mercado Libre Express (Brick)" },
+        { "value": "both_express", "label": "COD + Mercado Libre Express" },
+        { "value": "online_invoice", "label": "COD + checkout Shopify (invoice legacy)" }
+      ],
+      "info": "Elige un solo metodo por landing, o ambos express. Mercado Libre se cobra en el modal y el pedido entra a Shopify como pago offline 'Mercado Libre Express'."
+    },
+    {
       "type": "checkbox",
       "id": "cod_enable_online_payment",
-      "label": "Mostrar pago en linea (Shopify Checkout)",
-      "default": true,
-      "info": "Mercado Pago, tarjeta y otros metodos activos en Shopify aparecen en el checkout nativo."
+      "label": "Legacy: mostrar pago en linea (solo si Metodo vacio)",
+      "default": false,
+      "info": "Deprecado. Usa 'Metodo(s) de pago en el express'."
     },
     {
       "type": "text",
@@ -303,20 +320,45 @@
     },
     {
       "type": "text",
+      "id": "cod_payment_mp_title",
+      "label": "Titulo Mercado Libre Express",
+      "default": "Mercado Libre"
+    },
+    {
+      "type": "text",
+      "id": "cod_payment_mp_hint",
+      "label": "Descripcion Mercado Libre Express",
+      "default": "Paga aqui mismo. Pedido a Shopify como pago offline."
+    },
+    {
+      "type": "text",
+      "id": "cod_mp_submit_label",
+      "label": "Texto boton Mercado Libre",
+      "default": "Continuar al pago con Mercado Libre"
+    },
+    {
+      "type": "text",
+      "id": "cod_mp_public_key",
+      "label": "Mercado Pago Public Key (opcional)",
+      "default": "",
+      "info": "Si esta vacio, se usa MERCADOPAGO_PUBLIC_KEY de la app."
+    },
+    {
+      "type": "text",
       "id": "cod_payment_online_title",
-      "label": "Titulo pago en linea",
-      "default": "Mercado Pago"
+      "label": "Titulo pago invoice Shopify (legacy)",
+      "default": "Mercado Pago (Shopify)"
     },
     {
       "type": "text",
       "id": "cod_payment_online_hint",
-      "label": "Descripcion pago en linea",
-      "default": "Checkout seguro de Shopify con tus metodos activos"
+      "label": "Descripcion pago invoice (legacy)",
+      "default": "Abre el checkout nativo de Shopify"
     },
     {
       "type": "text",
       "id": "cod_online_submit_label",
-      "label": "Texto boton pago en linea",
+      "label": "Texto boton pago invoice (legacy)",
       "default": "Continuar al pago seguro"
     },
     {
